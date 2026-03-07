@@ -39,7 +39,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .mlogo{font-family:var(–head);font-size:clamp(66px,13vw,130px);color:var(–g);letter-spacing:7px;line-height:.9;text-shadow:0 0 45px rgba(0,255,136,.5);}
 .msub{font-family:var(–head);font-size:clamp(12px,2.5vw,18px);color:var(–dim);letter-spacing:11px;margin-top:4px;}
 .mflavor{font-size:13px;color:var(–dim);line-height:1.7;margin-top:18px;max-width:300px;border-left:2px solid var(–border2);padding-left:13px;}
-/* online badge */
 .online-badge{display:inline-flex;align-items:center;gap:7px;margin-top:14px;padding:6px 14px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.25);border-radius:20px;font-size:13px;font-weight:700;letter-spacing:1px;}
 .online-dot{width:8px;height:8px;border-radius:50%;background:var(–g);box-shadow:0 0 6px var(–g);animation:pulse-dot 1.5s ease-in-out infinite;}
 @keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:.4;}}
@@ -59,7 +58,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .inp:focus{border-color:var(–g);box-shadow:0 0 0 2px rgba(0,255,136,.1);background:#0d1f10;}
 .inp::placeholder{color:#4a7a55;-webkit-text-fill-color:#4a7a55;}
 .inp option{background:var(–bg2);color:#fff;}
-/* Fix browser autofill turning background white/yellow */
 .inp:-webkit-autofill,.inp:-webkit-autofill:hover,.inp:-webkit-autofill:focus{
 -webkit-text-fill-color:#ffffff!important;
 -webkit-box-shadow:0 0 0 1000px #0d1f10 inset!important;
@@ -188,7 +186,6 @@ input,textarea,select{color:#ffffff;-webkit-text-fill-color:#ffffff;}
 #hudKills{position:absolute;top:64px;left:50%;transform:translateX(-50%);font-family:var(–head);font-size:21px;color:var(–r);letter-spacing:2px;}
 #hudRank{position:absolute;top:12px;left:12px;font-family:var(–head);font-size:14px;color:var(–dim);letter-spacing:3px;}
 #hudLen{position:absolute;top:32px;left:12px;font-family:var(–mono);font-size:11px;color:var(–dim);}
-/* Players online counter */
 #hudOnline{position:absolute;top:52px;left:12px;font-family:var(–mono);font-size:11px;color:var(–g);}
 #minimap{position:absolute;bottom:12px;right:12px;border:1px solid var(–border);border-radius:7px;overflow:hidden;background:rgba(0,0,0,.7);}
 #mmcv{display:block;}
@@ -200,7 +197,6 @@ input,textarea,select{color:#ffffff;-webkit-text-fill-color:#ffffff;}
 #evbanner{position:absolute;top:0;left:0;right:0;padding:5px;text-align:center;font-family:var(–head);font-size:17px;letter-spacing:3px;pointer-events:none;}
 #evbanner.xp{background:linear-gradient(90deg,#ff8800,#ffd700);color:#000;}
 #evbanner.coins{background:linear-gradient(90deg,var(–gold),#fff8a0);color:#000;}
-/* Scoreboard (Tab key) */
 #scoreboard{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.92);border:1px solid var(–border);border-radius:12px;padding:20px;min-width:280px;max-height:60vh;overflow-y:auto;}
 #scoreboard h3{font-family:var(–head);font-size:22px;color:var(–g);letter-spacing:4px;margin-bottom:14px;text-align:center;}
 
@@ -280,14 +276,15 @@ input,textarea,select{color:#ffffff;-webkit-text-fill-color:#ffffff;}
           <button class="tb on" onclick="authTab('login')">LOGIN</button>
           <button class="tb" onclick="authTab('register')">REGISTER</button>
         </div>
+        <!-- LOGIN: username + password only, no email -->
         <div id="loginForm">
-          <input class="inp" id="liEmail" type="email" placeholder="Email address" autocomplete="email">
+          <input class="inp" id="liUser" type="text" placeholder="Username" autocomplete="username">
           <input class="inp" id="liPass" type="password" placeholder="Password" autocomplete="current-password">
           <button class="btn bg" onclick="doLogin()">▶ ENTER THE PIT</button>
         </div>
+        <!-- REGISTER: username + password only, no email -->
         <div id="regForm" class="hidden">
-          <input class="inp" id="rgName" type="text" placeholder="Display Name (max 16)" maxlength="16" autocomplete="off">
-          <input class="inp" id="rgEmail" type="email" placeholder="Email address" autocomplete="email">
+          <input class="inp" id="rgName" type="text" placeholder="Username (max 16)" maxlength="16" autocomplete="username">
           <input class="inp" id="rgPass" type="password" placeholder="Password (min 6)" autocomplete="new-password">
           <button class="btn bg" onclick="doRegister()">CREATE SERPENT</button>
         </div>
@@ -516,7 +513,7 @@ input,textarea,select{color:#ffffff;-webkit-text-fill-color:#ffffff;}
           <input class="inp" id="promTgt" placeholder="Player display name or PlayFab ID">
           <select class="inp" id="promRole"><option value="moderator">🛡 Moderator</option><option value="owner">👑 Owner</option><option value="player">👤 Player (demote)</option></select>
           <button class="btn bgold" onclick="Own.promote()">CONFIRM</button>
-          <div style="font-size:12px;color:var(--dim);margin-top:8px;line-height:1.6;">Grants or removes <b style="color:var(--gold)">mod_panel</b>/<b style="color:var(--gold)">owner_panel</b> catalog items. For other players, use PlayFab Dashboard → Players → Inventory.</div>
+          <div style="font-size:12px;color:var(--dim);margin-top:8px;line-height:1.6;">Grants or removes <b style="color:var(--gold)">mod_panel</b>/<b style="color:var(--gold)">owner_panel</b> catalog items.</div>
         </div>
       </div>
       <div class="sm hidden" id="ownMsg" style="margin-top:8px;"></div>
@@ -542,13 +539,11 @@ input,textarea,select{color:#ffffff;-webkit-text-fill-color:#ffffff;}
     <button class="hibtn" onclick="reportPrompt()" title="Report">⚠</button>
   </div>
   <div id="scoreboard" class="hidden"><h3>SCOREBOARD</h3><div id="sbList"></div></div>
-  <!-- Chat -->
   <div id="chatBox">
     <div id="chatMsgs"></div>
     <input id="chatInput" placeholder="Press T to chat..." maxlength="80">
     <div id="chatHint">T = CHAT &nbsp;|&nbsp; TAB = SCORES</div>
   </div>
-  <!-- Joystick -->
   <div id="joyWrap" class="hidden"><div id="joyBase"><div id="joyKnob"></div></div></div>
   <button id="boostBtn" class="hidden">BOOST</button>
 </div>
@@ -577,20 +572,12 @@ input,textarea,select{color:#ffffff;-webkit-text-fill-color:#ffffff;}
      ═══════════════════════════════════════════════════ -->
 
 <script type="module">
-// ─────────────────────────────────────────────────────
-// FIREBASE IMPORTS (v9 modular)
-// ─────────────────────────────────────────────────────
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getDatabase, ref, set, onValue, onDisconnect,
   serverTimestamp, remove, update, push, get, off
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// ─────────────────────────────────────────────────────
-// ⚠️  REPLACE WITH YOUR FIREBASE CONFIG
-// Get it from: console.firebase.google.com →
-//   Your project → Project Settings → Your apps → SDK config
-// ─────────────────────────────────────────────────────
 const FB_CONFIG = {
   apiKey:            "YOUR_FIREBASE_API_KEY",
   authDomain:        "YOUR_PROJECT.firebaseapp.com",
@@ -603,7 +590,7 @@ const FB_CONFIG = {
 
 const fbApp  = initializeApp(FB_CONFIG);
 const db     = getDatabase(fbApp);
-window._db   = db;      // expose for non-module code
+window._db   = db;
 window._ref  = ref;
 window._set  = set;
 window._onValue = onValue;
@@ -628,7 +615,7 @@ const PF_SDK_URL = "https://download.playfab.com/PlayFabClientApi.js";
 let PF = null;
 
 // ─────────────────────────────────────────────────────
-// COSMETICS CATALOG  (mirrors VenomSnake_v1 catalog)
+// COSMETICS CATALOG
 // ─────────────────────────────────────────────────────
 const CATALOG = {
   skins:[
@@ -681,7 +668,7 @@ const WORLD    = 3600;
 const BASE_SPD = 2.9;
 const BOOST_SPD= 5.8;
 const SEG_GAP  = 6;
-const BOT_COUNT= 5;       // only 5 bots now
+const BOT_COUNT= 5;
 const FOOD_MAX = 380;
 
 // ─────────────────────────────────────────────────────
@@ -696,17 +683,17 @@ const S = {
 };
 
 // ─────────────────────────────────────────────────────
-// LOCAL STORAGE
+// LOCAL STORAGE  — also used for session auto-save
 // ─────────────────────────────────────────────────────
 const LS={
   get(k,d=null){try{const v=localStorage.getItem('vn3_'+k);return v?JSON.parse(v):d;}catch{return d;}},
-  set(k,v){try{localStorage.setItem('vn3_'+k,JSON.stringify(v));}catch{}}
+  set(k,v){try{localStorage.setItem('vn3_'+k,JSON.stringify(v));}catch{}},
+  del(k){try{localStorage.removeItem('vn3_'+k);}catch{}}
 };
 
 // ─────────────────────────────────────────────────────
-// FIREBASE HELPERS  (wait until module sets window._fbReady)
+// FIREBASE HELPERS
 // ─────────────────────────────────────────────────────
-function db(){return window._db;}
 function fbRef(path){return window._ref(window._db,path);}
 
 let FB_READY = false;
@@ -718,7 +705,6 @@ async function waitFB(){
   });
 }
 
-// Firebase presence path for this player
 let myFbRef = null;
 let syncInterval = null;
 
@@ -727,27 +713,23 @@ function fbUpdate(path,val){ if(!FB_READY)return; window._update(fbRef(path),val
 function fbRemove(path){ if(!FB_READY)return; window._remove(fbRef(path)).catch(()=>{}); }
 
 // ─────────────────────────────────────────────────────
-// MULTIPLAYER STATE  – remote players + server events
+// MULTIPLAYER STATE
 // ─────────────────────────────────────────────────────
 const MP = {
-  // Map of pfId → {name, segments(last 30), angle, skin, trail, kill,
-  //                role, score, kills, alive, hue, boosting}
   remotePlayers: {},
-  onlinePlayers: {},  // pfId → {name, score, kills, role}
-  serverEvents: {},   // {doubleXP, invertCtrl, speedMult, ...}
+  onlinePlayers: {},
+  serverEvents: {},
   chatMessages: [],
 
-  // Subscribe to all players presence
   subsAll() {
     if(!FB_READY) return;
     window._onValue(fbRef('players'), snap => {
       const all = snap.val() || {};
       MP.onlinePlayers = {};
       for(const [id, data] of Object.entries(all)) {
-        if(id === S.pfId) continue;  // skip self
+        if(id === S.pfId) continue;
         if(!data || !data.alive) { delete MP.remotePlayers[id]; continue; }
         MP.onlinePlayers[id] = {name:data.name||'?', score:data.score||0, kills:data.kills||0, role:data.role||'player'};
-        // Deserialize segments
         const segs = data.segs ? data.segs.split(';').map(s=>{const[x,y]=s.split(',');return{x:+x,y:+y};}) : [];
         const skin = CATALOG.skins.find(sk=>sk.id===data.skinId)||CATALOG.skins[0];
         MP.remotePlayers[id] = {
@@ -758,14 +740,12 @@ const MP = {
           length:segs.length
         };
       }
-      // Update online count in menus
       const total = Object.keys(all).length;
       document.getElementById('onlineCount').textContent = total + ' ONLINE';
       if(Game.running) document.getElementById('hudOnline').textContent = '● '+total+' ONLINE';
       updateScoreboard();
     });
 
-    // Server events (owner commands)
     window._onValue(fbRef('serverEvents'), snap => {
       MP.serverEvents = snap.val() || {};
       const ev = MP.serverEvents;
@@ -791,7 +771,6 @@ const MP = {
       }
     });
 
-    // Chat
     window._onValue(fbRef('chat'), snap => {
       const msgs = snap.val()||{};
       const arr = Object.values(msgs).sort((a,b)=>(a.t||0)-(b.t||0)).slice(-20);
@@ -799,7 +778,6 @@ const MP = {
       renderChat();
     });
 
-    // Kicks  
     if(S.pfId) {
       window._onValue(fbRef('kicks/'+S.pfId), snap => {
         const k = snap.val();
@@ -808,10 +786,8 @@ const MP = {
     }
   },
 
-  // Push our state to Firebase every ~50ms
   pushState(player) {
     if(!FB_READY || !player || !player.alive || !S.pfId) return;
-    // Encode segments (every other segment for bandwidth, max 40 points)
     const segs = [];
     for(let i=0;i<player.segments.length&&segs.length<40;i+=2) {
       segs.push(Math.round(player.segments[i].x)+','+Math.round(player.segments[i].y));
@@ -833,7 +809,6 @@ const MP = {
     });
   },
 
-  // Clean up on exit
   leave() {
     if(S.pfId) fbRemove('players/'+S.pfId);
     clearInterval(syncInterval);
@@ -846,7 +821,6 @@ const MP = {
 const PFApi = {
   async init(){
     return new Promise((res,rej)=>{
-      // Already loaded
       if(window.PlayFabClientSDK){
         PF=window.PlayFabClientSDK;
         if(window.PlayFab) window.PlayFab.settings.titleId=PF_TITLE;
@@ -855,7 +829,6 @@ const PFApi = {
       const s=document.createElement('script');
       s.src=PF_SDK_URL;
       s.onload=()=>{
-        // Give SDK a moment to initialize
         setTimeout(()=>{
           PF=window.PlayFabClientSDK;
           if(window.PlayFab) window.PlayFab.settings.titleId=PF_TITLE;
@@ -863,24 +836,22 @@ const PFApi = {
           else rej(new Error('PlayFab SDK loaded but not initialized'));
         },100);
       };
-      s.onerror=()=>rej(new Error('Could not load PlayFab SDK — check internet connection'));
+      s.onerror=()=>rej(new Error('Could not load PlayFab SDK'));
       document.head.appendChild(s);
     });
   },
   call(m,p){
     return new Promise((res,rej)=>{
-      if(!PF) return rej(new Error('PlayFab SDK not loaded. Check internet connection.'));
+      if(!PF) return rej(new Error('PlayFab SDK not loaded.'));
       PF[m](p,(r,e)=>{
         if(e){
-          // Map common PlayFab error codes to friendly messages
           const code = e.errorCode;
           let msg = e.errorMessage || 'Unknown error';
-          if(code===1001) msg='Invalid email or password.';
-          else if(code===1246) msg='Email already registered. Try logging in.';
+          if(code===1001) msg='Invalid username or password.';
+          else if(code===1246) msg='Username already taken. Try another.';
           else if(code===1006) msg='Account not found. Try registering.';
-          else if(code===10001) msg='Invalid email address.';
-          else if(code===1144) msg='Display name already taken. Try another.';
-          else if(code===1007) msg='Username already taken. Try another.';
+          else if(code===1144) msg='Display name already taken.';
+          else if(code===1007) msg='Username already taken.';
           rej(new Error(msg));
         } else {
           res(r.data);
@@ -888,9 +859,10 @@ const PFApi = {
       });
     });
   },
-  async login(email,pass){
-    return this.call('LoginWithEmailAddress',{
-      Email:email, Password:pass, TitleId:PF_TITLE,
+  // Login with username instead of email
+  async login(username, pass){
+    return this.call('LoginWithPlayFab',{
+      Username: username, Password: pass, TitleId: PF_TITLE,
       InfoRequestParameters:{
         GetUserAccountInfo:true,
         GetPlayerStatistics:true,
@@ -900,17 +872,16 @@ const PFApi = {
       }
     });
   },
-  async register(email,pass,name){
-    // Clean display name - letters, numbers, spaces, underscores only
-    const cleanName = name.replace(/[^a-zA-Z0-9_ ]/g,'').substring(0,20).trim();
-    if(!cleanName) throw new Error('Display name contains invalid characters');
-    const username = cleanName.replace(/\s/g,'_').toLowerCase().substring(0,20);
+  // Register with username + password, no email required
+  async register(username, pass){
+    const cleanName = username.replace(/[^a-zA-Z0-9_]/g,'').substring(0,20).trim();
+    if(!cleanName) throw new Error('Username can only contain letters, numbers, and underscores');
     return this.call('RegisterPlayFabUser',{
-      Email:email, Password:pass,
-      DisplayName:cleanName,
-      Username:username,
-      TitleId:PF_TITLE,
-      RequireBothUsernameAndEmail:false
+      Username:    cleanName,
+      Password:    pass,
+      DisplayName: cleanName,
+      TitleId:     PF_TITLE,
+      RequireBothUsernameAndEmail: false
     });
   },
   async getData(keys){const r=await this.call('GetUserData',{Keys:keys});return r.Data||{};},
@@ -1008,41 +979,46 @@ function authTab(t){
 }
 window.authTab=authTab;
 
+// ─────────────────────────────────────────────────────
+// AUTH  — username/password only, auto-save session
+// ─────────────────────────────────────────────────────
 async function doLogin(){
-  const email=document.getElementById('liEmail').value.trim();
-  const pass=document.getElementById('liPass').value;
-  if(!email){UI.msg('authMsg','Please enter your email.','er');return;}
+  const username = document.getElementById('liUser').value.trim();
+  const pass     = document.getElementById('liPass').value;
+  if(!username){UI.msg('authMsg','Please enter your username.','er');return;}
   if(!pass){UI.msg('authMsg','Please enter your password.','er');return;}
   UI.msg('authMsg','Logging in...','in');
   try{
-    const d=await PFApi.login(email,pass);
+    const d = await PFApi.login(username, pass);
+    // Save session so user stays logged in on refresh
+    LS.set('session', { username, pass });
     await onLoginSuccess(d);
   }catch(e){
-    UI.msg('authMsg',e.message||'Login failed. Check your email and password.','er');
+    UI.msg('authMsg', e.message||'Login failed. Check your username and password.','er');
     console.error('Login error:',e);
   }
 }
 window.doLogin=doLogin;
 
 async function doRegister(){
-  const name=document.getElementById('rgName').value.trim();
-  const email=document.getElementById('rgEmail').value.trim();
-  const pass=document.getElementById('rgPass').value;
-  if(!name){UI.msg('authMsg','Please enter a display name.','er');return;}
-  if(!email){UI.msg('authMsg','Please enter your email.','er');return;}
+  const name = document.getElementById('rgName').value.trim();
+  const pass  = document.getElementById('rgPass').value;
+  if(!name){UI.msg('authMsg','Please enter a username.','er');return;}
   if(!pass){UI.msg('authMsg','Please enter a password.','er');return;}
-  if(name.length<2){UI.msg('authMsg','Name must be at least 2 characters.','er');return;}
+  if(name.length<2){UI.msg('authMsg','Username must be at least 2 characters.','er');return;}
   if(pass.length<6){UI.msg('authMsg','Password must be at least 6 characters.','er');return;}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){UI.msg('authMsg','Please enter a valid email address.','er');return;}
+  if(!/^[a-zA-Z0-9_]+$/.test(name)){UI.msg('authMsg','Username: letters, numbers, underscores only.','er');return;}
   UI.msg('authMsg','Creating your account...','in');
   try{
-    await PFApi.register(email,pass,name);
-    UI.msg('authMsg','Account created! Logging in...','ok');
-    await new Promise(r=>setTimeout(r,800));
-    const d=await PFApi.login(email,pass);
+    await PFApi.register(name, pass);
+    UI.msg('authMsg','Account created! Logging you in...','ok');
+    await new Promise(r=>setTimeout(r,600));
+    const d = await PFApi.login(name, pass);
+    // Auto-save session after register too
+    LS.set('session', { username: name, pass });
     await onLoginSuccess(d);
   }catch(e){
-    UI.msg('authMsg',e.message||'Registration failed. Please try again.','er');
+    UI.msg('authMsg', e.message||'Registration failed. Please try again.','er');
     console.error('Register error:',e);
   }
 }
@@ -1051,46 +1027,30 @@ window.doRegister=doRegister;
 async function onLoginSuccess(data){
   S.loggedIn=true;
   S.pfId=data.PlayFabId;
-  // Get display name from multiple possible locations
   S.displayName =
     data.InfoResultPayload?.AccountInfo?.TitleInfo?.DisplayName ||
     data.InfoResultPayload?.PlayerProfile?.DisplayName ||
     data.InfoResultPayload?.AccountInfo?.Username ||
     'Player';
-  // Virtual currency
   const vc=data.InfoResultPayload?.UserVirtualCurrency||{};
   S.vc=vc['VC']||vc['GC']||0;
-  // Stats
   const stats=data.InfoResultPayload?.PlayerStatistics||[];
   stats.forEach(st=>{if(st.StatisticName)S.stats[st.StatisticName]=st.Value;});
-  // Inventory - check for role items
   const inv=data.InfoResultPayload?.UserInventory||[];
   S.inventory=inv.map(i=>i.ItemId).filter(Boolean);
   S.role=S.inventory.includes('owner_panel')?'owner':S.inventory.includes('mod_panel')?'moderator':'player';
-  // Check ban
   const ban=BAN.check(S.pfId);
-  if(ban){UI.msg('authMsg','❌ You are banned: '+ban.reason,'er');return;}
-  // Load saved cosmetics from PlayFab player data
+  if(ban){UI.msg('authMsg','❌ You are banned: '+ban.reason,'er');LS.del('session');return;}
   try{
     const pfData=await PFApi.getData(['ownedCosmetics','equipped','bans']);
-    if(pfData.ownedCosmetics){
-      try{JSON.parse(pfData.ownedCosmetics.Value||'[]').forEach(id=>Cosm.owned.add(id));}catch(e){}
-    }
-    if(pfData.equipped){
-      try{Object.assign(S.equipped,JSON.parse(pfData.equipped.Value||'{}'));}catch(e){}
-    }
-    // Sync bans from PlayFab to local (so bans persist across devices)
-    if(pfData.bans){
-      try{const pfBans=JSON.parse(pfData.bans.Value||'{}');LS.set('bans',{...LS.get('bans',{}),...pfBans});}catch(e){}
-    }
+    if(pfData.ownedCosmetics){try{JSON.parse(pfData.ownedCosmetics.Value||'[]').forEach(id=>Cosm.owned.add(id));}catch(e){}}
+    if(pfData.equipped){try{Object.assign(S.equipped,JSON.parse(pfData.equipped.Value||'{}'));}catch(e){}}
+    if(pfData.bans){try{const pfBans=JSON.parse(pfData.bans.Value||'{}');LS.set('bans',{...LS.get('bans',{}),...pfBans});}catch(e){}}
   }catch(e){console.warn('Could not load PlayFab data:',e);}
-  // Load cosmetics from inventory
   Cosm.load(inv);
-  // Load saved settings
   Object.assign(S.settings,LS.get('settings',{}));
   showProfile();
-  UI.msg('authMsg','✅ Welcome, '+S.displayName+'!','ok');
-  // Connect to Firebase multiplayer
+  UI.msg('authMsg','✅ Welcome back, '+S.displayName+'!','ok');
   if(FB_READY) MP.subsAll();
 }
 
@@ -1104,14 +1064,37 @@ function showProfile(){
   document.getElementById('sKills').textContent=S.stats.TotalKills||0;
   document.getElementById('sGames').textContent=S.stats.GamesPlayed||0;
   const rank=getRank(S.stats.BestScore||0);
-  document.getElementById('pRankLbl').textContent='RANK: '+rank.name; document.getElementById('pRankLbl').style.color=rank.color;
-  if(S.role==='owner'){document.getElementById('pRoleLbl').textContent='👑 OWNER';document.getElementById('pRoleLbl').style.color='var(--gold)';document.getElementById('pCrown').classList.remove('hidden');document.getElementById('pAv').style.borderColor='var(--gold)';document.getElementById('ownerBtn').classList.remove('hidden');document.getElementById('staffBtn').classList.remove('hidden');}
-  else if(S.role==='moderator'){document.getElementById('pRoleLbl').textContent='🛡 MODERATOR';document.getElementById('pRoleLbl').style.color='var(--mod)';document.getElementById('pModB').classList.remove('hidden');document.getElementById('pAv').style.borderColor='var(--mod)';document.getElementById('staffBtn').classList.remove('hidden');}
+  document.getElementById('pRankLbl').textContent='RANK: '+rank.name;
+  document.getElementById('pRankLbl').style.color=rank.color;
+  if(S.role==='owner'){
+    document.getElementById('pRoleLbl').textContent='👑 OWNER';
+    document.getElementById('pRoleLbl').style.color='var(--gold)';
+    document.getElementById('pCrown').classList.remove('hidden');
+    document.getElementById('pAv').style.borderColor='var(--gold)';
+    document.getElementById('ownerBtn').classList.remove('hidden');
+    document.getElementById('staffBtn').classList.remove('hidden');
+  } else if(S.role==='moderator'){
+    document.getElementById('pRoleLbl').textContent='🛡 MODERATOR';
+    document.getElementById('pRoleLbl').style.color='var(--mod)';
+    document.getElementById('pModB').classList.remove('hidden');
+    document.getElementById('pAv').style.borderColor='var(--mod)';
+    document.getElementById('staffBtn').classList.remove('hidden');
+  }
   const skin=CATALOG.skins.find(sk=>sk.id===S.equipped.skin)||CATALOG.skins[0];
   document.getElementById('pAvIco').textContent=skin.icon;
 }
 
-function doLogout(){S.loggedIn=false;MP.leave();document.getElementById('profileCard').classList.add('hidden');document.getElementById('authCard').classList.remove('hidden');['staffBtn','ownerBtn'].forEach(id=>document.getElementById(id).classList.add('hidden'));document.getElementById('pCrown').classList.add('hidden');document.getElementById('pModB').classList.add('hidden');}
+function doLogout(){
+  S.loggedIn=false;
+  // Clear saved session on manual logout
+  LS.del('session');
+  MP.leave();
+  document.getElementById('profileCard').classList.add('hidden');
+  document.getElementById('authCard').classList.remove('hidden');
+  ['staffBtn','ownerBtn'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  document.getElementById('pCrown').classList.add('hidden');
+  document.getElementById('pModB').classList.add('hidden');
+}
 window.doLogout=doLogout;
 
 // ─────────────────────────────────────────────────────
@@ -1154,19 +1137,19 @@ const Staff={
     window._get(fbRef('players')).then(snap=>{
       const all=snap.val()||{};
       if(!Object.keys(all).length){el.innerHTML='<div style="color:var(--dim);padding:12px">No players online.</div>';return;}
-      el.innerHTML=Object.entries(all).map(([id,d])=>`<div class="pcard"><div style="display:flex;align-items:center;gap:10px;"><div><div class="pcn">${d.name||'?'}</div><div class="pcid">${id}</div></div><span class="pcrole ${d.role||'player'}">${(d.role||'player').toUpperCase()}</span></div><div style="font-size:12px;color:var(--dim);margin:8px 0">Score: <b style="color:var(--text)">${d.score||0}</b> · Kills: <b style="color:var(--r)">${d.kills||0}</b></div><div class="pcacts"><button class="btn br bsm" onclick="Staff.qBan('${id}','${(d.name||'?').replace(/'/g,'')}')" style="font-size:12px;padding:7px 12px;">🔨 BAN</button><button class="btn bgold bsm" onclick="Staff.qKick('${id}','${(d.name||'?').replace(/'/g,'')}')" style="font-size:12px;padding:7px 12px;">👢 KICK</button></div></div>`).join('');
+      el.innerHTML=Object.entries(all).map(([id,d])=>`<div class="pcard"><div style="display:flex;align-items:center;gap:10px;"><div><div class="pcn">${d.name||'?'}</div><div class="pcid">${id}</div></div><span class="pcrole ${d.role||'player'}">${(d.role||'player').toUpperCase()}</span></div><div style="font-size:12px;color:var(--dim);margin:8px 0">Score: <b style="color:var(--text)">${d.score||0}</b> · Kills: <b style="color:var(--r)">${d.kills||0}</b></div><div class="pcacts"><button class="btn br bsm" onclick="Staff.qBan('${id}','${(d.name||'?').replace(/'/g,'')}')">🔨 BAN</button><button class="btn bgold bsm" onclick="Staff.qKick('${id}','${(d.name||'?').replace(/'/g,'')}')">👢 KICK</button></div></div>`).join('');
     }).catch(()=>{ el.innerHTML='<div style="color:var(--dim);padding:12px">Could not load live players.</div>'; });
   },
   lookup(){
     const q=document.getElementById('lookupQ').value.trim();
     if(!q)return;
-    const el=document.getElementById('lookupRes');el.innerHTML='<div style="color:var(--dim)">Searching Firebase...</div>';
+    const el=document.getElementById('lookupRes');el.innerHTML='<div style="color:var(--dim)">Searching...</div>';
     if(!FB_READY){el.innerHTML='<div style="color:var(--dim)">Firebase not connected.</div>';return;}
     window._get(fbRef('players')).then(snap=>{
       const all=snap.val()||{};
       const matches=Object.entries(all).filter(([id,d])=>id.toLowerCase().includes(q.toLowerCase())||(d.name||'').toLowerCase().includes(q.toLowerCase()));
-      if(!matches.length){el.innerHTML='<div style="color:var(--dim);padding:12px">No player found. Try their PlayFab ID.</div>';return;}
-      el.innerHTML=matches.map(([id,d])=>{const ban=BAN.check(id);return`<div class="pcard"><div style="display:flex;align-items:center;gap:10px;"><div><div class="pcn">${d.name||'?'}</div><div class="pcid">ID: ${id}</div></div><span class="pcrole ${d.role||'player'}">${(d.role||'player').toUpperCase()}</span></div><div style="font-size:12px;color:var(--dim);margin:8px 0">Score: <b style="color:var(--text)">${d.score||0}</b> · Kills: <b style="color:var(--r)">${d.kills||0}</b> · Skin: ${d.skinId||'default'}</div>${ban?`<div style="color:var(--r);font-size:12px;margin-bottom:8px">BANNED: ${ban.reason}</div>`:''}<div class="pcacts"><button class="btn br bsm" onclick="Staff.qBan('${id}','${(d.name||'?').replace(/'/g,'')}')" style="font-size:12px;padding:7px 12px;">🔨 BAN</button><button class="btn bgold bsm" onclick="Staff.qKick('${id}','${(d.name||'?').replace(/'/g,'')}')" style="font-size:12px;padding:7px 12px;">👢 KICK</button>${ban?`<button class="btn bo bsm" onclick="Staff.qUnban('${id}')" style="font-size:12px;padding:7px 12px;">✅ UNBAN</button>`:''}</div></div>`;}).join('');
+      if(!matches.length){el.innerHTML='<div style="color:var(--dim);padding:12px">No player found.</div>';return;}
+      el.innerHTML=matches.map(([id,d])=>{const ban=BAN.check(id);return`<div class="pcard"><div style="display:flex;align-items:center;gap:10px;"><div><div class="pcn">${d.name||'?'}</div><div class="pcid">ID: ${id}</div></div><span class="pcrole ${d.role||'player'}">${(d.role||'player').toUpperCase()}</span></div><div style="font-size:12px;color:var(--dim);margin:8px 0">Score: <b>${d.score||0}</b> · Kills: <b style="color:var(--r)">${d.kills||0}</b></div>${ban?`<div style="color:var(--r);font-size:12px;margin-bottom:8px">BANNED: ${ban.reason}</div>`:''}<div class="pcacts"><button class="btn br bsm" onclick="Staff.qBan('${id}','${(d.name||'?').replace(/'/g,'')}')">🔨 BAN</button><button class="btn bgold bsm" onclick="Staff.qKick('${id}','${(d.name||'?').replace(/'/g,'')}')">👢 KICK</button>${ban?`<button class="btn bo bsm" onclick="Staff.qUnban('${id}')">✅ UNBAN</button>`:''}</div></div>`;}).join('');
     });
   },
   ban(){if(S.role!=='moderator'&&S.role!=='owner'){UI.msg('staffMsg','Permission denied.','er');return;}const t=document.getElementById('banTgt').value.trim(),r=document.getElementById('banRsn').value.trim()||'No reason';if(!t){UI.msg('staffMsg','Enter a target.','er');return;}BAN.ban(t.toLowerCase(),t,r,S.displayName);this._kick(t,'You are banned: '+r);document.getElementById('banTgt').value='';document.getElementById('banRsn').value='';UI.msg('staffMsg','✅ '+t+' banned.','ok');},
@@ -1210,7 +1193,7 @@ const Own={
       PFApi.setData({ownedCosmetics:[...Cosm.owned]}).catch(()=>{});
       Cosm.renderAll();UI.msg('ownMsg','✅ Granted '+item+' to yourself!','ok');
     } else {
-      UI.msg('ownMsg','To grant to other players: PlayFab Dashboard → Players → search "'+t+'" → Inventory → Add item "'+item+'".','in');
+      UI.msg('ownMsg','To grant to others: PlayFab Dashboard → Players → "'+t+'" → Inventory → Add item "'+item+'".','in');
     }
     AL.add(S.displayName,'GRANT',t,item);
     document.getElementById('grantTgt').value='';document.getElementById('grantItm').value='';
@@ -1239,7 +1222,7 @@ const Own={
     const t=document.getElementById('promTgt').value.trim(),r=document.getElementById('promRole').value;
     if(!t){UI.msg('ownMsg','Enter a player.','er');return;}
     if(t.toLowerCase()===S.displayName.toLowerCase()||t===S.pfId){S.role=r;showProfile();UI.msg('ownMsg','✅ Your role: '+r,'ok');}
-    else{const item=r==='owner'?'owner_panel':r==='moderator'?'mod_panel':null;UI.msg('ownMsg','PlayFab Dashboard → Players → "'+t+'" → Inventory → Add "'+(item||'remove roles')+'". Then they get access on next login.','in');}
+    else{const item=r==='owner'?'owner_panel':r==='moderator'?'mod_panel':null;UI.msg('ownMsg','PlayFab Dashboard → Players → "'+t+'" → Inventory → Add "'+(item||'remove roles')+'".','in');}
     AL.add(S.displayName,'CMD',t,'promote to '+r);
     document.getElementById('promTgt').value='';
   }
@@ -1309,7 +1292,6 @@ const Game={
   running:false,_raf:null,_last:0,
 
   start(){
-    // reset
     GS.player=null;GS.bots=[];GS.food=[];GS.particles=[];
     GS.score=0;GS.kills=0;GS.doubleXP=false;GS.invertCtrl=false;GS.speedMult=1;GS.boss=null;GS.flash.a=0;GS.boosting=false;
     canvas.width=window.innerWidth;canvas.height=window.innerHeight;
@@ -1330,10 +1312,8 @@ const Game={
     this.running=true;
     GS.startTime=Date.now();
     this._last=performance.now();
-    // Firebase sync every 50ms
     clearInterval(syncInterval);
     syncInterval=setInterval(()=>MP.pushState(GS.player),50);
-    // Register disconnection cleanup
     if(FB_READY&&S.pfId){
       const pRef=fbRef('players/'+S.pfId);
       window._onDisconnect(pRef).remove();
@@ -1388,10 +1368,7 @@ const Game={
         {StatisticName:'TotalKills',Value:S.stats.TotalKills},
         {StatisticName:'BestScore',Value:S.stats.BestScore}
       ]);
-    }catch(e){
-      // Stats API might not be enabled yet - that's ok
-      console.warn('Could not update stats (check PlayFab API features):', e.message);
-    }
+    }catch(e){console.warn('Could not update stats:',e.message);}
     try{ await PFApi.setData({vc:String(S.vc)}); }catch(e){ console.warn('Could not save VC:',e.message); }
   },
 
@@ -1462,7 +1439,6 @@ class Snake{
       if(i===0&&this.isPlayer){ctx.shadowColor=c;ctx.shadowBlur=12;}ctx.fill();ctx.shadowBlur=0;
     }
     const hx=this.segments[0].x-camX+W/2,hy=this.segments[0].y-camY+H/2;
-    // Eyes
     for(const off of[-.45,.45]){const ea=this.angle+off,er=this.radius*.3,ex=hx+Math.cos(ea)*this.radius*.42,ey=hy+Math.sin(ea)*this.radius*.42;ctx.beginPath();ctx.arc(ex,ey,er,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.beginPath();ctx.arc(ex+Math.cos(this.angle)*er*.4,ey+Math.sin(this.angle)*er*.4,er*.55,0,Math.PI*2);ctx.fillStyle='#000';ctx.fill();}
     if(this.isBoss){ctx.font='20px serif';ctx.textAlign='center';ctx.fillText('👑',hx,hy-this.radius-18);}
     if(S.settings.names&&!this.isPlayer){ctx.font='bold 12px Rajdhani,sans-serif';ctx.textAlign='center';ctx.fillStyle='rgba(255,255,255,.7)';ctx.fillText(this.name,hx,hy-this.radius-7);}
@@ -1471,7 +1447,7 @@ class Snake{
 }
 
 // ─────────────────────────────────────────────────────
-// REMOTE PLAYER RENDERER  (draws other real players)
+// REMOTE PLAYER RENDERER
 // ─────────────────────────────────────────────────────
 function drawRemotePlayers(camX,camY){
   const W=canvas.width,H=canvas.height;
@@ -1492,15 +1468,12 @@ function drawRemotePlayers(camX,camY){
     }
     if(!rp.segments.length)continue;
     const hx=rp.segments[0].x-camX+W/2,hy=rp.segments[0].y-camY+H/2;
-    // Eyes
     for(const off of[-.45,.45]){const ea=rp.angle+off,er=3,ex=hx+Math.cos(ea)*5,ey=hy+Math.sin(ea)*5;ctx.beginPath();ctx.arc(ex,ey,er,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.beginPath();ctx.arc(ex+Math.cos(rp.angle)*er*.4,ey+Math.sin(rp.angle)*er*.4,er*.55,0,Math.PI*2);ctx.fillStyle='#000';ctx.fill();}
-    // Name + role badge
     if(S.settings.names){
       const c=rp.role==='owner'?'#ffd700':rp.role==='moderator'?'#44aaff':'rgba(255,255,255,.8)';
       const badge=rp.role==='owner'?'👑 ':rp.role==='moderator'?'🛡 ':'';
       ctx.font='bold 12px Rajdhani,sans-serif';ctx.textAlign='center';ctx.fillStyle=c;ctx.fillText(badge+rp.name,hx,hy-12);
     }
-    // Boost trail for remote player
     if(rp.boosting&&S.settings.particles!=='off'&&Math.random()<.4){
       const trail=CATALOG.trails.find(t=>t.id===rp.trailId)||CATALOG.trails[0];
       if(trail.fx) spawnTrailAt(rp.segments[0].x,rp.segments[0].y,trail.fx,skin.bc[0]||'#00ff88');
@@ -1576,21 +1549,13 @@ function updateBots(dt){
 
 function checkCollisions(){
   const p=GS.player;if(!p||!p.alive)return;
-  // Eat food
   for(let i=GS.food.length-1;i>=0;i--){const f=GS.food[i];if(D(p.headX,p.headY,f.x,f.y)<p.radius+f.r){GS.food.splice(i,1);const v=f.val*(GS.doubleXP?2:1);p.length+=v*2;GS.score+=v*10;if(f.isCoin){S.vc++;document.getElementById('pCoins').textContent='🪙 '+S.vc;}}}
-  // Bots eat food
   for(const b of GS.bots){if(!b.alive)continue;for(let i=GS.food.length-1;i>=0;i--){if(D(b.headX,b.headY,GS.food[i].x,GS.food[i].y)<b.radius+GS.food[i].r){GS.food.splice(i,1);b.length++;}}}
-  // Player hits bot body
   for(const b of GS.bots){if(!b.alive)continue;for(let i=5;i<b.segments.length;i+=2){if(D(p.headX,p.headY,b.segments[i].x,b.segments[i].y)<p.radius+b.radius*.8){spawnKillFX(p.headX,p.headY,S.equipped.kill);p.alive=false;for(let j=0;j<p.segments.length;j+=3)spawnFoodAt(p.segments[j].x,p.segments[j].y);setTimeout(()=>Game.end(b.name),600);return;}}}
-  // Bot hits player body
   for(const b of GS.bots){if(!b.alive)continue;for(let i=6;i<p.segments.length;i+=2){if(D(b.headX,b.headY,p.segments[i].x,p.segments[i].y)<b.radius+p.radius*.8){killBot(b,true);break;}}}
-  // Bot vs bot
   for(let a=0;a<GS.bots.length;a++){const ba=GS.bots[a];if(!ba.alive)continue;for(let b=a+1;b<GS.bots.length;b++){const bb=GS.bots[b];if(!bb.alive)continue;if(D(ba.headX,ba.headY,bb.headX,bb.headY)<ba.radius+bb.radius){ba.length<=bb.length?killBot(ba,false):killBot(bb,false);}}}
-  // Collision with REMOTE players (real multiplayer kill detection)
-  // Each client detects if they hit a remote player's body, remote detects if their head hits ours
   for(const rp of Object.values(MP.remotePlayers)){
     if(!rp.alive||!rp.segments.length)continue;
-    // Player head vs remote body
     for(let i=5;i<rp.segments.length;i+=2){
       if(D(p.headX,p.headY,rp.segments[i].x,rp.segments[i].y)<p.radius+8){
         spawnKillFX(p.headX,p.headY,S.equipped.kill);p.alive=false;
@@ -1650,7 +1615,6 @@ function drawMinimap(){
   mmCtx.clearRect(0,0,mmCv.width,mmCv.height);
   mmCtx.fillStyle='rgba(0,0,0,.65)';mmCtx.fillRect(0,0,mmCv.width,mmCv.height);
   GS.bots.forEach(b=>{if(!b.alive)return;mmCtx.fillStyle=b.isBoss?'#ffd700':b.color;mmCtx.beginPath();mmCtx.arc(b.headX*scale,b.headY*scale,2,0,Math.PI*2);mmCtx.fill();});
-  // Remote players on minimap
   for(const rp of Object.values(MP.remotePlayers)){if(!rp.alive||!rp.segments.length)continue;const s=rp.skin;mmCtx.fillStyle=s.bc[0]==='rainbow'?'#ff88ff':s.bc[0]||'#fff';mmCtx.beginPath();mmCtx.arc(rp.segments[0].x*scale,rp.segments[0].y*scale,3,0,Math.PI*2);mmCtx.fill();}
   const p=GS.player;if(p&&p.alive){mmCtx.fillStyle='#00ff88';mmCtx.shadowColor='#00ff88';mmCtx.shadowBlur=5;mmCtx.beginPath();mmCtx.arc(p.headX*scale,p.headY*scale,4,0,Math.PI*2);mmCtx.fill();mmCtx.shadowBlur=0;}
 }
@@ -1679,7 +1643,6 @@ function setupInput(){
   bb.ontouchstart=e=>{e.preventDefault();GS.boosting=true;bb.classList.add('pr');};
   bb.ontouchend=e=>{e.preventDefault();GS.boosting=false;bb.classList.remove('pr');};
   setupJoystick();
-  // Chat input
   const ci=document.getElementById('chatInput');
   ci.addEventListener('keydown',e=>{if(e.key==='Enter'){sendChat(ci.value);ci.value='';ci.style.display='none';chatOpen=false;e.stopPropagation();}if(e.key==='Escape'){ci.style.display='none';chatOpen=false;}e.stopPropagation();});
 }
@@ -1718,7 +1681,7 @@ window.addEventListener('resize',()=>{if(Game.running){canvas.width=window.inner
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 
 // ─────────────────────────────────────────────────────
-// INIT
+// INIT  — auto-restore session if saved
 // ─────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded',async()=>{
   const bar=document.getElementById('ldBar'),txt=document.getElementById('ldTxt');
@@ -1749,6 +1712,27 @@ window.addEventListener('DOMContentLoaded',async()=>{
 
   await tick(90,'LOADING ASSETS...');
   Object.assign(S.settings,LS.get('settings',{}));
+
+  // ── AUTO-LOGIN: restore saved session ──
+  const savedSession = LS.get('session', null);
+  if(pfOk && savedSession?.username && savedSession?.pass){
+    await tick(96,'RESTORING SESSION...');
+    try{
+      const d = await PFApi.login(savedSession.username, savedSession.pass);
+      await tick(100,'WELCOME BACK!');
+      await new Promise(r=>setTimeout(r,280));
+      const ls=document.getElementById('loadScreen');
+      ls.style.transition='opacity .5s';ls.style.opacity='0';
+      setTimeout(()=>{ls.style.display='none';document.getElementById('mainMenu').classList.remove('hidden');},520);
+      await onLoginSuccess(d);
+      return; // skip rest of init
+    }catch(e){
+      // Session expired or bad — clear it and fall through to normal login
+      LS.del('session');
+      console.warn('Auto-login failed, showing login screen.');
+    }
+  }
+
   await tick(100,'READY — ENTER THE PIT');
   await new Promise(r=>setTimeout(r,320));
 
@@ -1758,14 +1742,12 @@ window.addEventListener('DOMContentLoaded',async()=>{
   setTimeout(()=>{
     ls.style.display='none';
     document.getElementById('mainMenu').classList.remove('hidden');
-    // Show warning if PlayFab didn't connect
     if(!pfOk){
       setTimeout(()=>UI.msg('authMsg','⚠️ PlayFab connection failed. Check your internet and try refreshing.','er'),500);
     }
   },520);
 });
 
-// Cleanup on tab close
 window.addEventListener('beforeunload',()=>MP.leave());
 </script>
 
