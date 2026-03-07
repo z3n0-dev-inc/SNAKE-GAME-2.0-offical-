@@ -17,7 +17,8 @@
   --head:'Bebas Neue',cursive;--body:'Rajdhani',sans-serif;--mono:'Share Tech Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--body);touch-action:none;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--body);}
+#mainMenu{touch-action:pan-y;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 .hidden{display:none!important;}
 
@@ -54,10 +55,19 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .tb.on,.tb:hover{background:rgba(0,255,136,.1);border-color:var(–g);color:var(–g);}
 
 /* ── INPUTS ── */
-.inp{width:100%;padding:12px 15px;background:rgba(0,0,0,.5);border:1px solid var(–border);border-radius:8px;color:var(–text);font-family:var(–body);font-size:15px;font-weight:600;margin-bottom:11px;outline:none;transition:border-color .2s;-webkit-appearance:none;}
-.inp:focus{border-color:var(–g);box-shadow:0 0 0 2px rgba(0,255,136,.1);}
-.inp::placeholder{color:var(–dim);}
-.inp option{background:var(–bg2);}
+.inp{width:100%;padding:12px 15px;background:#0d1f10;border:1px solid var(–border);border-radius:8px;color:#ffffff;font-family:var(–body);font-size:15px;font-weight:600;margin-bottom:11px;outline:none;transition:border-color .2s;-webkit-appearance:none;-webkit-text-fill-color:#ffffff;caret-color:#00ff88;}
+.inp:focus{border-color:var(–g);box-shadow:0 0 0 2px rgba(0,255,136,.1);background:#0d1f10;}
+.inp::placeholder{color:#4a7a55;-webkit-text-fill-color:#4a7a55;}
+.inp option{background:var(–bg2);color:#fff;}
+/* Fix browser autofill turning background white/yellow */
+.inp:-webkit-autofill,.inp:-webkit-autofill:hover,.inp:-webkit-autofill:focus{
+-webkit-text-fill-color:#ffffff!important;
+-webkit-box-shadow:0 0 0 1000px #0d1f10 inset!important;
+box-shadow:0 0 0 1000px #0d1f10 inset!important;
+border-color:var(–border)!important;
+caret-color:#00ff88!important;
+}
+input,textarea,select{color:#ffffff;-webkit-text-fill-color:#ffffff;}
 
 /* ── BUTTONS ── */
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border:none;border-radius:9px;font-family:var(–head);font-size:17px;letter-spacing:3px;cursor:pointer;transition:all .2s;margin-bottom:8px;}
@@ -97,7 +107,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .sm.in{background:rgba(68,170,255,.1);border:1px solid var(–mod);color:var(–mod);}
 
 /* ── OVERLAYS ── */
-.overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.88);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;}
+.overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.88);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;touch-action:pan-y;}
 .pbox{background:var(–bg2);border:1px solid var(–border);border-radius:15px;width:100%;max-width:660px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 70px rgba(0,0,0,.8);position:relative;}
 .pbox::before{content:’’;position:absolute;top:0;left:0;right:0;height:2px;}
 .pbox.pg::before{background:linear-gradient(90deg,transparent,var(–g),transparent);}
@@ -109,7 +119,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .pt.g{color:var(–g);}.pt.b{color:var(–mod);}.pt.o{color:var(–gold);}.pt.r{color:var(–r);}
 .cbtn{width:34px;height:34px;border:1px solid var(–border);border-radius:6px;background:transparent;color:var(–dim);font-size:17px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .cbtn:hover{border-color:var(–r);color:var(–r);}
-.pbody{flex:1;overflow-y:auto;padding:22px;}
+.pbody{flex:1;overflow-y:auto;padding:22px;touch-action:pan-y;-webkit-overflow-scrolling:touch;}
 
 /* ── SECTION ── */
 .slbl{font-family:var(–head);font-size:12px;letter-spacing:4px;color:var(–dim);margin-bottom:10px;display:flex;align-items:center;gap:9px;}
@@ -221,8 +231,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 #chatMsgs{display:flex;flex-direction:column;gap:4px;max-height:160px;overflow:hidden;justify-content:flex-end;}
 .chatmsg{font-size:13px;font-weight:600;padding:5px 10px;background:rgba(0,0,0,.7);border-radius:6px;border-left:2px solid var(–border2);max-width:100%;word-break:break-word;animation:fadein .3s ease;}
 @keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-#chatInput{width:100%;padding:8px 12px;background:rgba(0,0,0,.8);border:1px solid var(–border);border-radius:7px;color:var(–text);font-family:var(–body);font-size:13px;font-weight:600;outline:none;pointer-events:all;margin-top:6px;display:none;}
+#chatInput{width:100%;padding:8px 12px;background:#0d1f10;border:1px solid var(–border);border-radius:7px;color:#ffffff;-webkit-text-fill-color:#ffffff;caret-color:#00ff88;font-family:var(–body);font-size:13px;font-weight:600;outline:none;pointer-events:all;margin-top:6px;display:none;}
 #chatInput:focus{border-color:var(–g);}
+#chatInput:-webkit-autofill{-webkit-text-fill-color:#ffffff!important;-webkit-box-shadow:0 0 0 1000px #0d1f10 inset!important;}
 #chatHint{font-family:var(–mono);font-size:10px;color:var(–dim);margin-top:4px;letter-spacing:1px;}
 
 @media(max-width:580px){.mwrap{flex-direction:column;}.mleft{display:none;}.mright{max-width:100%;}.cgd{grid-template-columns:1fr;}.pbox{max-height:94vh;}#joyWrap{bottom:55px;left:18px;}#boostBtn{bottom:55px;right:18px;}}
@@ -280,7 +291,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
           <input class="inp" id="rgPass" type="password" placeholder="Password (min 6)" autocomplete="new-password">
           <button class="btn bg" onclick="doRegister()">CREATE SERPENT</button>
         </div>
-        <div class="sm" id="authMsg" style="display:none;"></div>
+        <div class="sm" id="authMsg" style="display:none;margin-top:4px;"></div>
       </div>
 
 ```
@@ -835,16 +846,73 @@ const MP = {
 const PFApi = {
   async init(){
     return new Promise((res,rej)=>{
-      if(window.PlayFabClientSDK){PF=window.PlayFabClientSDK;PlayFab.settings.titleId=PF_TITLE;res();return;}
-      const s=document.createElement('script');s.src=PF_SDK_URL;
-      s.onload=()=>{PF=window.PlayFabClientSDK;PlayFab.settings.titleId=PF_TITLE;res();};
-      s.onerror=()=>rej(new Error('PlayFab SDK failed'));
+      // Already loaded
+      if(window.PlayFabClientSDK){
+        PF=window.PlayFabClientSDK;
+        if(window.PlayFab) window.PlayFab.settings.titleId=PF_TITLE;
+        res();return;
+      }
+      const s=document.createElement('script');
+      s.src=PF_SDK_URL;
+      s.onload=()=>{
+        // Give SDK a moment to initialize
+        setTimeout(()=>{
+          PF=window.PlayFabClientSDK;
+          if(window.PlayFab) window.PlayFab.settings.titleId=PF_TITLE;
+          if(PF) res();
+          else rej(new Error('PlayFab SDK loaded but not initialized'));
+        },100);
+      };
+      s.onerror=()=>rej(new Error('Could not load PlayFab SDK — check internet connection'));
       document.head.appendChild(s);
     });
   },
-  call(m,p){return new Promise((res,rej)=>{if(!PF)return rej(new Error('SDK not ready'));PF[m](p,(r,e)=>{if(e)rej(new Error(e.errorMessage||'PF error'));else res(r.data);});});},
-  async login(email,pass){return this.call('LoginWithEmailAddress',{Email:email,Password:pass,TitleId:PF_TITLE,InfoRequestParameters:{GetUserAccountInfo:true,GetPlayerStatistics:true,GetUserVirtualCurrency:true,GetUserInventory:true}});},
-  async register(email,pass,name){return this.call('RegisterPlayFabUser',{Email:email,Password:pass,DisplayName:name,Username:name.replace(/\s/g,'_').toLowerCase().substring(0,20),TitleId:PF_TITLE,RequireBothUsernameAndEmail:false});},
+  call(m,p){
+    return new Promise((res,rej)=>{
+      if(!PF) return rej(new Error('PlayFab SDK not loaded. Check internet connection.'));
+      PF[m](p,(r,e)=>{
+        if(e){
+          // Map common PlayFab error codes to friendly messages
+          const code = e.errorCode;
+          let msg = e.errorMessage || 'Unknown error';
+          if(code===1001) msg='Invalid email or password.';
+          else if(code===1246) msg='Email already registered. Try logging in.';
+          else if(code===1006) msg='Account not found. Try registering.';
+          else if(code===10001) msg='Invalid email address.';
+          else if(code===1144) msg='Display name already taken. Try another.';
+          else if(code===1007) msg='Username already taken. Try another.';
+          rej(new Error(msg));
+        } else {
+          res(r.data);
+        }
+      });
+    });
+  },
+  async login(email,pass){
+    return this.call('LoginWithEmailAddress',{
+      Email:email, Password:pass, TitleId:PF_TITLE,
+      InfoRequestParameters:{
+        GetUserAccountInfo:true,
+        GetPlayerStatistics:true,
+        GetUserVirtualCurrency:true,
+        GetUserInventory:true,
+        GetPlayerProfile:true
+      }
+    });
+  },
+  async register(email,pass,name){
+    // Clean display name - letters, numbers, spaces, underscores only
+    const cleanName = name.replace(/[^a-zA-Z0-9_ ]/g,'').substring(0,20).trim();
+    if(!cleanName) throw new Error('Display name contains invalid characters');
+    const username = cleanName.replace(/\s/g,'_').toLowerCase().substring(0,20);
+    return this.call('RegisterPlayFabUser',{
+      Email:email, Password:pass,
+      DisplayName:cleanName,
+      Username:username,
+      TitleId:PF_TITLE,
+      RequireBothUsernameAndEmail:false
+    });
+  },
   async getData(keys){const r=await this.call('GetUserData',{Keys:keys});return r.Data||{};},
   async setData(obj){const d={};for(const[k,v]of Object.entries(obj))d[k]=typeof v==='string'?v:JSON.stringify(v);return this.call('UpdateUserData',{Data:d});},
   async updateStats(arr){return this.call('UpdatePlayerStatistics',{Statistics:arr});},
@@ -943,10 +1011,16 @@ window.authTab=authTab;
 async function doLogin(){
   const email=document.getElementById('liEmail').value.trim();
   const pass=document.getElementById('liPass').value;
-  if(!email||!pass){UI.msg('authMsg','Fill all fields.','er');return;}
+  if(!email){UI.msg('authMsg','Please enter your email.','er');return;}
+  if(!pass){UI.msg('authMsg','Please enter your password.','er');return;}
   UI.msg('authMsg','Logging in...','in');
-  try{ const d=await PFApi.login(email,pass); await onLoginSuccess(d); }
-  catch(e){ UI.msg('authMsg','Login failed: '+(e.message||'Check credentials'),'er'); }
+  try{
+    const d=await PFApi.login(email,pass);
+    await onLoginSuccess(d);
+  }catch(e){
+    UI.msg('authMsg',e.message||'Login failed. Check your email and password.','er');
+    console.error('Login error:',e);
+  }
 }
 window.doLogin=doLogin;
 
@@ -954,35 +1028,70 @@ async function doRegister(){
   const name=document.getElementById('rgName').value.trim();
   const email=document.getElementById('rgEmail').value.trim();
   const pass=document.getElementById('rgPass').value;
-  if(!name||!email||!pass){UI.msg('authMsg','Fill all fields.','er');return;}
-  if(pass.length<6){UI.msg('authMsg','Password needs 6+ chars.','er');return;}
-  UI.msg('authMsg','Creating account...','in');
-  try{ await PFApi.register(email,pass,name); const d=await PFApi.login(email,pass); await onLoginSuccess(d); }
-  catch(e){ UI.msg('authMsg','Register failed: '+e.message,'er'); }
+  if(!name){UI.msg('authMsg','Please enter a display name.','er');return;}
+  if(!email){UI.msg('authMsg','Please enter your email.','er');return;}
+  if(!pass){UI.msg('authMsg','Please enter a password.','er');return;}
+  if(name.length<2){UI.msg('authMsg','Name must be at least 2 characters.','er');return;}
+  if(pass.length<6){UI.msg('authMsg','Password must be at least 6 characters.','er');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){UI.msg('authMsg','Please enter a valid email address.','er');return;}
+  UI.msg('authMsg','Creating your account...','in');
+  try{
+    await PFApi.register(email,pass,name);
+    UI.msg('authMsg','Account created! Logging in...','ok');
+    await new Promise(r=>setTimeout(r,800));
+    const d=await PFApi.login(email,pass);
+    await onLoginSuccess(d);
+  }catch(e){
+    UI.msg('authMsg',e.message||'Registration failed. Please try again.','er');
+    console.error('Register error:',e);
+  }
 }
 window.doRegister=doRegister;
 
 async function onLoginSuccess(data){
-  S.loggedIn=true; S.pfId=data.PlayFabId;
-  S.displayName=data.InfoResultPayload?.AccountInfo?.TitleInfo?.DisplayName||'Player';
-  const vc=data.InfoResultPayload?.UserVirtualCurrency||{}; S.vc=vc['VC']||vc['GC']||0;
-  (data.InfoResultPayload?.PlayerStatistics||[]).forEach(st=>S.stats[st.StatisticName]=st.Value);
-  S.inventory=(data.InfoResultPayload?.UserInventory||[]).map(i=>i.ItemId);
+  S.loggedIn=true;
+  S.pfId=data.PlayFabId;
+  // Get display name from multiple possible locations
+  S.displayName =
+    data.InfoResultPayload?.AccountInfo?.TitleInfo?.DisplayName ||
+    data.InfoResultPayload?.PlayerProfile?.DisplayName ||
+    data.InfoResultPayload?.AccountInfo?.Username ||
+    'Player';
+  // Virtual currency
+  const vc=data.InfoResultPayload?.UserVirtualCurrency||{};
+  S.vc=vc['VC']||vc['GC']||0;
+  // Stats
+  const stats=data.InfoResultPayload?.PlayerStatistics||[];
+  stats.forEach(st=>{if(st.StatisticName)S.stats[st.StatisticName]=st.Value;});
+  // Inventory - check for role items
+  const inv=data.InfoResultPayload?.UserInventory||[];
+  S.inventory=inv.map(i=>i.ItemId).filter(Boolean);
   S.role=S.inventory.includes('owner_panel')?'owner':S.inventory.includes('mod_panel')?'moderator':'player';
+  // Check ban
   const ban=BAN.check(S.pfId);
-  if(ban){UI.msg('authMsg','You are banned: '+ban.reason,'er');return;}
-  // Load PF cosmetics data
+  if(ban){UI.msg('authMsg','❌ You are banned: '+ban.reason,'er');return;}
+  // Load saved cosmetics from PlayFab player data
   try{
-    const d=await PFApi.getData(['ownedCosmetics','equipped']);
-    if(d.ownedCosmetics)JSON.parse(d.ownedCosmetics.Value||'[]').forEach(id=>Cosm.owned.add(id));
-    if(d.equipped)Object.assign(S.equipped,JSON.parse(d.equipped.Value||'{}'));
-  }catch(e){}
-  Cosm.load(data.InfoResultPayload?.UserInventory||[]);
-  Object.assign(S.settings, LS.get('settings',{}));
+    const pfData=await PFApi.getData(['ownedCosmetics','equipped','bans']);
+    if(pfData.ownedCosmetics){
+      try{JSON.parse(pfData.ownedCosmetics.Value||'[]').forEach(id=>Cosm.owned.add(id));}catch(e){}
+    }
+    if(pfData.equipped){
+      try{Object.assign(S.equipped,JSON.parse(pfData.equipped.Value||'{}'));}catch(e){}
+    }
+    // Sync bans from PlayFab to local (so bans persist across devices)
+    if(pfData.bans){
+      try{const pfBans=JSON.parse(pfData.bans.Value||'{}');LS.set('bans',{...LS.get('bans',{}),...pfBans});}catch(e){}
+    }
+  }catch(e){console.warn('Could not load PlayFab data:',e);}
+  // Load cosmetics from inventory
+  Cosm.load(inv);
+  // Load saved settings
+  Object.assign(S.settings,LS.get('settings',{}));
   showProfile();
-  UI.msg('authMsg',`Welcome back, ${S.displayName}!`,'ok');
-  // Subscribe to Firebase MP
-  MP.subsAll();
+  UI.msg('authMsg','✅ Welcome, '+S.displayName+'!','ok');
+  // Connect to Firebase multiplayer
+  if(FB_READY) MP.subsAll();
 }
 
 function showProfile(){
@@ -1273,7 +1382,17 @@ const Game={
     document.getElementById('sKills').textContent=S.stats.TotalKills;
     document.getElementById('sGames').textContent=S.stats.GamesPlayed;
     document.getElementById('pCoins').textContent='🪙 '+S.vc;
-    try{await PFApi.updateStats([{StatisticName:'GamesPlayed',Value:S.stats.GamesPlayed},{StatisticName:'TotalKills',Value:S.stats.TotalKills},{StatisticName:'BestScore',Value:S.stats.BestScore}]);await PFApi.setData({vc:S.vc});}catch(e){}
+    try{
+      await PFApi.updateStats([
+        {StatisticName:'GamesPlayed',Value:S.stats.GamesPlayed},
+        {StatisticName:'TotalKills',Value:S.stats.TotalKills},
+        {StatisticName:'BestScore',Value:S.stats.BestScore}
+      ]);
+    }catch(e){
+      // Stats API might not be enabled yet - that's ok
+      console.warn('Could not update stats (check PlayFab API features):', e.message);
+    }
+    try{ await PFApi.setData({vc:String(S.vc)}); }catch(e){ console.warn('Could not save VC:',e.message); }
   },
 
   backToMenu(){document.getElementById('gameOver').classList.add('hidden');document.getElementById('mainMenu').classList.remove('hidden');canvas.style.display='none';}
@@ -1603,26 +1722,47 @@ canvas.addEventListener('contextmenu',e=>e.preventDefault());
 // ─────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded',async()=>{
   const bar=document.getElementById('ldBar'),txt=document.getElementById('ldTxt');
-  const tick=async(p,m)=>{bar.style.width=p+'%';txt.textContent=m;await new Promise(r=>setTimeout(r,280));};
+  const tick=async(p,m)=>{bar.style.width=p+'%';txt.textContent=m;await new Promise(r=>setTimeout(r,220));};
 
   await tick(8, 'BOOTING VENOM v3...');
   await tick(20,'LOADING PLAYFAB SDK...');
-  try{ await PFApi.init(); await tick(40,'PLAYFAB ✓'); }
-  catch(e){ await tick(40,'PLAYFAB OFFLINE — DEMO MODE'); await new Promise(r=>setTimeout(r,500)); }
 
-  await tick(55,'CONNECTING FIREBASE...');
+  let pfOk=false;
+  try{
+    await PFApi.init();
+    pfOk=true;
+    await tick(42,'✓ PLAYFAB CONNECTED');
+  }catch(e){
+    await tick(42,'⚠ PLAYFAB OFFLINE — CHECK CONNECTION');
+    console.warn('PlayFab init failed:',e);
+    await new Promise(r=>setTimeout(r,800));
+  }
+
+  await tick(58,'CONNECTING FIREBASE...');
   await waitFB();
-  if(FB_READY){ await tick(75,'FIREBASE ✓ — MULTIPLAYER READY'); }
-  else { await tick(75,'FIREBASE OFFLINE — SINGLE PLAYER MODE'); await new Promise(r=>setTimeout(r,500)); }
+  if(FB_READY){
+    await tick(76,'✓ FIREBASE CONNECTED — MULTIPLAYER ON');
+  }else{
+    await tick(76,'⚠ FIREBASE OFFLINE — SINGLE PLAYER ONLY');
+    await new Promise(r=>setTimeout(r,600));
+  }
 
-  await tick(88,'LOADING COSMETICS...');
+  await tick(90,'LOADING ASSETS...');
   Object.assign(S.settings,LS.get('settings',{}));
   await tick(100,'READY — ENTER THE PIT');
-  await new Promise(r=>setTimeout(r,280));
+  await new Promise(r=>setTimeout(r,320));
 
   const ls=document.getElementById('loadScreen');
-  ls.style.transition='opacity .55s';ls.style.opacity='0';
-  setTimeout(()=>{ls.style.display='none';document.getElementById('mainMenu').classList.remove('hidden');},560);
+  ls.style.transition='opacity .5s';
+  ls.style.opacity='0';
+  setTimeout(()=>{
+    ls.style.display='none';
+    document.getElementById('mainMenu').classList.remove('hidden');
+    // Show warning if PlayFab didn't connect
+    if(!pfOk){
+      setTimeout(()=>UI.msg('authMsg','⚠️ PlayFab connection failed. Check your internet and try refreshing.','er'),500);
+    }
+  },520);
 });
 
 // Cleanup on tab close
