@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>VENOM v10 — Multiplayer Snake</title>
-<!-- VENOM v10 — Upgrades, role tags, multiplayer fixes, lag reduction -->
+<title>VENOM v11 — Multiplayer Snake</title>
+<!-- VENOM v11 — Fully optimized, terminal UI, zero AI-look -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 /* =====================================================
    VENOM v4 — OVERHAULED
@@ -91,8 +90,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 .mright{flex:1;min-width:290px;max-width:420px;}
 
 /* ── CARD ── */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:20px;box-shadow:0 2px 16px rgba(0,0,0,.4);position:relative;overflow:hidden;}
-.card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--g);opacity:.55;}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:0;padding:20px;box-shadow:none;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;width:2px;height:100%;background:var(--g);opacity:.8;}
 
 /* ── TABS ── */
 .tabs{display:flex;gap:0;margin-bottom:18px;border-bottom:1px solid var(--border);}
@@ -172,35 +171,331 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 /* ── OWNER COSMETICS BADGE ── */
 .owner-aura{position:absolute;inset:-2px;border-radius:2px;background:linear-gradient(135deg,#e8c832,#ff8800,#e8c832);opacity:.2;pointer-events:none;animation:ownerGlow 2s ease-in-out infinite;}
 
-/* ── STAFF DASHBOARD IMPROVED ── */
-.staff-player-card{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:2px;padding:12px 14px;margin-bottom:7px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s;animation:fadeInUp .3s ease forwards;}
-.staff-player-card:hover{border-color:rgba(58,154,238,.4);}
-.staff-player-card.selected{border-color:var(--mod);border-left:2px solid var(--mod);}
-.spc-dot{width:7px;height:7px;border-radius:50%;background:var(--g);flex-shrink:0;animation:pulse 1.5s ease-in-out infinite;}
-.spc-dot.offline{background:var(--dim2);animation:none;}
-.spc-name{font-weight:700;font-size:13px;font-family:var(--mono);flex:1;}
-.spc-role{font-family:var(--mono);font-size:10px;padding:2px 6px;border-radius:2px;font-weight:700;margin-left:5px;}
-.spc-role.owner{background:rgba(232,200,50,.12);color:var(--gold);}
-.spc-role.moderator{background:rgba(58,154,238,.12);color:var(--mod);}
-.spc-role.player{background:rgba(57,255,138,.07);color:var(--g);}
-.spc-stats{font-size:10px;color:var(--dim2);font-family:var(--mono);}
-.spc-actions{display:flex;gap:5px;}
-.quick-action-btn{padding:5px 9px;border-radius:2px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;border:1px solid;transition:all .15s;}
-.qa-ban{border-color:rgba(255,34,68,.4);color:var(--r);background:transparent;}
-.qa-ban:hover{background:rgba(255,34,68,.1);}
-.qa-kick{border-color:rgba(232,200,50,.4);color:var(--gold);background:transparent;}
-.qa-kick:hover{background:rgba(232,200,50,.1);}
-.qa-unban{border-color:rgba(57,255,138,.4);color:var(--g);background:transparent;}
-.qa-unban:hover{background:rgba(57,255,138,.1);}
-.search-bar{display:flex;gap:7px;margin-bottom:12px;}
-.search-input{flex:1;padding:9px 12px;background:rgba(0,0,0,.5);border:1px solid var(--border);border-left:2px solid var(--border);border-radius:2px;color:#d0dde8;font-family:var(--mono);font-size:12px;outline:none;transition:border-color .15s;caret-color:var(--g);}
-.search-input:focus{border-left-color:var(--g);}
-.search-input::placeholder{color:var(--dim2);}
-.no-results{text-align:center;color:var(--dim2);padding:24px;font-family:var(--mono);font-size:12px;}
-.log-entry{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:2px;margin-bottom:4px;font-family:var(--mono);font-size:11px;animation:fadeIn .2s ease;}
-.log-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:2px;}
+/* ══════════════════════════════════════════════════════
+   STAFF DASHBOARD — TERMINAL / DEV AESTHETIC
+   ══════════════════════════════════════════════════════ */
 
-/* ── OWNER COSMETIC ITEMS IN WARDROBE ── */
+/* Panel shell */
+#staffPanel .pbox, #ownerPanel .pbox {
+  background: #030608;
+  border: 1px solid #0f2a1a;
+  border-radius: 0;
+  box-shadow: 0 0 0 1px #0a1f12, 0 0 60px rgba(0,255,100,.07), inset 0 0 80px rgba(0,0,0,.6);
+  max-height: 88vh;
+}
+#staffPanel .pbox::before, #ownerPanel .pbox::before { display:none; }
+
+/* Scanline texture over panel */
+#staffPanel .pbox::after, #ownerPanel .pbox::after {
+  content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+  background: repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,255,80,.012) 3px,rgba(0,255,80,.012) 4px);
+  border-radius:0;
+}
+
+/* Panel header */
+#staffPanel .phd, #ownerPanel .phd {
+  background: rgba(0,255,80,.04);
+  border-bottom: 1px solid #0d2618;
+  padding: 0;
+  flex-shrink: 0;
+  position: relative; z-index:1;
+}
+.term-header {
+  display: flex; align-items: center; gap:0; width:100%;
+}
+.term-dots {
+  display:flex; gap:6px; padding:13px 16px; flex-shrink:0;
+}
+.term-dot {
+  width:11px;height:11px;border-radius:50%;cursor:pointer;transition:filter .15s;
+}
+.term-dot.red   { background:#ff5f57; box-shadow:0 0 6px #ff5f5766; }
+.term-dot.yellow{ background:#ffbd2e; box-shadow:0 0 6px #ffbd2e66; }
+.term-dot.green { background:#28c840; box-shadow:0 0 6px #28c84066; }
+.term-dot:hover { filter:brightness(1.3); }
+.term-title-bar {
+  flex:1; display:flex; align-items:center; gap:10px;
+  padding: 10px 12px; border-left:1px solid #0d2618;
+  font-family:var(--mono); font-size:11px; color:#2a5c38; letter-spacing:3px;
+}
+.term-title-bar .term-prompt { color:#00ff64; margin-right:2px; }
+.term-title-bar .term-label  { color:#4aff88; letter-spacing:4px; font-weight:700; font-size:12px; }
+.term-blink { display:inline-block; width:8px;height:13px;background:#00ff64;margin-left:4px;animation:termBlink 1s step-end infinite;vertical-align:middle; }
+
+/* Panel body */
+#staffPanel .pbody, #ownerPanel .pbody {
+  position:relative; z-index:1;
+  background:transparent;
+  padding:0;
+}
+
+/* Tab bar */
+.term-tabs {
+  display:flex; gap:0; border-bottom:1px solid #0d2618;
+  background: rgba(0,0,0,.4); overflow-x:auto; flex-shrink:0;
+  scrollbar-width:none;
+}
+.term-tabs::-webkit-scrollbar{display:none;}
+.ttab {
+  padding:10px 16px; background:transparent; border:none;
+  border-right:1px solid #0d2618;
+  color:#1a4028; font-family:var(--mono); font-size:10px;
+  font-weight:700; letter-spacing:2px; cursor:pointer;
+  transition:all .15s; white-space:nowrap; position:relative;
+  display:flex; align-items:center; gap:6px;
+}
+.ttab:hover:not(.on) { color:#2a6040; background:rgba(0,255,80,.02); }
+.ttab.on {
+  color:#00ff64; background:rgba(0,255,80,.06);
+  border-bottom:2px solid #00ff64;
+}
+.ttab.on::before {
+  content:'> '; color:#00ff64; opacity:.5;
+}
+.ttab-badge {
+  background:var(--r); color:#fff; font-size:8px; font-weight:700;
+  padding:1px 5px; border-radius:1px; margin-left:4px; vertical-align:middle;
+  font-family:var(--mono); letter-spacing:1px; display:none;
+}
+
+/* Tab content area */
+.term-body { padding:16px 18px; }
+
+/* Section label — terminal style */
+.tslbl {
+  font-family:var(--mono); font-size:9px; letter-spacing:4px;
+  color:#1a4028; margin-bottom:12px; display:flex; align-items:center; gap:10px;
+}
+.tslbl::before { content:'//'; color:#00ff64; margin-right:4px; opacity:.6; }
+.tslbl::after  { content:''; flex:1; height:1px; background:linear-gradient(90deg,#0d2618,transparent); }
+
+/* Input fields */
+.term-input {
+  width:100%; padding:9px 12px;
+  background: rgba(0,20,8,.8);
+  border: 1px solid #0d2618;
+  border-left: 2px solid #0d2618;
+  border-radius:0; color:#7fff9a;
+  font-family:var(--mono); font-size:12px;
+  outline:none; transition:border-color .15s;
+  caret-color:#00ff64; margin-bottom:8px;
+  -webkit-appearance:none;
+}
+.term-input:focus { border-color:#0d2618; border-left-color:#00ff64; box-shadow:0 0 0 1px rgba(0,255,100,.08); }
+.term-input::placeholder { color:#1a4028; }
+.term-input option { background:#030608; color:#7fff9a; }
+
+/* Buttons */
+.term-btn {
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  width:100%; padding:9px 14px; border-radius:0;
+  font-family:var(--mono); font-size:11px; letter-spacing:2px;
+  cursor:pointer; transition:all .12s; margin-bottom:7px;
+  position:relative; overflow:hidden; text-transform:uppercase; font-weight:700;
+  border:1px solid; background:transparent;
+}
+.term-btn::before {
+  content:'$ '; font-size:10px; opacity:.5;
+}
+.term-btn:active { transform:scale(.98); }
+
+.tbg { border-color:#00ff64; color:#00ff64; }
+.tbg:hover { background:rgba(0,255,100,.08); box-shadow:0 0 12px rgba(0,255,100,.15); }
+
+.tbr { border-color:rgba(255,34,68,.5); color:#ff2244; }
+.tbr:hover { background:rgba(255,34,68,.08); box-shadow:0 0 10px rgba(255,34,68,.1); }
+
+.tbb { border-color:rgba(0,200,255,.3); color:#00c8ff; }
+.tbb:hover { background:rgba(0,200,255,.06); }
+
+.tbgold { border-color:rgba(232,200,50,.4); color:#e8c832; }
+.tbgold:hover { background:rgba(232,200,50,.07); }
+
+.tbpur { border-color:rgba(184,122,240,.35); color:#b87af0; }
+.tbpur:hover { background:rgba(184,122,240,.07); }
+
+.tbsm { font-size:10px; padding:6px 12px; width:auto; margin:0; }
+
+/* Quick action chips */
+.tchip {
+  padding:4px 10px; border-radius:1px; font-family:var(--mono);
+  font-size:9px; font-weight:700; letter-spacing:1px; cursor:pointer;
+  border:1px solid; transition:all .12s; background:transparent;
+}
+.tchip-r { border-color:rgba(255,34,68,.35); color:#ff2244; }
+.tchip-r:hover { background:rgba(255,34,68,.1); }
+.tchip-g { border-color:rgba(0,255,100,.3); color:#00ff64; }
+.tchip-g:hover { background:rgba(0,255,100,.08); }
+.tchip-y { border-color:rgba(232,200,50,.35); color:#e8c832; }
+.tchip-y:hover { background:rgba(232,200,50,.08); }
+.tchip-b { border-color:rgba(0,200,255,.3); color:#00c8ff; }
+.tchip-b:hover { background:rgba(0,200,255,.08); }
+
+/* Player card — terminal row */
+.tpcard {
+  background: rgba(0,10,4,.6);
+  border: 1px solid #0d2618;
+  border-left: 2px solid #0d2618;
+  padding:10px 12px; margin-bottom:5px;
+  cursor:pointer; transition:all .12s;
+  font-family:var(--mono); position:relative;
+  animation:fadeInUp .25s ease forwards;
+}
+.tpcard::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
+  background:transparent; transition:background .12s;
+}
+.tpcard:hover { border-color:#1a4028; background:rgba(0,255,80,.025); }
+.tpcard:hover::before { background:#00ff64; }
+.tpcard.sel { border-left-color:#00c8ff; }
+.tpcard.sel::before { background:#00c8ff; }
+.tpc-row { display:flex; align-items:center; gap:10px; }
+.tpc-dot { width:6px;height:6px;border-radius:50%;background:#00ff64;flex-shrink:0;animation:pdot 1.5s ease-in-out infinite; }
+.tpc-dot.off { background:#1a3022; animation:none; }
+.tpc-name { font-weight:700; font-size:13px; color:#4aff88; flex:1; }
+.tpc-role { font-size:9px; padding:2px 6px; border-radius:1px; font-weight:700; letter-spacing:1px; }
+.tpc-role.owner     { background:rgba(232,200,50,.1); color:#e8c832; border:1px solid rgba(232,200,50,.2); }
+.tpc-role.moderator { background:rgba(0,200,255,.08); color:#00c8ff; border:1px solid rgba(0,200,255,.15); }
+.tpc-role.player    { background:rgba(0,255,80,.06);  color:#00ff64; border:1px solid rgba(0,255,80,.12); }
+.tpc-stats { font-size:10px; color:#1a4028; margin-top:5px; display:flex; gap:14px; flex-wrap:wrap; }
+.tpc-stats b { color:#2a6040; }
+.tpc-acts { display:flex; gap:5px; flex-wrap:wrap; margin-top:8px; }
+.tpc-flag { font-size:9px; font-family:var(--mono); padding:3px 8px; border-radius:1px; margin-top:4px; display:inline-block; }
+.tpc-flag.banned { background:rgba(255,34,68,.08); border:1px solid rgba(255,34,68,.25); color:#ff2244; }
+.tpc-flag.warned  { background:rgba(232,200,50,.06); border:1px solid rgba(232,200,50,.2); color:#e8c832; }
+
+/* Log entries */
+.tlog {
+  display:flex; align-items:flex-start; gap:9px;
+  padding:7px 10px; background:rgba(0,8,3,.5);
+  border: 1px solid #0a1e10; border-left:2px solid #0a1e10;
+  margin-bottom:3px; font-family:var(--mono); font-size:10px;
+  animation:fadeIn .15s ease;
+}
+.tlog-dot { width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:3px; }
+.tlog-time { color:#1a3022; white-space:nowrap; flex-shrink:0; font-size:9px; }
+.tlog-action { font-weight:700; font-size:10px; margin:0 5px; }
+
+/* Selected player card */
+.tsel-card {
+  background:rgba(0,200,255,.03);
+  border:1px solid rgba(0,200,255,.12);
+  border-left:2px solid rgba(0,200,255,.4);
+  padding:12px 14px; margin-bottom:14px;
+  font-family:var(--mono);
+}
+.tsel-label { font-size:9px; color:#1a4a60; letter-spacing:3px; margin-bottom:5px; }
+.tsel-name  { font-size:15px; color:#00c8ff; font-weight:700; }
+
+/* Status message */
+.tmsg { padding:8px 12px; font-family:var(--mono); font-size:11px; margin-top:8px; border-left:2px solid; }
+.tmsg.ok   { border-left-color:#00ff64; color:#00ff64; background:rgba(0,255,100,.04); }
+.tmsg.er   { border-left-color:#ff2244; color:#ff2244; background:rgba(255,34,68,.04); }
+.tmsg.in   { border-left-color:#00c8ff; color:#00c8ff; background:rgba(0,200,255,.04); }
+
+/* Search */
+.tsearch { display:flex; gap:7px; margin-bottom:12px; }
+.tsearch-input {
+  flex:1; padding:9px 12px;
+  background:rgba(0,10,4,.8);
+  border:1px solid #0d2618; border-left:2px solid #0d2618;
+  border-radius:0; color:#7fff9a;
+  font-family:var(--mono); font-size:12px;
+  outline:none; caret-color:#00ff64;
+  transition:border-color .15s;
+}
+.tsearch-input:focus { border-left-color:#00ff64; }
+.tsearch-input::placeholder { color:#1a4028; }
+
+/* Owner command buttons */
+.ocb {
+  padding:12px 8px; background:rgba(0,8,3,.7);
+  border:1px solid #0d2618; border-radius:0;
+  color:#1a4028; font-family:var(--mono); font-size:9px;
+  font-weight:700; letter-spacing:1px; cursor:pointer;
+  transition:all .15s; text-align:center; position:relative; overflow:hidden;
+}
+.ocb::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg,rgba(0,255,80,.04),transparent);
+  opacity:0; transition:opacity .15s;
+}
+.ocb:hover { border-color:#1a5030; color:#00ff64; background:rgba(0,255,80,.04); }
+.ocb:hover::after { opacity:1; }
+.ocb:active { transform:scale(.97); }
+.ocb.active { border-color:#00ff64; color:#00ff64; background:rgba(0,255,80,.07); box-shadow:0 0 8px rgba(0,255,80,.15); }
+.oci { font-size:18px; display:block; margin-bottom:4px; }
+.ocb.staff-cmd { border-color:rgba(0,200,255,.15); color:#0a3040; }
+.ocb.staff-cmd:hover { border-color:rgba(0,200,255,.4); color:#00c8ff; background:rgba(0,200,255,.05); }
+.ocb.staff-cmd.active { border-color:#00c8ff; color:#00c8ff; box-shadow:0 0 8px rgba(0,200,255,.15); }
+.ocb.danger-cmd { border-color:rgba(255,34,68,.15); color:#3a0a10; }
+.ocb.danger-cmd:hover { border-color:rgba(255,34,68,.4); color:#ff2244; background:rgba(255,34,68,.05); }
+
+/* No results */
+.tno-results { text-align:center; color:#1a4028; padding:28px 16px; font-family:var(--mono); font-size:11px; }
+.tno-results::before { content:'// '; color:#0d2618; }
+
+/* Search bar old compat */
+.search-bar{display:flex;gap:7px;margin-bottom:12px;}
+.search-input{flex:1;padding:9px 12px;background:rgba(0,10,4,.8);border:1px solid #0d2618;border-left:2px solid #0d2618;border-radius:0;color:#7fff9a;font-family:var(--mono);font-size:12px;outline:none;transition:border-color .15s;caret-color:#00ff64;}
+.search-input:focus{border-left-color:#00ff64;}
+.search-input::placeholder{color:#1a4028;}
+.no-results{text-align:center;color:#1a4028;padding:24px;font-family:var(--mono);font-size:12px;}
+
+/* ── STAFF PANEL old refs ── */
+.stabs{display:flex;gap:0;border-bottom:1px solid #0d2618;margin-bottom:0;flex-wrap:wrap;}
+.stab{padding:9px 14px;background:transparent;border:none;border-bottom:2px solid transparent;color:#1a4028;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all .15s;margin-bottom:-1px;white-space:nowrap;}
+.stab.on{color:#00ff64;border-bottom-color:#00ff64;}
+.stab:hover:not(.on){color:#2a6040;}
+
+/* ── PLAYER CARD IN DASHBOARD ── */
+.pcard{background:rgba(0,10,4,.6);border:1px solid #0d2618;border-left:2px solid #0d2618;border-radius:0;padding:12px;margin-bottom:7px;cursor:pointer;transition:border-color .15s;}
+.pcard:hover{border-color:#1a4028;}
+.pcard.selected{border-left-color:#00c8ff;}
+.pcn{font-family:var(--mono);font-size:15px;color:#4aff88;margin-bottom:2px;}
+.pcid{font-family:var(--mono);font-size:10px;color:#1a4028;margin-bottom:6px;}
+.pcrole{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:1px;font-weight:700;display:inline-block;letter-spacing:1px;}
+.pcrole.owner{background:rgba(232,200,50,.1);color:#e8c832;border:1px solid rgba(232,200,50,.2);}
+.pcrole.moderator{background:rgba(0,200,255,.08);color:#00c8ff;border:1px solid rgba(0,200,255,.15);}
+.pcrole.player{background:rgba(0,255,80,.06);color:#00ff64;border:1px solid rgba(0,255,80,.12);}
+.pcstats{display:flex;gap:12px;font-family:var(--mono);font-size:11px;color:#1a4028;margin-top:7px;}
+.pcstats b{color:#2a6040;}
+.pcacts{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px;}
+.pcbanned{background:rgba(255,34,68,.06);border:1px solid rgba(255,34,68,.2);padding:4px 8px;font-size:11px;color:#ff2244;margin-top:5px;font-family:var(--mono);}
+.pcwarns{background:rgba(232,200,50,.05);border:1px solid rgba(232,200,50,.18);padding:4px 8px;font-size:11px;color:#e8c832;margin-top:5px;font-family:var(--mono);}
+
+/* ── LIVE PLAYER CARD ── */
+.lpcard{background:rgba(0,10,4,.6);border:1px solid #0d2618;border-left:2px solid #0d2618;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s;}
+.lpcard:hover{border-color:#1a4028;}
+.lpdot{width:7px;height:7px;border-radius:50%;background:#00ff64;flex-shrink:0;animation:pdot 1.5s ease-in-out infinite;}
+.lpname{flex:1;font-weight:700;font-size:13px;font-family:var(--mono);color:#4aff88;}
+.lpstats{font-size:10px;color:#1a4028;font-family:var(--mono);}
+
+/* ── OWNER CMDS ── */
+.cgd{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px;}
+.cgd3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:4px;}
+.log-entry{display:flex;align-items:flex-start;gap:10px;padding:7px 10px;background:rgba(0,8,3,.5);border:1px solid #0a1e10;border-left:2px solid #0a1e10;margin-bottom:3px;font-family:var(--mono);font-size:10px;}
+.log-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.staff-player-card{background:rgba(0,10,4,.6);border:1px solid #0d2618;border-left:2px solid #0d2618;padding:11px 13px;margin-bottom:5px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s;}
+.staff-player-card:hover{border-color:#1a4028;}
+.staff-player-card.selected{border-left-color:#00c8ff;}
+.spc-dot{width:6px;height:6px;border-radius:50%;background:#00ff64;flex-shrink:0;animation:pdot 1.5s ease-in-out infinite;}
+.spc-dot.offline{background:#1a3022;animation:none;}
+.spc-name{font-weight:700;font-size:13px;font-family:var(--mono);flex:1;color:#4aff88;}
+.spc-role{font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:1px;font-weight:700;margin-left:5px;letter-spacing:1px;}
+.spc-role.owner{background:rgba(232,200,50,.1);color:#e8c832;border:1px solid rgba(232,200,50,.2);}
+.spc-role.moderator{background:rgba(0,200,255,.08);color:#00c8ff;border:1px solid rgba(0,200,255,.15);}
+.spc-role.player{background:rgba(0,255,80,.06);color:#00ff64;border:1px solid rgba(0,255,80,.12);}
+.spc-stats{font-size:10px;color:#1a4028;font-family:var(--mono);}
+.spc-actions{display:flex;gap:5px;}
+.quick-action-btn{padding:4px 9px;border-radius:1px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1px;cursor:pointer;border:1px solid;transition:all .12s;background:transparent;}
+.qa-ban{border-color:rgba(255,34,68,.35);color:#ff2244;}
+.qa-ban:hover{background:rgba(255,34,68,.1);}
+.qa-kick{border-color:rgba(232,200,50,.35);color:#e8c832;}
+.qa-kick:hover{background:rgba(232,200,50,.1);}
+.qa-unban{border-color:rgba(0,255,80,.3);color:#00ff64;}
+.qa-unban:hover{background:rgba(0,255,80,.08);}
+
 .wd-owner-section{margin-bottom:18px;}
 .wd-owner-header{font-family:var(--mono);font-size:10px;letter-spacing:4px;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:9px;}
 .wd-owner-header::after{content:'';flex:1;height:1px;background:rgba(232,200,50,.25);}
@@ -216,6 +511,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 .pn{font-family:var(--mono);font-size:20px;letter-spacing:2px;color:var(--g);}
 .pn.ow{color:var(--gold);}.pn.mo{color:var(--mod);}
 .prk{font-family:var(--mono);font-size:10px;color:var(--dim2);letter-spacing:2px;margin-top:3px;}
+.role-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px 3px 7px;border-radius:3px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:2px;border:1px solid currentColor;margin-top:5px;}
 .pvc{margin-left:auto;font-family:var(--mono);font-size:16px;color:var(--gold);white-space:nowrap;}
 .srow{display:flex;justify-content:space-around;padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:14px;}
 .st span{display:block;font-family:var(--mono);font-size:24px;color:var(--g);text-align:center;}
@@ -230,8 +526,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 .sm.in{background:transparent;border:1px solid rgba(58,154,238,.25);border-left:2px solid var(--mod);color:var(--mod);}
 
 /* ── OVERLAYS ── */
-.overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.88);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;touch-action:pan-y;}
-.pbox{background:var(--bg2);border:1px solid var(--border2);border-radius:3px;width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+.overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center;padding:16px;touch-action:pan-y;}
+.pbox{background:var(--bg2);border:1px solid var(--border2);border-radius:0;width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;position:relative;}
 .pbox::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
 .pbox.pg::before{background:var(--g);}
 .pbox.pb::before{background:var(--mod);}
@@ -349,7 +645,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 #evbanner.coins{background:linear-gradient(90deg,var(--gold),#fff8a0);color:#000;}
 #evbanner.ghost{background:linear-gradient(90deg,#9b59b6,#c678f5);color:#fff;}
 #evbanner.mini{background:linear-gradient(90deg,#44aaff,#00ffcc);color:#000;}
-#scoreboard{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(6,8,9,.97);border:1px solid var(--border2);border-radius:3px;padding:18px;min-width:270px;max-height:60vh;overflow-y:auto;}
+#scoreboard{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(6,8,9,.97);border:1px solid var(--border2);border-radius:0;padding:18px;min-width:270px;max-height:60vh;overflow-y:auto;}
 #scoreboard h3{font-family:var(--mono);font-size:16px;color:var(--g);letter-spacing:4px;margin-bottom:12px;text-align:center;}
 
 /* ── KILL FEED ── */
@@ -372,7 +668,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 #boostBtn.pr{background:rgba(255,34,68,.32);}
 
 /* ── GAME OVER ── */
-#gameOver{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.92);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;}
+#gameOver{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;}
 .gobox{background:var(--bg2);border:1px solid var(--border2);border-top:2px solid var(--r);border-radius:3px;padding:28px;text-align:center;max-width:360px;width:90%;}
 .gotitle{font-family:var(--mono);font-size:52px;color:var(--r);letter-spacing:4px;}
 .gostreak{font-family:var(--mono);font-size:13px;color:var(--gold);letter-spacing:2px;margin-bottom:4px;}
@@ -474,7 +770,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 
 <!-- BAN SCREEN -->
 <div id="banScreen" class="hidden">
-  <div class="ban-skull"><i data-lucide="skull" style="width:32px;height:32px;margin-right:5px;vertical-align:middle;"></i></div>
+  <div class="ban-skull"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ff2244" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="m12.5 17-.5-1-.5 1h1z" fill="none"/><path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z" fill="none"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="12" r="1"/></svg></div>
   <div class="btt">BANNED</div>
   <div class="brs">You have been permanently removed from VENOM.<br><span class="breason" id="banReasonTxt">Reason not specified.</span></div>
   <div style="font-family:var(--mono);font-size:12px;color:var(--dim2);margin-top:8px;">Contact staff to appeal.</div>
@@ -522,16 +818,16 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
       <div class="card hidden" id="profileCard">
         <div class="phdr">
           <div class="av" id="pAv">
-            <span id="pAvIco"><i data-lucide="zap" style="width:22px;height:22px;"></i></span>
-            <div class="av-crown hidden" id="pCrown"><i data-lucide="crown" style="width:14px;height:14px;"></i></div>
-            <div class="av-mod hidden" id="pModB"><i data-lucide="shield-check" style="width:15px;height:15px;"></i></div>
+            <span id="pAvIco">🐍</span>
+            <div class="av-crown hidden" id="pCrown"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" fill="none"/><path d="M5 21h14" fill="none"/></svg></div>
+            <div class="av-mod hidden" id="pModB"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" fill="none"/><path d="m9 12 2 2 4-4" fill="none"/></svg></div>
           </div>
           <div style="flex:1;min-width:0;">
             <div class="pn" id="pName">Player</div>
             <div class="prk" id="pRankLbl">RANK: HATCHLING</div>
-            <div style="font-size:11px;color:var(--dim2);margin-top:1px;" id="pRoleLbl"></div>
+            <div id="pRoleLbl" style="margin-top:5px;display:none;"></div>
           </div>
-          <div class="pvc" id="pCoins"><i data-lucide="circle-dollar-sign" style="width:14px;height:14px;margin-right:4px;vertical-align:middle;color:var(--gold)"></i><span id="pCoinsVal">0</span></div>
+          <div class="pvc" id="pCoins"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" fill="none"/><path d="M12 18V6" fill="none"/></svg> <span id="pCoinsVal">0</span></div>
         </div>
         <div class="srow">
           <div class="st"><span id="sBest">0</span><label>BEST</label></div>
@@ -539,15 +835,15 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
           <div class="st"><span id="sGames">0</span><label>GAMES</label></div>
         </div>
         <div class="mbtns">
-          <button class="btn bg" onclick="Game.start()" style="font-size:18px;padding:14px;"><i data-lucide="play" style="width:18px;height:18px;margin-right:6px;vertical-align:middle;"></i>PLAY</button>
+          <button class="btn bg" onclick="Game.start()" style="font-size:18px;padding:14px;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" fill="none"/></svg> PLAY</button>
           <div class="g2btn">
-            <button class="btn bo" onclick="Wardrobe.open()"><i data-lucide="palette" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i>WARDROBE</button>
-            <button class="btn bo" onclick="UI.open('lbPanel')"><i data-lucide="trophy" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i>RANKS</button>
+            <button class="btn bo" onclick="Wardrobe.open()"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z" fill="none"/><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/></svg> WARDROBE</button>
+            <button class="btn bo" onclick="UI.open('lbPanel')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978" fill="none"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978" fill="none"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18" fill="none"/><path d="M4 22h16" fill="none"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z" fill="none"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6" fill="none"/></svg> RANKS</button>
           </div>
-          <button class="btn bo" onclick="UI.open('upgradesPanel')"><i data-lucide="trending-up" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i>UPGRADES</button>
-          <button class="btn bo" onclick="UI.open('settPanel')"><i data-lucide="settings" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i>SETTINGS</button>
-          <button class="btn bb hidden" id="staffBtn" onclick="UI.open('staffPanel')"><i data-lucide="shield-check" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i>STAFF DASHBOARD</button>
-          <button class="btn bgold hidden" id="ownerBtn" onclick="UI.open('ownerPanel')"><i data-lucide="crown" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i>OWNER PANEL</button>
+          <button class="btn bo" onclick="UI.open('upgradesPanel')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M16 7h6v6" fill="none"/><path d="m22 7-8.5 8.5-5-5L2 17" fill="none"/></svg> UPGRADES</button>
+          <button class="btn bo" onclick="UI.open('settPanel')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" fill="none"/><circle cx="12" cy="12" r="3"/></svg> SETTINGS</button>
+          <button class="btn bb hidden" id="staffBtn" onclick="UI.open('staffPanel')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" fill="none"/><path d="m9 12 2 2 4-4" fill="none"/></svg> STAFF DASHBOARD</button>
+          <button class="btn bgold hidden" id="ownerBtn" onclick="UI.open('ownerPanel')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" fill="none"/><path d="M5 21h14" fill="none"/></svg> OWNER PANEL</button>
           <button class="bghost" onclick="doLogout()">LOGOUT</button>
         </div>
       </div>
@@ -558,7 +854,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <!-- WARDROBE / COSMETICS -->
 <div class="overlay hidden" id="wardrobePanel">
   <div class="pbox pg" style="max-width:860px;max-height:92vh;">
-    <div class="phd"><div class="pt g"><i data-lucide="palette" style="width:15px;height:15px;margin-right:7px;vertical-align:middle;"></i>WARDROBE</div><button class="cbtn" onclick="UI.close('wardrobePanel')">✕</button></div>
+    <div class="phd"><div class="pt g"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z" fill="none"/><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/></svg> WARDROBE</div><button class="cbtn" onclick="UI.close('wardrobePanel')">✕</button></div>
     <div class="pbody" style="padding:0;display:flex;flex-direction:column;">
       <div class="wd-layout" style="display:flex;min-height:0;flex:1;">
         <div class="wd-preview">
@@ -566,10 +862,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
           <div class="wd-equipped-name" id="wdEquippedName">Classic</div>
           <div class="wd-equipped-sub" id="wdEquippedSub">EQUIPPED</div>
           <div style="width:100%;height:1px;background:var(--border);margin:4px 0;"></div>
-          <button class="wd-cat on" id="wdCatSkin" onclick="Wardrobe.showCat('skin',this)"><i data-lucide="layers" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>SKINS</button>
-          <button class="wd-cat" id="wdCatTrail" onclick="Wardrobe.showCat('trail',this)"><i data-lucide="sparkles" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>TRAILS</button>
-          <button class="wd-cat" id="wdCatKill" onclick="Wardrobe.showCat('kill',this)"><i data-lucide="swords" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>KILL FX</button>
-          <div id="wdCoinsDisplay" style="font-family:var(--head);font-size:14px;color:var(--gold);margin-top:auto;text-align:center;"><i data-lucide="circle-dollar-sign" style="width:13px;height:13px;margin-right:3px;vertical-align:middle;"></i>0</div>
+          <button class="wd-cat on" id="wdCatSkin" onclick="Wardrobe.showCat('skin',this)"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" fill="none"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" fill="none"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" fill="none"/></svg> SKINS</button>
+          <button class="wd-cat" id="wdCatTrail" onclick="Wardrobe.showCat('trail',this)"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" fill="none"/><path d="M20 2v4" fill="none"/><path d="M22 4h-4" fill="none"/><circle cx="4" cy="20" r="2"/></svg> TRAILS</button>
+          <button class="wd-cat" id="wdCatKill" onclick="Wardrobe.showCat('kill',this)"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" y1="14" x2="9" y2="18"/><line x1="7" y1="17" x2="4" y2="20"/><line x1="3" y1="19" x2="5" y2="21"/></svg> KILL FX</button>
+          <div id="wdCoinsDisplay" style="font-family:var(--head);font-size:14px;color:var(--gold);margin-top:auto;text-align:center;"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" fill="none"/><path d="M12 18V6" fill="none"/></svg>0</div>
         </div>
         <div class="wd-items" id="wdItemsPane"></div>
       </div>
@@ -581,7 +877,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <!-- UPGRADES PANEL -->
 <div class="overlay hidden" id="upgradesPanel">
   <div class="pbox pg" style="max-width:740px;">
-    <div class="phd"><div class="pt g"><i data-lucide="trending-up" style="width:15px;height:15px;margin-right:7px;vertical-align:middle;"></i>UPGRADES</div><button class="cbtn" onclick="UI.close('upgradesPanel')">✕</button></div>
+    <div class="phd"><div class="pt g"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M16 7h6v6" fill="none"/><path d="m22 7-8.5 8.5-5-5L2 17" fill="none"/></svg> UPGRADES</div><button class="cbtn" onclick="UI.close('upgradesPanel')">✕</button></div>
     <div class="pbody">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--dim2);">Permanently upgrade your serpent with coins. Upgrades persist between games.</div>
@@ -596,7 +892,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <!-- LEADERBOARD -->
 <div class="overlay hidden" id="lbPanel">
   <div class="pbox pg">
-    <div class="phd"><div class="pt g"><i data-lucide="trophy" style="width:15px;height:15px;margin-right:7px;vertical-align:middle;"></i>LEADERBOARD</div><button class="cbtn" onclick="UI.close('lbPanel')">✕</button></div>
+    <div class="phd"><div class="pt g"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978" fill="none"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978" fill="none"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18" fill="none"/><path d="M4 22h16" fill="none"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z" fill="none"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6" fill="none"/></svg> LEADERBOARD</div><button class="cbtn" onclick="UI.close('lbPanel')">✕</button></div>
     <div class="pbody">
       <div class="tabs">
         <button class="tb on" onclick="LB.load('BestScore',this)">TOP SCORE</button>
@@ -611,7 +907,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <!-- SETTINGS -->
 <div class="overlay hidden" id="settPanel">
   <div class="pbox pg">
-    <div class="phd"><div class="pt g"><i data-lucide="settings" style="width:15px;height:15px;margin-right:7px;vertical-align:middle;"></i>SETTINGS</div><button class="cbtn" onclick="UI.close('settPanel')">✕</button></div>
+    <div class="phd"><div class="pt g"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" fill="none"/><circle cx="12" cy="12" r="3"/></svg> SETTINGS</div><button class="cbtn" onclick="UI.close('settPanel')">✕</button></div>
     <div class="pbody">
       <div class="sblk"><div class="slbl">CONTROLS</div>
         <div class="setrow">
@@ -655,125 +951,139 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 
 <!-- ── STAFF DASHBOARD ── -->
 <div class="overlay hidden" id="staffPanel">
-  <div class="pbox pb" style="max-width:800px;">
-    <div class="phd"><div class="pt b"><i data-lucide="shield-check" style="width:15px;height:15px;margin-right:7px;vertical-align:middle;"></i>STAFF DASHBOARD</div><button class="cbtn" onclick="UI.close('staffPanel')">✕</button></div>
+  <div class="pbox pb" style="max-width:820px;">
+    <div class="phd" style="padding:0;">
+      <div class="term-header">
+        <div class="term-dots">
+          <div class="term-dot red"    onclick="UI.close('staffPanel')" title="Close"></div>
+          <div class="term-dot yellow" title="Minimize"></div>
+          <div class="term-dot green"  title="Fullscreen"></div>
+        </div>
+        <div class="term-title-bar">
+          <span class="term-prompt">~/venom/staff</span>
+          <span class="term-label">DASHBOARD</span>
+          <span class="term-blink"></span>
+        </div>
+        <div style="padding:10px 14px;font-family:var(--mono);font-size:9px;color:#1a4028;letter-spacing:1px;white-space:nowrap;">v10.0 // MOD CONSOLE</div>
+      </div>
+    </div>
     <div class="pbody">
-      <div class="stabs">
-        <button class="stab on" onclick="Staff.tab('live',this)"><i data-lucide="activity" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>LIVE</button>
-        <button class="stab" onclick="Staff.tab('lookup',this)"><i data-lucide="search" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>SEARCH</button>
-        <button class="stab" onclick="Staff.tab('tools',this)"><i data-lucide="wrench" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>MOD TOOLS</button>
-        <button class="stab" onclick="Staff.tab('idlookup',this)">🆔 ID LOOKUP</button>
-        <button class="stab" onclick="Staff.tab('logs',this)"><i data-lucide="scroll-text" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>LOGS</button>
-        <button class="stab" onclick="Staff.tab('bcast',this)"><i data-lucide="radio" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>BROADCAST</button>
-        <button class="stab" onclick="Staff.tab('reports',this)" id="stReportsTab"><i data-lucide="alert-triangle" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>REPORTS<span id="reportsBadge" style="display:none;background:var(--r);color:#fff;font-size:9px;padding:1px 5px;border-radius:2px;margin-left:4px;vertical-align:middle;">0</span></button>
+      <div class="stabs" style="padding:0 4px;">
+        <button class="stab on" onclick="Staff.tab('live',this)">▶ LIVE</button>
+        <button class="stab" onclick="Staff.tab('lookup',this)">⌕ SEARCH</button>
+        <button class="stab" onclick="Staff.tab('tools',this)">⚙ MOD TOOLS</button>
+        <button class="stab" onclick="Staff.tab('idlookup',this)">⎔ ID LOOKUP</button>
+        <button class="stab" onclick="Staff.tab('logs',this)">▤ LOGS</button>
+        <button class="stab" onclick="Staff.tab('bcast',this)">⊛ BROADCAST</button>
+        <button class="stab" onclick="Staff.tab('reports',this)" id="stReportsTab">⚑ REPORTS<span id="reportsBadge" class="ttab-badge">0</span></button>
       </div>
 
       <!-- LIVE PLAYERS -->
-      <div id="stLive">
+      <div id="stLive" style="padding:14px 16px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div class="slbl" style="margin:0;">PLAYERS IN GAME NOW</div>
-          <button class="btn bb bsm" style="margin:0;" onclick="Staff.loadLive()"><i data-lucide="refresh-cw" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>REFRESH</button>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:3px;color:#1a4028;">// PLAYERS ONLINE NOW</div>
+          <button class="quick-action-btn tchip-b" style="font-size:9px;padding:5px 11px;" onclick="Staff.loadLive()">⟳ REFRESH</button>
         </div>
-        <div id="liveList"></div>
+        <div id="liveList"><div class="tno-results">Run refresh to load live players</div></div>
       </div>
 
       <!-- SEARCH/LOOKUP -->
-      <div id="stLookup" class="hidden">
-        <div class="search-bar">
-          <input class="search-input" id="lookupQ" placeholder="Search by display name or PlayFab ID..." onkeydown="if(event.key==='Enter')Staff.lookup()">
-          <button class="btn bb bsm" style="margin:0;white-space:nowrap;" onclick="Staff.lookup()"><i data-lucide="search" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>SEARCH</button>
+      <div id="stLookup" class="hidden" style="padding:14px 16px;">
+        <div style="font-family:var(--mono);font-size:9px;color:#1a4028;letter-spacing:2px;margin-bottom:10px;">// SEARCH PLAYERS — NAME OR PLAYFAB ID</div>
+        <div class="tsearch">
+          <input class="tsearch-input" id="lookupQ" placeholder="$ search_player --name=... --id=..." onkeydown="if(event.key==='Enter')Staff.lookup()">
+          <button class="quick-action-btn tchip-b" style="padding:9px 14px;font-size:10px;white-space:nowrap;" onclick="Staff.lookup()">EXEC</button>
         </div>
-        <div id="lookupRes"></div>
+        <div id="lookupRes"><div class="tno-results">Awaiting query...</div></div>
       </div>
 
       <!-- ID LOOKUP -->
-      <div id="stIdlookup" class="hidden">
-        <div class="slbl" style="margin-bottom:12px;">FIND PLAYFAB ID BY NAME</div>
-        <div class="search-bar" style="margin-bottom:10px;">
-          <input class="search-input" id="idlookupQ" placeholder="Type display name to find PlayFab ID..." onkeydown="if(event.key==='Enter')Staff.idLookup()">
-          <button class="btn bb bsm" style="margin:0;white-space:nowrap;" onclick="Staff.idLookup()"><i data-lucide="search" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>FIND</button>
+      <div id="stIdlookup" class="hidden" style="padding:14px 16px;">
+        <div style="font-family:var(--mono);font-size:9px;color:#1a4028;letter-spacing:2px;margin-bottom:10px;">// RESOLVE PLAYFAB ID FROM DISPLAY NAME</div>
+        <div class="tsearch" style="margin-bottom:10px;">
+          <input class="tsearch-input" id="idlookupQ" placeholder="$ resolve_id --display-name=..." onkeydown="if(event.key==='Enter')Staff.idLookup()">
+          <button class="quick-action-btn tchip-b" style="padding:9px 14px;font-size:10px;" onclick="Staff.idLookup()">FIND</button>
         </div>
-        <div style="font-size:11px;color:var(--dim2);margin-bottom:14px;line-height:1.7;">
-          Searches all currently online players + local session cache. Click any result to copy the PlayFab ID or auto-fill it into Mod Tools.
+        <div style="font-family:var(--mono);font-size:10px;color:#1a4028;margin-bottom:14px;line-height:1.8;border-left:2px solid #0d2618;padding-left:10px;">
+          Searches all online players + session cache.<br>Click any result to auto-fill Mod Tools.
         </div>
-        <div id="idlookupRes"></div>
-        <div class="slbl" style="margin-top:18px;margin-bottom:10px;">YOUR OWN INFO</div>
-        <div style="background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.15);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-          <div style="display:flex;align-items:center;justify-content:center;"><i data-lucide="user" style="width:22px;height:22px;margin-right:5px;vertical-align:middle;"></i></div>
+        <div id="idlookupRes"><div class="tno-results">Awaiting query...</div></div>
+        <div style="font-family:var(--mono);font-size:9px;color:#1a4028;letter-spacing:3px;margin:16px 0 10px;display:flex;align-items:center;gap:10px;">// YOUR SESSION<span style="flex:1;height:1px;background:linear-gradient(90deg,#0d2618,transparent);display:block;"></span></div>
+        <div style="background:rgba(0,255,80,.03);border:1px solid #0d2618;border-left:2px solid rgba(0,255,80,.3);padding:12px 14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
           <div style="flex:1;min-width:0;">
-            <div style="font-family:var(--head);font-size:14px;color:var(--g);" id="idSelfName">—</div>
-            <div style="font-family:var(--mono);font-size:12px;color:var(--dim2);margin-top:3px;" id="idSelfId">—</div>
-            <div style="font-size:11px;color:var(--dim2);margin-top:2px;" id="idSelfRole">—</div>
+            <div style="font-family:var(--mono);font-size:13px;color:#4aff88;font-weight:700;" id="idSelfName">—</div>
+            <div style="font-family:var(--mono);font-size:10px;color:#1a4028;margin-top:3px;" id="idSelfId">—</div>
+            <div style="font-size:10px;color:#1a4028;margin-top:2px;font-family:var(--mono);" id="idSelfRole">—</div>
           </div>
-          <button class="btn bb bsm" style="margin:0;" onclick="Staff.copyId(document.getElementById('idSelfId').textContent)"><i data-lucide="copy" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>COPY MY ID</button>
+          <button class="quick-action-btn tchip-b" onclick="Staff.copyId(document.getElementById('idSelfId').textContent)">⎘ COPY ID</button>
         </div>
       </div>
 
       <!-- MOD TOOLS -->
-      <div id="stTools" class="hidden">
-        <div style="background:rgba(68,170,255,.05);border:1px solid rgba(68,170,255,.15);border-radius:10px;padding:14px;margin-bottom:14px;" id="stSelectedPlayer">
-          <div style="font-size:11px;color:var(--dim2);letter-spacing:2px;margin-bottom:6px;">SELECTED PLAYER</div>
-          <div id="stSelectedName" style="font-family:var(--head);font-size:16px;color:var(--mod);">None selected — use Live or Search tab</div>
+      <div id="stTools" class="hidden" style="padding:14px 16px;">
+        <div class="tsel-card" id="stSelectedPlayer">
+          <div class="tsel-label">// SELECTED TARGET</div>
+          <div class="tsel-name" id="stSelectedName">none — select from Live or Search tab</div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-          <div class="sblk">
-            <div class="slbl">TARGET</div>
-            <input class="inp" id="modTgt" placeholder="Display name OR PlayFab ID">
-            <input class="inp" id="modReason" placeholder="Reason (required for ban/warn)">
-            <div class="slbl" style="margin-top:4px;">BAN DURATION</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;">
-              <button class="btn bo bsm" onclick="Staff.setDur(0)">PERM</button>
-              <button class="btn bo bsm" onclick="Staff.setDur(24)">24H</button>
-              <button class="btn bo bsm" onclick="Staff.setDur(168)">7D</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <div style="font-family:var(--mono);font-size:9px;color:#1a4028;letter-spacing:3px;margin-bottom:8px;">// TARGET</div>
+            <input class="term-input" id="modTgt" placeholder="display name OR playfab id">
+            <input class="term-input" id="modReason" placeholder="reason (required for ban/warn)">
+            <div style="font-family:var(--mono);font-size:9px;color:#1a4028;letter-spacing:3px;margin-bottom:8px;margin-top:4px;">// BAN DURATION</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:8px;">
+              <button class="quick-action-btn tchip-r" style="text-align:center;display:block;padding:6px 4px;" onclick="Staff.setDur(0)">PERM</button>
+              <button class="quick-action-btn tchip-y" style="text-align:center;display:block;padding:6px 4px;" onclick="Staff.setDur(24)">24H</button>
+              <button class="quick-action-btn tchip-y" style="text-align:center;display:block;padding:6px 4px;" onclick="Staff.setDur(168)">7D</button>
             </div>
-            <input class="inp" id="modDurHrs" type="number" placeholder="Custom hours (0=perm)" min="0" style="margin-bottom:0;">
+            <input class="term-input" id="modDurHrs" type="number" placeholder="custom hours (0=perm)" min="0" style="margin-bottom:0;">
           </div>
-          <div class="sblk">
-            <div class="slbl">ACTIONS</div>
-            <button class="btn br" style="margin-bottom:7px;" onclick="Staff.ban()"><i data-lucide="ban" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>BAN PLAYER</button>
-            <button class="btn bo" style="margin-bottom:7px;" onclick="Staff.unban()"><i data-lucide="check-circle-2" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>UNBAN</button>
-            <button class="btn bgold" style="margin-bottom:7px;" onclick="Staff.warn()"><i data-lucide="alert-triangle" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>WARN</button>
-            <button class="btn bb" style="margin-bottom:7px;" onclick="Staff.kick()"><i data-lucide="user-x" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>KICK</button>
-            <button class="btn bpur" onclick="Staff.mute()"><i data-lucide="mic-off" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>MUTE 1H</button>
+          <div>
+            <div style="font-family:var(--mono);font-size:9px;color:#1a4028;letter-spacing:3px;margin-bottom:8px;">// ACTIONS</div>
+            <button class="term-btn tbr" onclick="Staff.ban()">BAN PLAYER</button>
+            <button class="term-btn tbg" onclick="Staff.unban()">UNBAN</button>
+            <button class="term-btn tbgold" onclick="Staff.warn()">WARN</button>
+            <button class="term-btn tbb" onclick="Staff.kick()">KICK</button>
+            <button class="term-btn tbpur" onclick="Staff.mute()">MUTE 1H</button>
           </div>
         </div>
-        <div class="sm hidden" id="staffMsg"></div>
+        <div class="tmsg hidden" id="staffMsg"></div>
       </div>
 
       <!-- ACTION LOG -->
-      <div id="stLogs" class="hidden">
+      <div id="stLogs" class="hidden" style="padding:14px 16px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div class="slbl" style="margin:0;">RECENT ACTIONS</div>
-          <button class="btn bo bsm" style="margin:0;" onclick="Staff.loadLogs()"><i data-lucide="refresh-cw" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>REFRESH</button>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:3px;color:#1a4028;">// AUDIT LOG</div>
+          <button class="quick-action-btn tchip-b" style="font-size:9px;padding:5px 11px;" onclick="Staff.loadLogs()">⟳ REFRESH</button>
         </div>
-        <div id="logList"></div>
+        <div id="logList"><div class="tno-results">No actions recorded yet</div></div>
       </div>
 
       <!-- BROADCAST -->
-      <div id="stBcast" class="hidden">
-        <div class="sblk">
-          <div class="slbl">SERVER BROADCAST</div>
-          <input class="inp" id="staffBcastMsg" placeholder="Message to all players...">
-          <select class="inp" id="staffBcastType">
-            <option value="info">Info</option>
-            <option value="warning">Warning</option>
-            <option value="event">Event</option>
-          </select>
-          <button class="btn bb" onclick="Staff.broadcast()"><i data-lucide="radio" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>BROADCAST TO ALL</button>
-        </div>
+      <div id="stBcast" class="hidden" style="padding:14px 16px;">
+        <div style="font-family:var(--mono);font-size:9px;color:#1a4028;letter-spacing:2px;margin-bottom:12px;">// BROADCAST MESSAGE TO ALL PLAYERS</div>
+        <input class="term-input" id="staffBcastMsg" placeholder="$ broadcast --msg=&quot;your message&quot;">
+        <select class="term-input" id="staffBcastType" style="margin-bottom:12px;">
+          <option value="info">-- type: INFO</option>
+          <option value="warning">-- type: WARNING</option>
+          <option value="event">-- type: EVENT</option>
+        </select>
+        <button class="term-btn tbb" onclick="Staff.broadcast()">⊛ BROADCAST TO ALL</button>
       </div>
 
       <!-- REPORTS -->
-      <div id="stReports" class="hidden">
+      <div id="stReports" class="hidden" style="padding:14px 16px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <div class="slbl" style="margin:0;">PLAYER REPORTS</div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:3px;color:#1a4028;">// PLAYER REPORTS</div>
           <div style="display:flex;gap:6px;">
-            <button class="btn bb bsm" style="margin:0;" onclick="Staff.loadReports()"><i data-lucide="refresh-cw" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>REFRESH</button>
-            <button class="btn br bsm" style="margin:0;" onclick="Staff.clearReports()"><i data-lucide="trash-2" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>CLEAR ALL</button>
+            <button class="quick-action-btn tchip-b" style="font-size:9px;padding:5px 11px;" onclick="Staff.loadReports()">⟳ REFRESH</button>
+            <button class="quick-action-btn tchip-r" style="font-size:9px;padding:5px 11px;" onclick="Staff.clearReports()">✕ CLEAR ALL</button>
           </div>
         </div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--dim2);margin-bottom:12px;line-height:1.6;">Reports submitted from the Live tab. Each report captures a full real-time snapshot of the player.</div>
-        <div id="reportsList"><div class="no-results">No reports yet.</div></div>
+        <div style="font-family:var(--mono);font-size:10px;color:#1a4028;margin-bottom:12px;line-height:1.7;border-left:2px solid #0d2618;padding-left:10px;">
+          Reports capture a full real-time player snapshot at time of submission.
+        </div>
+        <div id="reportsList"><div class="tno-results">No reports yet</div></div>
       </div>
     </div>
   </div>
@@ -781,95 +1091,115 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 
 <!-- OWNER PANEL -->
 <div class="overlay hidden" id="ownerPanel">
-  <div class="pbox po" style="max-width:720px;">
-    <div class="phd"><div class="pt o"><i data-lucide="crown" style="width:15px;height:15px;margin-right:7px;vertical-align:middle;"></i>OWNER PANEL</div><button class="cbtn" onclick="UI.close('ownerPanel')">✕</button></div>
+  <div class="pbox po" style="max-width:740px;">
+    <div class="phd" style="padding:0;">
+      <div class="term-header">
+        <div class="term-dots">
+          <div class="term-dot red"    onclick="UI.close('ownerPanel')" title="Close"></div>
+          <div class="term-dot yellow" title="Minimize"></div>
+          <div class="term-dot green"  title="Fullscreen"></div>
+        </div>
+        <div class="term-title-bar" style="border-left-color:#1a1400;">
+          <span class="term-prompt" style="color:#b89620;">~/venom/owner</span>
+          <span class="term-label" style="color:#e8c832;">ROOT CONSOLE</span>
+          <span class="term-blink" style="background:#e8c832;"></span>
+        </div>
+        <div style="padding:10px 14px;font-family:var(--mono);font-size:9px;color:#3a2e00;letter-spacing:1px;white-space:nowrap;">⚡ UNRESTRICTED ACCESS</div>
+      </div>
+    </div>
     <div class="pbody">
-      <div class="stabs">
-        <button class="stab on" style="color:var(--gold);border-bottom-color:var(--gold);" onclick="Own.tab('cmds',this)">COMMANDS</button>
-        <button class="stab" onclick="Own.tab('grant',this)">GRANT</button>
-        <button class="stab" onclick="Own.tab('bcast',this)">BROADCAST</button>
-        <button class="stab" onclick="Own.tab('prom',this)">PROMOTE</button>
+      <div class="stabs" style="padding:0 4px;">
+        <button class="stab on" style="color:#e8c832;border-bottom-color:#e8c832;" onclick="Own.tab('cmds',this)">⚡ COMMANDS</button>
+        <button class="stab" style="" onclick="Own.tab('grant',this)">⊕ GRANT</button>
+        <button class="stab" onclick="Own.tab('bcast',this)">⊛ BROADCAST</button>
+        <button class="stab" onclick="Own.tab('prom',this)">⇑ PROMOTE</button>
       </div>
 
-      <div id="owCmds">
-        <div class="slbl">FUN SERVER EVENTS — KEYS 1–8</div>
-        <div class="cgd" style="margin-top:10px;margin-bottom:14px;">
-          <button class="ocb" id="ocbDoubleXP" onclick="Own.cmd('doubleXP')"><span class="oci"><i data-lucide="zap" style="width:18px;height:18px;"></i></span>2× XP EVENT</button>
+      <div id="owCmds" style="padding:14px 16px;">
+        <div style="font-family:var(--mono);font-size:9px;color:#3a2e00;letter-spacing:3px;margin-bottom:10px;">// SERVER EVENTS — KEYS [1-8]</div>
+        <div class="cgd" style="margin-top:8px;margin-bottom:14px;">
+          <button class="ocb" id="ocbDoubleXP" onclick="Own.cmd('doubleXP')"><span class="oci">⚡</span>2× XP EVENT</button>
           <button class="ocb" id="ocbCoinRain" onclick="Own.cmd('coinRain')"><span class="oci">🪙</span>COIN RAIN</button>
-          <button class="ocb" id="ocbSpawnBoss" onclick="Own.cmd('spawnBoss')"><span class="oci"><i data-lucide="crown" style="width:18px;height:18px;"></i></span>SPAWN BOSS</button>
-          <button class="ocb" id="ocbNukeMap" onclick="Own.cmd('nukeMap')"><span class="oci"><i data-lucide="bomb" style="width:18px;height:18px;"></i></span>NUKE MAP</button>
-          <button class="ocb" id="ocbGrowAll" onclick="Own.cmd('growAll')"><span class="oci"><i data-lucide="arrow-up" style="width:18px;height:18px;"></i></span>GROW ALL</button>
-          <button class="ocb" id="ocbSpeedFrenzy" onclick="Own.cmd('speedFrenzy')"><span class="oci"><i data-lucide="gauge" style="width:18px;height:18px;"></i></span>SPEED FRENZY</button>
-          <button class="ocb" id="ocbFoodFrenzy" onclick="Own.cmd('foodFrenzy')"><span class="oci"><i data-lucide="leaf" style="width:18px;height:18px;"></i></span>FOOD FRENZY</button>
-          <button class="ocb" id="ocbInvertCtrl" onclick="Own.cmd('invertCtrl')"><span class="oci"><i data-lucide="flip-horizontal" style="width:18px;height:18px;"></i></span>INVERT CTRL</button>
+          <button class="ocb" id="ocbSpawnBoss" onclick="Own.cmd('spawnBoss')"><span class="oci">👑</span>SPAWN BOSS</button>
+          <button class="ocb" id="ocbNukeMap" onclick="Own.cmd('nukeMap')"><span class="oci">💥</span>NUKE MAP</button>
+          <button class="ocb" id="ocbGrowAll" onclick="Own.cmd('growAll')"><span class="oci">↑</span>GROW ALL</button>
+          <button class="ocb" id="ocbSpeedFrenzy" onclick="Own.cmd('speedFrenzy')"><span class="oci">⚡</span>SPEED FRENZY</button>
+          <button class="ocb" id="ocbFoodFrenzy" onclick="Own.cmd('foodFrenzy')"><span class="oci">🌿</span>FOOD FRENZY</button>
+          <button class="ocb" id="ocbInvertCtrl" onclick="Own.cmd('invertCtrl')"><span class="oci">⇄</span>INVERT CTRL</button>
         </div>
-        <div class="slbl">PLAYER MODES — KEYS 9–0</div>
-        <div class="cgd3" style="margin-top:10px;margin-bottom:14px;">
-          <button class="ocb staff-cmd" id="ocbGhostMode" onclick="Own.cmd('ghostMode')"><span class="oci"><i data-lucide="ghost" style="width:18px;height:18px;"></i></span>GHOST MODE</button>
-          <button class="ocb staff-cmd" id="ocbMiniSnake" onclick="Own.cmd('miniSnake')"><span class="oci"><i data-lucide="minimize-2" style="width:18px;height:18px;"></i></span>MINI SNAKE</button>
-          <button class="ocb staff-cmd" id="ocbFireworks" onclick="Own.cmd('fireworks')"><span class="oci"><i data-lucide="sparkles" style="width:18px;height:18px;"></i></span>FIREWORKS</button>
+        <div style="font-family:var(--mono);font-size:9px;color:#3a2e00;letter-spacing:3px;margin-bottom:10px;">// PLAYER MODES — KEYS [9-0]</div>
+        <div class="cgd3" style="margin-top:8px;margin-bottom:14px;">
+          <button class="ocb staff-cmd" id="ocbGhostMode" onclick="Own.cmd('ghostMode')"><span class="oci">👻</span>GHOST MODE</button>
+          <button class="ocb staff-cmd" id="ocbMiniSnake" onclick="Own.cmd('miniSnake')"><span class="oci">◌</span>MINI SNAKE</button>
+          <button class="ocb staff-cmd" id="ocbFireworks" onclick="Own.cmd('fireworks')"><span class="oci">✨</span>FIREWORKS</button>
         </div>
-        <div class="slbl">ADMIN COMMANDS</div>
-        <div class="cgd3" style="margin-top:10px;">
-          <button class="ocb danger-cmd" onclick="Own.cmd('killAllBots')"><span class="oci"><i data-lucide="cpu" style="width:18px;height:18px;"></i></span>KILL BOTS</button>
-          <button class="ocb danger-cmd" onclick="Own.cmd('maxFoodFrenzy')"><span class="oci"><i data-lucide="leaf" style="width:18px;height:18px;"></i></span>MAX FOOD</button>
-          <button class="ocb danger-cmd" onclick="Own.cmd('zeroGravity')"><span class="oci"><i data-lucide="orbit" style="width:18px;height:18px;"></i></span>ZERO GRAV</button>
-        </div>
-      </div>
-
-      <div id="owGrant" class="hidden">
-        <div class="sblk"><div class="slbl">GRANT COSMETIC</div>
-          <input class="inp" id="grantTgt" placeholder="Player display name or PlayFab ID">
-          <select class="inp" id="grantItm">
-            <option value="">— Select item —</option>
-            <optgroup label="OWNER SKINS"><option value="skin_owner">Owner Gold</option><option value="skin_owner2">Owner Obsidian</option><option value="skin_owner3">Blood Crown</option></optgroup>
-            <optgroup label="OWNER TRAILS"><option value="trail_owner">Golden Aura</option><option value="trail_owner2">Void Rift</option></optgroup>
-            <optgroup label="OWNER KILL FX"><option value="kill_owner">Royal Wrath</option><option value="kill_owner2">Supernova</option></optgroup>
-            <optgroup label="EXCLUSIVE SKINS"><option value="skin_gold">Gold Serpent</option><option value="skin_rainbow">Rainbow</option><option value="skin_void">⬛ Dark Void</option><option value="skin_galaxy">Galaxy</option><option value="skin_inferno">Inferno</option><option value="skin_toxic">Toxic</option></optgroup>
-            <optgroup label="EXCLUSIVE TRAILS"><option value="trail_fire">Fire Trail</option><option value="trail_lightning">Lightning Trail</option></optgroup>
-            <optgroup label="EXCLUSIVE KILL FX"><option value="kill_explosion">Explosion</option><option value="kill_vortex">Vortex</option></optgroup>
-            <optgroup label="STAFF"><option value="skin_mod">Staff Blue Skin</option><option value="trail_mod">Blue Pulse Trail</option><option value="kill_thunder">Thunder Kill FX</option></optgroup>
-            <optgroup label="ACCESS"><option value="mod_panel">Mod Panel Access</option><option value="owner_panel">Owner Panel Access</option></optgroup>
-          </select>
-          <button class="btn bgold" onclick="Own.grantItem()">GRANT ITEM</button>
-        </div>
-        <div class="sblk"><div class="slbl">GRANT COINS</div>
-          <input class="inp" id="coinTgt" placeholder="Player display name or PlayFab ID">
-          <input class="inp" type="number" id="coinAmt" placeholder="Coin amount" min="1">
-          <button class="btn bgold" onclick="Own.grantCoins()">GRANT COINS</button>
+        <div style="font-family:var(--mono);font-size:9px;color:#3a2e00;letter-spacing:3px;margin-bottom:10px;">// ADMIN COMMANDS — USE WITH CARE</div>
+        <div class="cgd3" style="margin-top:8px;">
+          <button class="ocb danger-cmd" onclick="Own.cmd('killAllBots')"><span class="oci">⊗</span>KILL BOTS</button>
+          <button class="ocb danger-cmd" onclick="Own.cmd('maxFoodFrenzy')"><span class="oci">■</span>MAX FOOD</button>
+          <button class="ocb danger-cmd" onclick="Own.cmd('zeroGravity')"><span class="oci">○</span>ZERO GRAV</button>
         </div>
       </div>
 
-      <div id="owBcast" class="hidden">
-        <div class="sblk"><div class="slbl">SERVER BROADCAST</div>
-          <input class="inp" id="bcastMsg" placeholder="Message to broadcast...">
-          <select class="inp" id="bcastType"><option value="info">Info</option><option value="warning">Warning</option><option value="event">Event</option></select>
-          <button class="btn bgold" onclick="Own.broadcast()"><i data-lucide="radio" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>BROADCAST TO ALL</button>
+      <div id="owGrant" class="hidden" style="padding:14px 16px;">
+        <div style="font-family:var(--mono);font-size:9px;color:#3a2e00;letter-spacing:3px;margin-bottom:10px;">// GRANT COSMETIC ITEM</div>
+        <input class="term-input" id="grantTgt" placeholder="player display name or playfab id">
+        <select class="term-input" id="grantItm" style="margin-bottom:10px;">
+          <option value="">-- select item to grant --</option>
+          <optgroup label="OWNER SKINS"><option value="skin_owner">Owner Gold</option><option value="skin_owner2">Owner Obsidian</option><option value="skin_owner3">Blood Crown</option></optgroup>
+          <optgroup label="OWNER TRAILS"><option value="trail_owner">Golden Aura</option><option value="trail_owner2">Void Rift</option></optgroup>
+          <optgroup label="OWNER KILL FX"><option value="kill_owner">Royal Wrath</option><option value="kill_owner2">Supernova</option></optgroup>
+          <optgroup label="EXCLUSIVE SKINS"><option value="skin_gold">Gold Serpent</option><option value="skin_rainbow">Rainbow</option><option value="skin_void">Dark Void</option><option value="skin_galaxy">Galaxy</option><option value="skin_inferno">Inferno</option><option value="skin_toxic">Toxic</option></optgroup>
+          <optgroup label="EXCLUSIVE TRAILS"><option value="trail_fire">Fire Trail</option><option value="trail_lightning">Lightning Trail</option></optgroup>
+          <optgroup label="EXCLUSIVE KILL FX"><option value="kill_explosion">Explosion</option><option value="kill_vortex">Vortex</option></optgroup>
+          <optgroup label="STAFF"><option value="skin_mod">Staff Blue Skin</option><option value="trail_mod">Blue Pulse Trail</option><option value="kill_thunder">Thunder Kill FX</option></optgroup>
+          <optgroup label="ACCESS TOKENS"><option value="mod_panel">Mod Panel Access</option><option value="owner_panel">Owner Panel Access</option></optgroup>
+        </select>
+        <button class="term-btn tbgold" onclick="Own.grantItem()">⊕ GRANT ITEM</button>
+        <div style="font-family:var(--mono);font-size:9px;color:#3a2e00;letter-spacing:3px;margin:14px 0 10px;">// GRANT COINS</div>
+        <input class="term-input" id="coinTgt" placeholder="player display name or playfab id">
+        <input class="term-input" type="number" id="coinAmt" placeholder="coin amount" min="1">
+        <button class="term-btn tbgold" onclick="Own.grantCoins()">⊕ GRANT COINS</button>
+      </div>
+
+      <div id="owBcast" class="hidden" style="padding:14px 16px;">
+        <div style="font-family:var(--mono);font-size:9px;color:#3a2e00;letter-spacing:3px;margin-bottom:10px;">// BROADCAST TO ALL PLAYERS</div>
+        <input class="term-input" id="bcastMsg" placeholder="$ broadcast --msg=&quot;...&quot;">
+        <select class="term-input" id="bcastType" style="margin-bottom:10px;">
+          <option value="info">-- type: INFO</option>
+          <option value="warning">-- type: WARNING</option>
+          <option value="event">-- type: EVENT</option>
+        </select>
+        <button class="term-btn tbb" onclick="Own.broadcast()">⊛ BROADCAST TO ALL</button>
+      </div>
+
+      <div id="owProm" class="hidden" style="padding:14px 16px;">
+        <div style="font-family:var(--mono);font-size:9px;color:#3a2e00;letter-spacing:3px;margin-bottom:10px;">// PROMOTE / DEMOTE PLAYER</div>
+        <input class="term-input" id="promTgt" placeholder="player display name or playfab id">
+        <select class="term-input" id="promRole" style="margin-bottom:10px;">
+          <option value="moderator">-- role: MODERATOR</option>
+          <option value="owner">-- role: OWNER</option>
+          <option value="player">-- role: PLAYER (demote)</option>
+        </select>
+        <button class="term-btn tbgold" onclick="Own.promote()">⇑ CONFIRM ROLE CHANGE</button>
+        <div style="font-size:11px;color:#3a2e00;margin-top:10px;line-height:1.7;font-family:var(--mono);border-left:2px solid #2a1e00;padding-left:10px;">
+          Grants or removes <b style="color:#e8c832;">mod_panel</b> / <b style="color:#e8c832;">owner_panel</b> catalog items.<br>Takes effect on next login.
         </div>
       </div>
 
-      <div id="owProm" class="hidden">
-        <div class="sblk"><div class="slbl">PROMOTE / DEMOTE</div>
-          <input class="inp" id="promTgt" placeholder="Player display name or PlayFab ID">
-          <select class="inp" id="promRole"><option value="moderator">Moderator</option><option value="owner">Owner</option><option value="player">Player (demote)</option></select>
-          <button class="btn bgold" onclick="Own.promote()">CONFIRM</button>
-          <div style="font-size:12px;color:var(--dim2);margin-top:8px;line-height:1.6;">Grants or removes <b style="color:var(--gold)">mod_panel</b>/<b style="color:var(--gold)">owner_panel</b> catalog items.</div>
-        </div>
-      </div>
-
-      <div class="sm hidden" id="ownMsg" style="margin-top:8px;"></div>
+      <div class="tmsg hidden" id="ownMsg" style="margin:0 16px 14px;"></div>
     </div>
   </div>
 </div>
 
 <!-- DEV TAG -->
-<div id="devTag">VENOM v10 // PLAYFAB+FIREBASE // <span id="devFps">--</span> FPS</div>
+<div id="devTag">VENOM v11 // PLAYFAB+FIREBASE // <span id="devFps">--</span> FPS</div>
 
 <!-- HUD -->
 <div id="hud" class="hidden">
   <div id="xpBarWrap"><div id="xpBarFill"></div></div>
   <div id="hudScore">0</div>
-  <div id="hudKills"><i data-lucide="skull" style="width:11px;height:11px;margin-right:4px;vertical-align:middle;"></i>0</div>
+  <div id="hudKills"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="m12.5 17-.5-1-.5 1h1z" fill="none"/><path d="M15 22a1 1 0 0 0 1-1v-1a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20v1a1 1 0 0 0 1 1z" fill="none"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="12" r="1"/></svg> 0</div>
   <div id="hudStreak"></div>
   <div id="hudRank"></div>
   <div id="hudLen"></div>
@@ -884,13 +1214,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
   <div id="killfeed"></div>
   <div id="streakDisplay"></div>
   <div class="hudbtns">
-    <button class="hibtn" onclick="Game.pause()" title="Menu [ESC]"><i data-lucide="menu" style="width:15px;height:15px;"></i></button>
-    <button class="hibtn" onclick="UI.open('settPanel')" title="Settings"><i data-lucide="settings" style="width:15px;height:15px;"></i></button>
-    <button class="hibtn" onclick="toggleScoreboard()" title="Scoreboard [TAB]"><i data-lucide="bar-chart-2" style="width:15px;height:15px;"></i></button>
-    <button class="hibtn hidden" id="hudStaffBtn" onclick="UI.open('staffPanel')" title="Staff Dashboard [F1]"><i data-lucide="shield-check" style="width:15px;height:15px;"></i></button>
-    <button class="hibtn hidden" id="hudOwnerBtn" onclick="UI.open('ownerPanel')" title="Owner Panel [F2]" style="border-color:rgba(255,215,0,.35);color:var(--gold);"><i data-lucide="crown" style="width:15px;height:15px;"></i></button>
+    <button class="hibtn" onclick="Game.pause()" title="Menu [ESC]"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M4 5h16" fill="none"/><path d="M4 12h16" fill="none"/><path d="M4 19h16" fill="none"/></svg></button>
+    <button class="hibtn" onclick="UI.open('settPanel')" title="Settings"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" fill="none"/><circle cx="12" cy="12" r="3"/></svg></button>
+    <button class="hibtn" onclick="toggleScoreboard()" title="Scoreboard [TAB]"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M5 21v-6" fill="none"/><path d="M12 21V3" fill="none"/><path d="M19 21V9" fill="none"/></svg></button>
+    <button class="hibtn hidden" id="hudStaffBtn" onclick="UI.open('staffPanel')" title="Staff Dashboard [F1]"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" fill="none"/><path d="m9 12 2 2 4-4" fill="none"/></svg></button>
+    <button class="hibtn hidden" id="hudOwnerBtn" onclick="UI.open('ownerPanel')" title="Owner Panel [F2]" style="border-color:rgba(255,215,0,.35);color:var(--gold);"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" fill="none"/><path d="M5 21h14" fill="none"/></svg></button>
   </div>
-  <div id="scoreboard" class="hidden"><h3><i data-lucide="bar-chart-2" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>SCOREBOARD</h3><div id="sbList"></div></div>
+  <div id="scoreboard" class="hidden"><h3><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M5 21v-6" fill="none"/><path d="M12 21V3" fill="none"/><path d="M19 21V9" fill="none"/></svg> SCOREBOARD</h3><div id="sbList"></div></div>
   <div id="chatBox">
     <div id="chatMsgs"></div>
     <input id="chatInput" placeholder="Press T to chat..." maxlength="80">
@@ -910,7 +1240,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <div id="gameOver" class="hidden">
   <div class="gobox">
     <div class="gotitle" id="goTitleTxt">DEAD</div>
-    <div class="gonew hidden" id="goNew"><i data-lucide="trophy" style="width:14px;height:14px;margin-right:5px;vertical-align:middle;"></i>NEW BEST!</div>
+    <div class="gonew hidden" id="goNew"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978" fill="none"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978" fill="none"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18" fill="none"/><path d="M4 22h16" fill="none"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z" fill="none"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6" fill="none"/></svg> NEW BEST!</div>
     <div class="gostreak" id="goStreak" style="display:none;"></div>
     <div class="gokill" id="goKiller">Eliminated</div>
     <div class="gostats">
@@ -919,9 +1249,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
       <div class="gost"><span id="goTime">0s</span><label>TIME</label></div>
     </div>
     <div id="goExtras" style="display:flex;gap:8px;justify-content:center;margin-bottom:10px;flex-wrap:wrap;"></div>
-    <div class="gocoins" id="goCoins">+0 <i data-lucide="circle-dollar-sign" style="width:12px;height:12px;margin-left:2px;vertical-align:middle;color:var(--gold)"></i></div>
+    <div class="gocoins" id="goCoins">+0 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" fill="none"/><path d="M12 18V6" fill="none"/></svg></div>
     <div id="goVerdict" style="font-family:var(--mono);font-size:11px;color:var(--dim2);margin-bottom:16px;font-style:italic;"></div>
-    <button class="btn bg" style="font-size:17px;" onclick="Game.start()"><i data-lucide="play" style="width:16px;height:16px;margin-right:6px;vertical-align:middle;"></i>PLAY AGAIN</button>
+    <button class="btn bg" style="font-size:17px;" onclick="Game.start()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" fill="none"/></svg> PLAY AGAIN</button>
     <button class="btn bo" onclick="Game.backToMenu()">MAIN MENU</button>
   </div>
 </div>
@@ -957,7 +1287,6 @@ window._push   = push;
 window._get    = get;
 window._off    = off;
 window._fbReady = true;
-console.log("Firebase ready");
 </script>
 
 <script>
@@ -1056,15 +1385,15 @@ let PF = null;
 const ROLE_TAGS = {
   owner: {
     label:'OWNER', icon:'crown', color:'#ffd700',
-    aura:'rgba(255,215,0,{a})', shadowColor:'#ffd700', chatBadge:'${svgIc("crown",11,"currentColor")}'
+    aura:'rgba(255,215,0,{a})', shadowColor:'#ffd700', chatBadge:svgIc('crown',11,'currentColor')
   },
   moderator: {
     label:'MOD', icon:'shield-plus', color:'#44aaff',
-    aura:'rgba(68,170,255,{a})', shadowColor:'#44aaff', chatBadge:'${svgIc("shield-check",11,"currentColor")}'
+    aura:'rgba(68,170,255,{a})', shadowColor:'#44aaff', chatBadge:svgIc('shield-check',11,'currentColor')
   },
   vip: {
     label:'VIP', icon:'star', color:'#c678f5',
-    aura:'rgba(198,120,245,{a})', shadowColor:'#c678f5', chatBadge:'${svgIc("star",11,"currentColor")}'
+    aura:'rgba(198,120,245,{a})', shadowColor:'#c678f5', chatBadge:svgIc('star',11,'currentColor')
   },
   player: {
     label:'', icon:'', color:'#00ff88',
@@ -1280,10 +1609,9 @@ const MP = {
   _unsubs: [], // store unsubscribe functions for cleanup
 
   subsAll() {
-    if(!FB_READY) { console.warn('[MP] subsAll called but FB not ready'); return; }
+    if(!FB_READY) { return; }
     if(this._subscribed) return;
     this._subscribed = true;
-    console.log('[MP] Subscribing to Firebase multiplayer channels...');
 
     // Helper: subscribe and track for cleanup
     const sub=(path,cb)=>{
@@ -1295,7 +1623,6 @@ const MP = {
     // ── Connection state monitoring ──────────────────────────────
     sub('.info/connected', snap => {
       const connected = snap.val();
-      console.log('[MP] Firebase connection:', connected ? 'ONLINE' : 'OFFLINE');
       if(connected && S.pfId){
         const safeId = S.pfId.replace(/[.#$\[\]]/g,'_');
         window._onDisconnect(fbRef('players/'+safeId)).remove();
@@ -1415,7 +1742,7 @@ const MP = {
         const count=Object.keys(snap.val()||{}).length;
         const badge=document.getElementById('reportsBadge');
         if(!badge)return;
-        if(count>0){badge.style.display='inline';badge.textContent=count;}
+        if(count>0){badge.style.display='inline-flex';badge.textContent=count;}
         else badge.style.display='none';
         const reportsEl=document.getElementById('stReports');
         if(reportsEl&&!reportsEl.classList.contains('hidden'))Staff.loadReports();
@@ -1632,14 +1959,21 @@ function doBan(reason){
 }
 
 // TOAST NOTIFICATIONS
+// Pre-built toast icon SVGs — built once, reused for every notification
+const TOAST_ICONS={
+  ok:svgIc('check-circle-2',13,'currentColor'),
+  er:svgIc('alert-circle',13,'currentColor'),
+  in:svgIc('info',13,'currentColor'),
+  gold:svgIc('circle-dollar-sign',13,'currentColor')
+};
 const Toast={
+  _stack:null,
   show(msg,type='ok',dur=3200){
-    const stack=document.getElementById('toastStack');
+    if(!this._stack)this._stack=document.getElementById('toastStack');
     const t=document.createElement('div');
     t.className=`toast ${type}`;
-    const icons={ok:'${svgIc("check-circle-2",13,"currentColor")}',er:'${svgIc("alert-circle",13,"currentColor")}',in:'${svgIc("info",13,"currentColor")}',gold:'${svgIc("circle-dollar-sign",13,"currentColor")}'};
-    t.innerHTML=`<span class="ic">${icons[type]||'•'}</span><span>${msg}</span>`;
-    stack.appendChild(t);
+    t.innerHTML=`<span class="ic">${TOAST_ICONS[type]||'•'}</span><span>${msg}</span>`;
+    this._stack.appendChild(t);
     setTimeout(()=>{if(t.parentNode)t.remove();},dur+200);
   }
 };
@@ -1718,7 +2052,7 @@ const Cosm={
     }
     this.equip(item.id,cat);
     document.getElementById('pCoinsVal').textContent=S.vc;
-    document.getElementById('wdCoinsDisplay').innerHTML='${svgIc("circle-dollar-sign",13,"currentColor")}'+S.vc;
+    document.getElementById('wdCoinsDisplay').innerHTML=svgIc('circle-dollar-sign',13,'currentColor')+S.vc;
     PFApi.setData({vc:String(S.vc)}).catch(()=>{});
     Toast.show('Purchased '+item.name+'!','gold');
   },
@@ -1732,7 +2066,7 @@ const Wardrobe={
   _animFrame:null,
   open(){
     UI.open('wardrobePanel');
-    document.getElementById('wdCoinsDisplay').innerHTML='${svgIc("circle-dollar-sign",13,"currentColor")}'+S.vc;
+    document.getElementById('wdCoinsDisplay').innerHTML=svgIc('circle-dollar-sign',13,'currentColor')+S.vc;
     this.showCat('skin',document.getElementById('wdCatSkin'));
     this.startPreview();
   },
@@ -1775,9 +2109,9 @@ const Wardrobe={
       const badge = equipped
         ? `<span class="wd-badge eq">ON</span>`
         : isOwnerTag
-          ? `<span class="wd-badge own" style="background:${ownerTag.color};color:#000;">${ownerTag.icon}</span>`
+          ? `<span class="wd-badge own" style="background:${ownerTag.color};color:#000;">${svgIc(ownerTag.icon,10,'#000')}</span>`
           : isStaffTag
-            ? `<span class="wd-badge staff" style="background:${modTag.color};color:#000;">${modTag.icon}</span>`
+            ? `<span class="wd-badge staff" style="background:${modTag.color};color:#000;">${svgIc(modTag.icon,10,'#000')}</span>`
             : isExclTag
               ? `<span class="wd-badge excl">EX</span>`
               : '';
@@ -1786,12 +2120,12 @@ const Wardrobe={
         : !owned && isLocked
           ? `<div class="wd-price" style="color:var(--dim2);font-size:9px">${isOwnerTag?ownerTag.label:isStaffTag?modTag.label:'EXCLUSIVE'}</div>`
           : '';
-      return`<div class="${cls}" onclick="Wardrobe.click('${item.id}','${cat}')">${badge}<span class="wd-icon">${svgIc("${item.icon}",24,"currentColor")}</span><div class="wd-name">${item.name}</div>${price}</div>`;
+      return`<div class="${cls}" onclick="Wardrobe.click('${item.id}','${cat}')">${badge}<span class="wd-icon">${svgIc(item.icon,24,'currentColor')}</span><div class="wd-name">${item.name}</div>${price}</div>`;
     };
 
     if(ownerItems.length && S.role==='owner'){
       const ownerTag = getTag('owner');
-      html='<div class="wd-owner-section"><div class="wd-owner-header">'+ownerTag.icon+' OWNER EXCLUSIVES</div><div class="wd-grid">'+ownerItems.map(renderItem).join('')+'</div></div>';
+      html='<div class="wd-owner-section"><div class="wd-owner-header">'+svgIc(ownerTag.icon,13,ownerTag.color)+' OWNER EXCLUSIVES</div><div class="wd-grid">'+ownerItems.map(renderItem).join('')+'</div></div>';
     }
     html+='<div class="wd-grid">';
     [...staffItems,...exclItems,...shopItems,...freeItems].forEach(item=>{ html+=renderItem(item); });
@@ -1818,7 +2152,7 @@ const Wardrobe={
       Cosm.buy(item,cat);
     } else {
       const tag = pfItemHasTag(id,'owner') ? getTag('owner') : pfItemHasTag(id,'staff') ? getTag('moderator') : null;
-      Toast.show(tag ? tag.icon+' This item is '+tag.label+'-exclusive' : 'This item is exclusive — cannot purchase','er');
+      Toast.show(tag ? svgIc(tag.icon,13,tag.color)+' This item is '+tag.label+'-exclusive' : 'This item is exclusive — cannot purchase','er');
     }
   },
   drawPreview(){
@@ -1863,7 +2197,7 @@ window.Wardrobe=Wardrobe;
 // ─── UPGRADES ───────────────────────────────────────────────
 const Upgrades = {
   open() {
-    document.getElementById('upgCoinsDisplay').innerHTML = '${svgIc("circle-dollar-sign",13,"currentColor")}' + S.vc;
+    document.getElementById('upgCoinsDisplay').innerHTML = svgIc('circle-dollar-sign',13,'currentColor')+S.vc;
     this.render();
     UI.open('upgradesPanel');
   },
@@ -1903,12 +2237,12 @@ const Upgrades = {
           : `${nextTier.desc} — costs ${svgIc("circle-dollar-sign",10,"var(--gold)")}${nextTier.cost}`;
 
       const btnLabel = maxed
-        ? '${svgIc("check-circle-2",12,"currentColor")}MAX LEVEL'
+        ? svgIc('check-circle-2',12,'currentColor')+'MAX LEVEL'
         : `UPGRADE → ${nextTier.label} &nbsp;${svgIc("circle-dollar-sign",11,"var(--gold)")}${nextTier.cost}`;
 
       card.innerHTML = `
         <div class="upg-header">
-          <div class="upg-icon">${svgIc("${upg.icon}",22,"currentColor")}</div>
+          <div class="upg-icon">${svgIc(upg.icon,22,'currentColor')}</div>
           <div>
             <div class="upg-name">${upg.name}</div>
             <div class="upg-desc">${upg.desc}</div>
@@ -1936,7 +2270,7 @@ const Upgrades = {
     S.upgrades[id] = lvl + 1;
     _rebuildUpgCache();
     document.getElementById('pCoins').textContent = '🪙 ' + S.vc;
-    document.getElementById('upgCoinsDisplay').innerHTML = '${svgIc("circle-dollar-sign",13,"currentColor")}' + S.vc;
+    document.getElementById('upgCoinsDisplay').innerHTML = svgIc('circle-dollar-sign',13,'currentColor')+S.vc;
     // Persist
     PFApi.setData({ vc: String(S.vc), upgrades: JSON.stringify(S.upgrades) }).catch(() => {});
     Toast.show(`${upg.name} upgraded to ${tier.label}!`, 'ok');
@@ -1958,7 +2292,6 @@ const UI={
     if(id==='wardrobePanel')Wardrobe.open();
     if(id==='upgradesPanel')Upgrades.open();
     if(id==='staffPanel'&&window.Staff)Staff._updateReportsBadge();
-    // Re-render Lucide icons for any new data-lucide elements
   },
   close(id){
     const el=document.getElementById(id);
@@ -1975,7 +2308,11 @@ const UI={
   msg(id,txt,type){
     const el=document.getElementById(id);
     if(!el)return;
-    el.textContent=txt;el.className=`sm ${type}`;el.style.display='block';
+    el.textContent=txt;
+    // Support both old .sm and new terminal .tmsg elements
+    const isTerm=el.classList.contains('tmsg')||id==='staffMsg'||id==='ownMsg';
+    el.className=isTerm?`tmsg ${type}`:`sm ${type}`;
+    el.style.display='block';
     el.style.animation='none';void el.offsetWidth;el.style.animation='fadeIn .2s ease';
     clearTimeout(el._t);el._t=setTimeout(()=>{el.style.display='none';},4000);
   }
@@ -2242,15 +2579,17 @@ function showProfile(){
 
   // Reset role styling
   pName.className = 'pn';
-  roleLbl.textContent = '';
-  roleLbl.style.color = '';
+  pName.style.color = '';
+  roleLbl.style.display = 'none';
+  roleLbl.innerHTML = '';
   pAv.style.borderColor = '';
   document.getElementById('pCrown').classList.add('hidden');
   document.getElementById('pModB').classList.add('hidden');
 
   if(S.role !== 'player'){
-    roleLbl.innerHTML = '<i data-lucide="' + tag.icon + '" style="width:12px;height:12px;margin-right:4px;vertical-align:middle;"></i>' + tag.label;
-    roleLbl.style.color = tag.color;
+    // Build clean badge pill with SVG icon + label
+    roleLbl.innerHTML = `<span class="role-badge" style="color:${tag.color};background:rgba(0,0,0,.4);">${svgIc(tag.icon,12,tag.color)}&nbsp;${tag.label}</span>`;
+    roleLbl.style.display = 'block';
     pAv.style.borderColor = tag.color;
     pName.style.color = tag.color;
     if(S.role === 'owner'){
@@ -2269,7 +2608,9 @@ function showProfile(){
   }
 
   const skin=CATALOG.skins.find(sk=>sk.id===S.equipped.skin)||CATALOG.skins[0];
-  document.getElementById('pAvIco').innerHTML='${svgIc("zap",22,"currentColor")}';
+  const avIcon = S.role==='owner' ? svgIc('crown',26,tag.color) : S.role==='moderator' ? svgIc('shield-check',24,tag.color) : '🐍';
+  const avEl = document.getElementById('pAvIco');
+  if(avEl) avEl.innerHTML = avIcon;
 }
 
 function doLogout(){
@@ -2339,15 +2680,15 @@ const Staff={
     const el=document.getElementById('liveList');
     if(!el)return;
     if(!FB_READY){
-      el.innerHTML='<div class="no-results">Firebase not connected — host on GitHub Pages for live data</div>';
+      el.innerHTML='<div class="tno-results">// firebase offline — showing local cache</div>';
       this._renderLiveFallback(el);
       return;
     }
-    el.innerHTML='<div class="no-results" style="opacity:.6"><i data-lucide="refresh-cw" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;" class="ic-spin"></i>Loading...</div>';
+    el.innerHTML='<div class="tno-results" style="opacity:.7">$ fetching live players...</div>';
     window._get(fbRef('players')).then(snap=>{
       const all=snap.val()||{};
       const entries=Object.entries(all);
-      if(!entries.length){el.innerHTML='<div class="no-results">No players currently online.</div>';return;}
+      if(!entries.length){el.innerHTML='<div class="tno-results">// no players online right now</div>';return;}
       el.innerHTML='';
       entries.forEach(([id,d],i)=>{
         const warns=WARNS.count(id);
@@ -2356,46 +2697,49 @@ const Staff={
         const card=document.createElement('div');
         card.className='staff-player-card';
         card.style.animationDelay=(i*0.04)+'s';
-        const roleColor=d.role==='owner'?'var(--gold)':d.role==='moderator'?'var(--mod)':'var(--g)';
+        const rCls=d.role==='owner'?'owner':d.role==='moderator'?'moderator':'player';
         card.innerHTML=`
           <div class="spc-dot"></div>
           <div style="flex:1;min-width:0;">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-              <span class="spc-name" style="color:${roleColor}">${esc(d.name)||'Unknown'}</span>
-              <span class="spc-role ${d.role||'player'}">${(d.role||'PLAYER').toUpperCase()}</span>
-              ${warns>0?`<span style="color:var(--gold);font-size:11px;font-weight:700">${warns}W</span>`:''}
-              ${ban?'<span style="color:var(--r);font-size:11px;font-weight:700">BANNED</span>':''}
+            <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+              <span class="spc-name">${esc(d.name)||'unknown'}</span>
+              <span class="spc-role ${rCls}">${(d.role||'player').toUpperCase()}</span>
+              ${warns>0?`<span style="font-family:var(--mono);font-size:9px;color:#e8c832;border:1px solid rgba(232,200,50,.3);padding:1px 5px;">${warns} WARN${warns>1?'S':''}</span>`:''}
+              ${ban?'<span style="font-family:var(--mono);font-size:9px;color:#ff2244;border:1px solid rgba(255,34,68,.3);padding:1px 5px;">BANNED</span>':''}
             </div>
-            <div class="spc-stats">Score: <b style="color:var(--text)">${(d.score||0).toLocaleString()}</b> · Kills: <b style="color:var(--r)">${d.kills||0}</b>${d.streak>2?` ·  <b style="color:var(--gold)">${d.streak}</b>`:''} · <span style="opacity:.5">${id.substring(0,8)}…</span></div>
+            <div class="spc-stats" style="margin-top:4px;">
+              score: <b style="color:#2a6040">${(d.score||0).toLocaleString()}</b> &nbsp;|&nbsp;
+              kills: <b style="color:#ff2244">${d.kills||0}</b> &nbsp;|&nbsp;
+              <span style="color:#0d2618">${id.substring(0,8)}…</span>
+            </div>
           </div>
           <div class="spc-actions" style="flex-direction:column;gap:4px;">
-            <button class="quick-action-btn" style="border-color:rgba(255,34,68,.5);color:var(--r);font-weight:900;letter-spacing:0;" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')">${svgIc("flag",11,"currentColor")}REPORT</button>
-            <button class="quick-action-btn qa-kick" onclick="event.stopPropagation();Staff.quickKick('${esc(id)}','${esc(d.name||'?')}')">KICK</button>
+            <button class="quick-action-btn tchip-r" style="font-size:9px;" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')">⚑ RPT</button>
+            <button class="quick-action-btn tchip-y" onclick="event.stopPropagation();Staff.quickKick('${esc(id)}','${esc(d.name||'?')}')">KICK</button>
             ${ban
-              ? `<button class="quick-action-btn qa-unban" onclick="event.stopPropagation();Staff.quickUnban('${esc(id)}','${esc(d.name||'?')}')">UNBAN</button>`
-              : `<button class="quick-action-btn qa-ban" onclick="event.stopPropagation();Staff.quickBan('${esc(id)}','${esc(d.name||'?')}')">BAN</button>`
+              ? `<button class="quick-action-btn tchip-g" onclick="event.stopPropagation();Staff.quickUnban('${esc(id)}','${esc(d.name||'?')}')">UNBAN</button>`
+              : `<button class="quick-action-btn tchip-r" onclick="event.stopPropagation();Staff.quickBan('${esc(id)}','${esc(d.name||'?')}')">BAN</button>`
             }
           </div>`;
         card.onclick=()=>this.selectPlayer(id,d.name||'?');
         el.appendChild(card);
       });
     }).catch(e=>{
-      el.innerHTML=`<div class="no-results"> Could not load: ${e.message||'unknown error'}</div>`;
+      el.innerHTML=`<div class="tno-results">// error: ${e.message||'unknown'}</div>`;
     });
   },
 
   _renderLiveFallback(el){
-    // Show local MP cache when Firebase unavailable
     const cached=Object.entries(MP.onlinePlayers||{});
     if(!cached.length)return;
     const note=document.createElement('div');
-    note.style.cssText='font-size:11px;color:var(--dim2);margin-bottom:8px;';
-    note.textContent='Showing cached data (offline mode)';
+    note.style.cssText='font-family:var(--mono);font-size:9px;color:#1a4028;margin-bottom:8px;padding-left:4px;';
+    note.textContent='// cached data — firebase offline';
     el.appendChild(note);
     cached.forEach(([id,d])=>{
       const card=document.createElement('div');
       card.className='staff-player-card';
-      card.innerHTML=`<div class="spc-dot offline"></div><div style="flex:1"><span class="spc-name">${d.name||id}</span></div>`;
+      card.innerHTML=`<div class="spc-dot offline"></div><div style="flex:1"><span class="spc-name">${_esc(d.name||id)}</span></div>`;
       el.appendChild(card);
     });
   },
@@ -2462,52 +2806,52 @@ const Staff={
     const warns=WARNS.count(id);
     const isOnline=d.alive===true;
     const esc=s=>(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');
-    const roleColor=d.role==='owner'?'var(--gold)':d.role==='moderator'?'var(--mod)':'var(--g)';
     const rank=getRank(d.score||0);
     const lastSeen=d.lastSeen?_timeAgo(d.lastSeen):'never';
-    const accentColor=isOnline?'var(--g)':ban?'var(--r)':warns>0?'var(--gold)':'var(--border2)';
+    const rCls=d.role==='owner'?'owner':d.role==='moderator'?'moderator':'player';
+    const accentCol=isOnline?'#00ff64':ban?'#ff2244':warns>0?'#e8c832':'#0d2618';
 
     const card=document.createElement('div');
-    card.style.cssText=`background:rgba(0,0,0,.4);border:1px solid var(--border2);border-left:3px solid ${accentColor};border-radius:3px;padding:13px;margin-bottom:8px;animation:fadeInUp .3s ease forwards;cursor:pointer;transition:background .12s;`;
-    card.onmouseenter=()=>{card.style.background='rgba(255,255,255,.03)';};
-    card.onmouseleave=()=>{card.style.background='rgba(0,0,0,.4)';};
+    card.style.cssText=`background:rgba(0,8,3,.6);border:1px solid #0d2618;border-left:2px solid ${accentCol};padding:11px 12px;margin-bottom:6px;cursor:pointer;transition:all .12s;animation:fadeInUp .25s ease forwards;`;
+    card.onmouseenter=()=>{card.style.background='rgba(0,255,80,.025)';card.style.borderColor='#1a4028';};
+    card.onmouseleave=()=>{card.style.background='rgba(0,8,3,.6)';card.style.borderColor='#0d2618';};
     card.innerHTML=`
       <div style="display:flex;align-items:flex-start;gap:10px;">
-        <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;">
-          <div style="width:34px;height:34px;border-radius:2px;background:rgba(0,0,0,.5);border:1px solid ${roleColor}44;display:flex;align-items:center;justify-content:center;font-size:17px;">
-            ${d.role==='owner'?'◆':d.role==='moderator'?'■':'·'}
+        <div style="flex-shrink:0;">
+          <div style="width:32px;height:32px;background:rgba(0,0,0,.5);border:1px solid ${accentCol}33;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;color:${accentCol};">
+            ${d.role==='owner'?'◆':d.role==='moderator'?'■':'◇'}
           </div>
-          <div style="font-family:var(--mono);font-size:8px;padding:1px 4px;border:1px solid ${isOnline?'rgba(57,255,138,.35)':'var(--border)'};color:${isOnline?'var(--g)':'var(--dim2)'};">${isOnline?'● LIVE':'○ OFF'}</div>
+          <div style="font-family:var(--mono);font-size:8px;text-align:center;margin-top:3px;color:${isOnline?'#00ff64':'#1a4028'};letter-spacing:1px;">${isOnline?'LIVE':'OFF'}</div>
         </div>
         <div style="flex:1;min-width:0;">
-          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:6px;">
-            <span style="font-family:var(--mono);font-size:14px;font-weight:700;color:${roleColor}">${esc(d.name)||'Unknown'}</span>
-            <span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:${d.role==='owner'?'rgba(232,200,50,.1)':d.role==='moderator'?'rgba(58,154,238,.1)':'rgba(57,255,138,.07)'};border:1px solid ${roleColor}55;color:${roleColor};">${(d.role||'player').toUpperCase()}</span>
-            ${ban?`<span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:rgba(255,34,68,.1);border:1px solid rgba(255,34,68,.4);color:var(--r);">BANNED</span>`:''}
-            ${warns>0?`<span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:rgba(232,200,50,.1);border:1px solid rgba(232,200,50,.4);color:var(--gold);">${warns}W</span>`:''}
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:5px;">
+            <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:${d.role==='owner'?'#e8c832':d.role==='moderator'?'#00c8ff':'#4aff88'}">${esc(d.name)||'unknown'}</span>
+            <span class="spc-role ${rCls}">${(d.role||'player').toUpperCase()}</span>
+            ${ban?`<span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:rgba(255,34,68,.08);border:1px solid rgba(255,34,68,.3);color:#ff2244;">BANNED</span>`:''}
+            ${warns>0?`<span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:rgba(232,200,50,.06);border:1px solid rgba(232,200,50,.25);color:#e8c832;">${warns}W</span>`:''}
           </div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:7px;">
-            ${[['SCORE',(d.score||0).toLocaleString(),'var(--g)'],['KILLS',d.kills||0,'var(--r)'],['RANK',rank.icon+' '+rank.name,rank.color],['GAMES',d.games||'?','var(--dim2)']].map(([lbl,val,col])=>`
-            <div style="background:rgba(0,0,0,.3);border:1px solid var(--border);padding:4px 5px;text-align:center;border-radius:2px;">
-              <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:${col};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${val}</div>
-              <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);letter-spacing:1px;">${lbl}</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:6px;">
+            ${[['SCORE',(d.score||0).toLocaleString(),'#2a6040'],['KILLS',d.kills||0,'#ff2244'],['RANK',rank.name,rank.color],['SEEN',isOnline?'NOW':lastSeen,'#1a4028']].map(([lbl,val,col])=>`
+            <div style="background:rgba(0,0,0,.3);border:1px solid #0a1e10;padding:3px 5px;text-align:center;">
+              <div style="font-family:var(--mono);font-size:10px;font-weight:700;color:${col};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${val}</div>
+              <div style="font-family:var(--mono);font-size:7px;color:#0d2618;letter-spacing:1px;">${lbl}</div>
             </div>`).join('')}
           </div>
-          <div onclick="event.stopPropagation();Staff.copyId('${esc(id)}')" title="Click to copy PlayFab ID"
-               style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.4);border:1px solid var(--border);padding:4px 8px;cursor:pointer;margin-bottom:${ban||!isOnline?'5px':'0'};">
-            <span style="font-family:var(--mono);font-size:8px;color:var(--dim2);">PFID</span>
-            <span style="font-family:var(--mono);font-size:10px;color:var(--mod);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${id}</span>
-            <span style="opacity:.5;display:inline-flex;">${svgIc("copy",10,"currentColor")}</span>
+          <div onclick="event.stopPropagation();Staff.copyId('${esc(id)}')" title="Copy PlayFab ID"
+               style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.3);border:1px solid #0a1e10;padding:3px 8px;cursor:pointer;">
+            <span style="font-family:var(--mono);font-size:8px;color:#0d2618;">$ID</span>
+            <span style="font-family:var(--mono);font-size:9px;color:#1a4028;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${id}</span>
+            <span style="color:#1a4028;font-size:10px;">⎘</span>
           </div>
-          ${ban?`<div style="font-family:var(--mono);font-size:9px;color:var(--r);margin-top:3px;">${esc((ban.reason||'no reason').substring(0,45))}</div>`:''}
-          ${!isOnline&&d.lastSeen?`<div style="font-family:var(--mono);font-size:9px;color:var(--dim2);margin-top:3px;">Last seen: ${lastSeen}</div>`:''}
+          ${ban?`<div style="font-family:var(--mono);font-size:9px;color:#ff2244;margin-top:4px;border-left:2px solid #ff224433;padding-left:6px;">// banned: ${esc((ban.reason||'no reason').substring(0,45))}</div>`:''}
         </div>
-        <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;">
-          <button class="quick-action-btn" style="border-color:rgba(58,154,238,.5);color:var(--mod);min-width:54px;font-size:9px;" onclick="event.stopPropagation();Staff.idToTools('${esc(id)}','${esc(d.name||'?')}')">${svgIc("settings",10,"currentColor")}TOOLS</button>
-          ${isOnline?`<button class="quick-action-btn qa-kick" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickKick('${esc(id)}','${esc(d.name||'?')}')">KICK</button>`:''}
-          ${ban?`<button class="quick-action-btn qa-unban" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickUnban('${esc(id)}','${esc(d.name||'?')}')">UNBAN</button>`
-               :`<button class="quick-action-btn qa-ban" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickBan('${esc(id)}','${esc(d.name||'?')}')">BAN</button>`}
-          ${isOnline?`<button class="quick-action-btn" style="border-color:rgba(255,34,68,.4);color:var(--r);font-size:9px;" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')">${svgIc("flag",10,"currentColor")}RPT</button>`:''}
+        <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+          <button class="quick-action-btn tchip-b" style="font-size:9px;min-width:52px;" onclick="event.stopPropagation();Staff.idToTools('${esc(id)}','${esc(d.name||'?')}')">TOOLS</button>
+          ${isOnline?`<button class="quick-action-btn tchip-y" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickKick('${esc(id)}','${esc(d.name||'?')}')">KICK</button>`:''}
+          ${ban
+            ?`<button class="quick-action-btn tchip-g" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickUnban('${esc(id)}','${esc(d.name||'?')}')">UNBAN</button>`
+            :`<button class="quick-action-btn tchip-r" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickBan('${esc(id)}','${esc(d.name||'?')}')">BAN</button>`}
+          ${isOnline?`<button class="quick-action-btn tchip-r" style="font-size:9px;" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')">⚑ RPT</button>`:''}
         </div>
       </div>`;
     card.onclick=()=>this.idToTools(id,d.name||'?');
@@ -2516,18 +2860,13 @@ const Staff={
 
   _renderResults(el,matches,context){
     if(!matches.length){
-      el.innerHTML=`<div style="text-align:center;padding:28px;font-family:var(--mono);">
-        <div style="margin-bottom:8px;">${svgIc("search",28,"var(--dim2)")}</div>
-        <div style="color:var(--text);font-size:12px;">No player found</div>
-        <div style="color:var(--dim2);font-size:10px;margin-top:5px;">Try a partial name or their PlayFab ID</div>
-        <div style="color:var(--dim2);font-size:9px;margin-top:3px;opacity:.6;">${context||''}</div>
-      </div>`;
+      el.innerHTML=`<div class="tno-results">// no results for: ${_esc(context||'')}</div>`;
       return;
     }
     const online=matches.filter(([,d])=>d.alive===true).length;
-    el.innerHTML=`<div style="font-family:var(--mono);font-size:10px;color:var(--dim2);margin-bottom:10px;display:flex;gap:10px;">
-      <span><b style="color:var(--text)">${matches.length}</b> player${matches.length>1?'s':''} found</span>
-      ${online?`<span style="color:var(--g)">● ${online} online now</span>`:''}
+    el.innerHTML=`<div style="font-family:var(--mono);font-size:9px;color:#1a4028;margin-bottom:10px;letter-spacing:1px;">
+      // found <b style="color:#2a6040">${matches.length}</b> player${matches.length>1?'s':''}
+      ${online?`<span style="color:#00ff64;margin-left:8px;">● ${online} live</span>`:''}
     </div>`;
     matches.forEach(([id,d],i)=>{
       const card=this._renderPlayerCard(id,d);
@@ -2541,8 +2880,8 @@ const Staff={
     const q=(document.getElementById('lookupQ')?.value||'').trim();
     const el=document.getElementById('lookupRes');
     if(!el)return;
-    if(!q){el.innerHTML='<div style="font-family:var(--mono);font-size:11px;color:var(--dim2);opacity:.5;padding:8px;">Type a name or PlayFab ID — searches online AND offline players</div>';return;}
-    el.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--dim2);padding:12px;display:flex;align-items:center;gap:8px;"><span style="display:inline-block;animation:spin .7s linear infinite;">⟳</span> Searching all sources…</div>`;
+    if(!q){el.innerHTML='<div class="tno-results">// enter search query...</div>';return;}
+    el.innerHTML='<div class="tno-results">$ searching all sources...</div>';
     this._fetchAllSources().then(all=>{
       const ql=q.toLowerCase();
       const matches=Object.entries(all).filter(([id,d])=>
@@ -2561,19 +2900,27 @@ const Staff={
     const el=document.getElementById('logList');
     if(!el)return;
     const logs=AL.get();
-    if(!logs.length){el.innerHTML='<div class="no-results">No actions recorded yet.</div>';return;}
-    const colorMap={BAN:'var(--r)',KICK:'var(--gold)',WARN:'var(--gold)',MUTE:'var(--pur)',GRANT:'var(--g)',UNBAN:'var(--g)',BROADCAST:'var(--mod)',CMD:'var(--mod)'};
-    el.innerHTML=logs.slice(0,80).map(l=>`
-      <div class="log-entry">
-        <div class="log-dot" style="background:${colorMap[l.action]||'var(--dim2)'}"></div>
-        <div style="color:var(--dim2);font-size:10px;white-space:nowrap;">${new Date(l.time).toLocaleTimeString()}</div>
-        <div style="flex:1;">
-          <span style="color:var(--mod);font-weight:700">${l.actor||'?'}</span>
-          <span style="color:${colorMap[l.action]||'var(--text)'}"> ${l.action}</span>
-          ${l.target?`<span style="color:var(--text)"> → ${l.target}</span>`:''}
-          ${l.detail?`<span style="color:var(--dim2)"> (${(l.detail+'').substring(0,50)})</span>`:''}
+    if(!logs.length){el.innerHTML='<div class="tno-results">// no actions recorded yet</div>';return;}
+    const colorMap={
+      BAN:'#ff2244', KICK:'#e8c832', WARN:'#e8c832', MUTE:'#b87af0',
+      GRANT:'#00ff64', UNBAN:'#00ff64', BROADCAST:'#00c8ff', CMD:'#00c8ff', REPORT:'#ff8800'
+    };
+    const symMap={BAN:'⊗',KICK:'⇥',WARN:'⚠',MUTE:'◉',GRANT:'⊕',UNBAN:'✓',BROADCAST:'⊛',CMD:'▶',REPORT:'⚑'};
+    el.innerHTML=logs.slice(0,80).map(l=>{
+      const col=colorMap[l.action]||'#1a4028';
+      const sym=symMap[l.action]||'·';
+      return`<div class="log-entry" style="border-left-color:${col}33;">
+        <div class="log-dot" style="background:${col};box-shadow:0 0 4px ${col}66;"></div>
+        <div style="color:#1a4028;font-size:9px;white-space:nowrap;flex-shrink:0;">${new Date(l.time).toLocaleTimeString()}</div>
+        <div style="flex:1;font-family:var(--mono);font-size:10px;">
+          <span style="color:${col};font-weight:700;">${sym} ${l.action}</span>
+          <span style="color:#2a6040;margin:0 5px;">by</span>
+          <span style="color:#4aff88;">${_esc(l.actor||'?')}</span>
+          ${l.target?`<span style="color:#1a4028;"> → </span><span style="color:#2a6040;">${_esc(l.target+'')}</span>`:''}
+          ${l.detail?`<span style="color:#0d2618;"> // ${_esc((l.detail+'').substring(0,50))}</span>`:''}
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   },
 
   /* ---------- ACTION HELPERS ---------- */
@@ -2704,14 +3051,14 @@ const Staff={
     document.getElementById('idSelfId').textContent   = S.pfId        || '—';
     document.getElementById('idSelfRole').textContent = (S.role||'player').toUpperCase();
     document.getElementById('idlookupQ').value = '';
-    document.getElementById('idlookupRes').innerHTML  = '<div class="no-results" style="opacity:.6">Type a name or PlayFab ID and hit FIND.</div>';
+    document.getElementById('idlookupRes').innerHTML  = '<div class="tno-results">// awaiting query...</div>';
   },
 
   idLookup(){
     const q=(document.getElementById('idlookupQ')?.value||'').trim();
     const el=document.getElementById('idlookupRes');
-    if(!q){el.innerHTML='<div style="font-family:var(--mono);font-size:11px;color:var(--dim2);opacity:.5;padding:8px;">Enter a display name or PlayFab ID — finds online + offline players.</div>';return;}
-    el.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--dim2);padding:12px;display:flex;align-items:center;gap:8px;"><span style="display:inline-block;animation:spin .7s linear infinite;">⟳</span> Searching all records…</div>`;
+    if(!q){el.innerHTML='<div class="tno-results">// enter a name or id to resolve</div>';return;}
+    el.innerHTML='<div class="tno-results">$ resolving id...</div>';
     this._fetchAllSources().then(all=>{
       const ql=q.toLowerCase();
       const hits=Object.entries(all).filter(([id,d])=>
@@ -2822,41 +3169,46 @@ const Staff={
   loadReports(){
     const el=document.getElementById('reportsList');
     if(!el)return;
-    el.innerHTML='<div class="no-results" style="opacity:.6"><i data-lucide="refresh-cw" style="width:12px;height:12px;margin-right:4px;vertical-align:middle;" class="ic-spin"></i>Loading reports...</div>';
+    el.innerHTML='<div class="tno-results">$ fetching reports...</div>';
 
     const renderReports=(reports)=>{
-      if(!reports.length){el.innerHTML='<div class="no-results">No reports yet.</div>';return;}
+      if(!reports.length){el.innerHTML='<div class="tno-results">// no reports on file</div>';return;}
       el.innerHTML='';
       reports.forEach((r,i)=>{
         const div=document.createElement('div');
-        div.style.cssText='background:rgba(0,0,0,.35);border:1px solid var(--border2);border-left:3px solid var(--r);border-radius:2px;padding:12px;margin-bottom:8px;animation:fadeInUp .3s ease forwards;';
+        div.style.cssText='background:rgba(20,0,0,.5);border:1px solid #1a0808;border-left:2px solid #ff224488;padding:11px 12px;margin-bottom:6px;animation:fadeInUp .25s ease forwards;';
         div.style.animationDelay=(i*0.04)+'s';
-        const t=r.timestamp?new Date(r.timestamp).toLocaleString():r.reportedAt||'Unknown';
+        const t=r.timestamp?new Date(r.timestamp).toLocaleString():r.reportedAt||'unknown';
+        const safeName=(r.reportedName||'').replace(/'/g,"\\'");
+        const safeId=(r.reportedId||'').replace(/'/g,"\\'");
         div.innerHTML=`
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
-            <div>
-              <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--r);">${svgIc("flag",12,"var(--r)")}${r.reportedName||'Unknown'}</span>
-              <span style="font-family:var(--mono);font-size:10px;color:var(--dim2);margin-left:8px;">${r.role||'player'}</span>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:7px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="color:#ff2244;font-size:14px;">⚑</span>
+              <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:#ff4466;">${_esc(r.reportedName||'Unknown')}</span>
+              <span style="font-family:var(--mono);font-size:9px;padding:1px 5px;background:rgba(255,34,68,.08);border:1px solid rgba(255,34,68,.2);color:#ff2244;">${r.role||'player'}</span>
             </div>
-            <span style="font-family:var(--mono);font-size:10px;color:var(--dim2);white-space:nowrap;">${t}</span>
+            <span style="font-family:var(--mono);font-size:9px;color:#1a4028;white-space:nowrap;">${t}</span>
           </div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--gold);margin-bottom:8px;">Reason: <b style="color:var(--text)">${r.reason||'—'}</b></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-family:var(--mono);font-size:10px;color:var(--dim2);margin-bottom:8px;">
-            <span>Score: <b style="color:var(--text)">${(r.score||0).toLocaleString()}</b></span>
-            <span>Kills: <b style="color:var(--r)">${r.kills||0}</b></span>
-            <span>Streak: <b style="color:var(--gold)">${r.streak||0}</b></span>
-            <span>Len: <b style="color:var(--text)">${r.length||0}</b></span>
-            <span>Warns: <b style="color:var(--gold)">${r.warnCount||0}</b></span>
-            <span>Banned: <b style="color:${r.isBanned?'var(--r)':'var(--dim2)'}">${r.isBanned?'YES':'NO'}</b></span>
+          <div style="font-family:var(--mono);font-size:10px;color:#1a4028;margin-bottom:7px;border-left:2px solid #ff224433;padding-left:8px;">
+            // reason: <span style="color:#e8c832;">${_esc(r.reason||'—')}</span>
           </div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--dim2);background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:2px;padding:6px;cursor:pointer;word-break:break-all;" onclick="Staff.copyId('${r.reportedId||''}')">
-            PFID: <span style="color:var(--mod);">${r.reportedId||'—'}</span> ${svgIc("copy",10,"currentColor")}
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;font-family:var(--mono);font-size:9px;color:#0d2618;margin-bottom:7px;">
+            <span>score: <b style="color:#2a6040">${(r.score||0).toLocaleString()}</b></span>
+            <span>kills: <b style="color:#ff2244">${r.kills||0}</b></span>
+            <span>streak: <b style="color:#e8c832">${r.streak||0}</b></span>
+            <span>length: <b style="color:#1a4028">${r.length||0}</b></span>
+            <span>warns: <b style="color:#e8c832">${r.warnCount||0}</b></span>
+            <span>banned: <b style="color:${r.isBanned?'#ff2244':'#0d2618'}">${r.isBanned?'YES':'NO'}</b></span>
           </div>
-          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
-            <button class="quick-action-btn qa-ban" onclick="Staff.quickBan('${r.reportedId||''}','${(r.reportedName||'').replace(/'/g,"\\'")}')">BAN</button>
-            <button class="quick-action-btn qa-kick" onclick="Staff.quickKick('${r.reportedId||''}','${(r.reportedName||'').replace(/'/g,"\\'")}')">KICK</button>
-            <button class="quick-action-btn" style="border-color:rgba(58,154,238,.4);color:var(--mod);" onclick="Staff.idToTools('${r.reportedId||''}','${(r.reportedName||'').replace(/'/g,"\\'")}')">${svgIc("settings",10,"currentColor")}TOOLS</button>
-            <span style="font-family:var(--mono);font-size:10px;color:var(--dim2);align-self:center;margin-left:auto;">Reported by: ${r.reportedBy||'?'}</span>
+          <div style="font-family:var(--mono);font-size:9px;color:#0d2618;background:rgba(0,0,0,.3);border:1px solid #0a1e10;padding:5px 8px;cursor:pointer;word-break:break-all;margin-bottom:7px;" onclick="Staff.copyId('${safeId}')">
+            $ID: <span style="color:#1a4028;">${r.reportedId||'—'}</span> <span style="color:#0d2618;">⎘</span>
+          </div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;">
+            <button class="quick-action-btn tchip-r" style="font-size:9px;" onclick="Staff.quickBan('${safeId}','${safeName}')">BAN</button>
+            <button class="quick-action-btn tchip-y" style="font-size:9px;" onclick="Staff.quickKick('${safeId}','${safeName}')">KICK</button>
+            <button class="quick-action-btn tchip-b" style="font-size:9px;" onclick="Staff.idToTools('${safeId}','${safeName}')">TOOLS</button>
+            <span style="font-family:var(--mono);font-size:9px;color:#0d2618;margin-left:auto;">by: ${_esc(r.reportedBy||'?')}</span>
           </div>`;
         el.appendChild(div);
       });
@@ -2866,7 +3218,6 @@ const Staff={
       window._get(fbRef('reports')).then(snap=>{
         const data=snap.val()||{};
         const list=Object.values(data).sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
-        // Merge with local reports
         const local=JSON.parse(localStorage.getItem('vn5_reports')||'[]');
         const merged=[...list,...local].sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
         renderReports(merged);
@@ -2884,10 +3235,8 @@ const Staff={
   clearReports(){
     if(!confirm('Clear ALL reports? This cannot be undone.'))return;
     localStorage.removeItem('vn5_reports');
-    if(FB_READY){
-      fbRemove('reports').catch(()=>{});
-    }
-    document.getElementById('reportsList').innerHTML='<div class="no-results">No reports yet.</div>';
+    if(FB_READY){ fbRemove('reports').catch(()=>{}); }
+    document.getElementById('reportsList').innerHTML='<div class="tno-results">// reports cleared</div>';
     const badge=document.getElementById('reportsBadge');
     if(badge){badge.style.display='none';badge.textContent='0';}
     Toast.show('Reports cleared','ok');
@@ -2900,7 +3249,7 @@ const Staff={
       const count=Object.keys(snap.val()||{}).length;
       const badge=document.getElementById('reportsBadge');
       if(!badge)return;
-      if(count>0){badge.style.display='inline';badge.textContent=count;}
+      if(count>0){badge.style.display='inline-flex';badge.textContent=count;}
       else badge.style.display='none';
     }).catch(()=>{});
   }
@@ -2982,7 +3331,7 @@ const Own={
     if(isSelf){
       S.vc+=amt;
       document.getElementById('pCoinsVal').textContent=S.vc;
-      document.getElementById('wdCoinsDisplay').innerHTML='${svgIc("circle-dollar-sign",13,"currentColor")}'+S.vc;
+      document.getElementById('wdCoinsDisplay').innerHTML=svgIc('circle-dollar-sign',13,'currentColor')+S.vc;
       PFApi.setData({vc:String(S.vc)}).catch(()=>{});
       Toast.show('+'+amt+' coins added!','gold');
       UI.msg('ownMsg','+'+amt+' coins added!','ok');
@@ -3090,13 +3439,15 @@ function sendChat(msg){
   if(!FB_READY||!msg.trim())return;
   window._push(fbRef('chat'),{name:S.displayName,role:S.role,msg:msg.trim().substring(0,80),t:Date.now()});
 }
+let _chatMsgsEl=null;
+const _esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 function renderChat(){
-  const el=document.getElementById('chatMsgs');
-  el.innerHTML=MP.chatMessages.slice(-8).map(m=>{
+  if(!_chatMsgsEl)_chatMsgsEl=document.getElementById('chatMsgs');
+  _chatMsgsEl.innerHTML=MP.chatMessages.slice(-8).map(m=>{
     const tag=getTag(m.role);
-    return`<div class="chatmsg"><span style="color:${tag.color}">${tag.chatBadge||''}${m.name||'?'}: </span><span style="color:var(--text)">${m.msg}</span></div>`;
+    return`<div class="chatmsg"><span style="color:${tag.color}">${tag.chatBadge||''}<b>${_esc(m.name)}</b>: </span><span style="color:var(--text)">${_esc(m.msg)}</span></div>`;
   }).join('');
-  el.scrollTop=el.scrollHeight;
+  _chatMsgsEl.scrollTop=_chatMsgsEl.scrollHeight;
 }
 
 // SCOREBOARD
@@ -3119,14 +3470,17 @@ function updateScoreboard(){
   }).join('');
 }
 
-// ─── KILL FEED ────────────────────────────────────────
+// Pre-built kill feed icon strings
+const _KF_SKULL = svgIc('skull',11,'var(--r)');
+const _KF_SWORD = svgIc('swords',11,'var(--gold)');
+let _killfeedEl = null;
 function addKillFeed(killer,victim,isPlayer=false){
-  const feed=document.getElementById('killfeed');
+  if(!_killfeedEl)_killfeedEl=document.getElementById('killfeed');
   const el=document.createElement('div');
   el.className='kf-entry';
-  el.innerHTML=`<span class="kf-icon">${isPlayer?'>':'x'}</span><span class="kf-killer">${killer}</span><span style="color:var(--dim2);margin:0 4px">killed</span><span class="kf-victim">${victim}</span>`;
-  feed.insertBefore(el,feed.firstChild);
-  while(feed.children.length>6)feed.lastChild.remove();
+  el.innerHTML=`<span class="kf-icon">${isPlayer?_KF_SWORD:_KF_SKULL}</span><span class="kf-killer">${killer}</span><span style="color:var(--dim2);margin:0 4px">›</span><span class="kf-victim">${victim}</span>`;
+  _killfeedEl.insertBefore(el,_killfeedEl.firstChild);
+  while(_killfeedEl.children.length>6)_killfeedEl.lastChild.remove();
   setTimeout(()=>{el.style.transition='opacity .5s';el.style.opacity='0';setTimeout(()=>el.remove(),500);},4000);
 }
 
@@ -3178,10 +3532,10 @@ const GS={
   flash:{a:0,c:'#fff'},
   boss:null,
   boostStamina:100, shielded:false, shieldTimer:0, speedOrbTimer:0,
-  // new fun mechanics
   combo:1, comboTimer:0, foodEaten:0, magnetTimer:0, bombImmune:0,
   lastMilestone:0,
-  _fpsFrames:0, _fpsLast:0, fps:0
+  _fpsFrames:0, _fpsLast:0, fps:0,
+  _trailFxCache:null, _trailFxId:null
 };
 
 const Game={
@@ -3195,6 +3549,8 @@ const Game={
     GS.boss=null;GS.flash.a=0;GS.boosting=false;
     GS.boostStamina=100;GS.shielded=false;GS.shieldTimer=0;GS.speedOrbTimer=0;
     GS.combo=1;GS.comboTimer=0;GS.foodEaten=0;GS.magnetTimer=0;GS.bombImmune=0;GS.lastMilestone=0;
+    GS._trailFxCache=null;GS._trailFxId=null; // reset trail cache for new game
+    this._sessionId=(this._sessionId||0)+1; // increment session so stale timeouts self-cancel
     document.getElementById('ghostOverlay').style.display='none';
     document.getElementById('miniOverlay').style.display='none';
     canvas.width=window.innerWidth;canvas.height=window.innerHeight;
@@ -3288,7 +3644,7 @@ const Game={
     document.getElementById('goKills').textContent=GS.kills;
     const mins=Math.floor(t/60),secs=t%60;
     document.getElementById('goTime').textContent=mins>0?`${mins}m ${secs}s`:t+'s';
-    document.getElementById('goKiller').textContent=killer?'${svgIc("skull",12,"currentColor")}Eliminated by '+killer:'${svgIc("skull",12,"currentColor")}Died';
+    document.getElementById('goKiller').innerHTML=killer?svgIc('skull',12,'currentColor')+'Eliminated by '+killer:svgIc('skull',12,'currentColor')+'Died';
     document.getElementById('goCoins').innerHTML='+'+coins+' ${svgIc("circle-dollar-sign",12,"var(--gold)")}';
 
     // New best
@@ -3872,7 +4228,7 @@ function checkCollisions(){
       const br=b.radius*.8, rSum2=(pr+br)*(pr+br);
       for(let i=5;i<b.segments.length;i+=2){
         const s=b.segments[i],dx=phx-s.x,dy=phy-s.y;
-        if(dx*dx+dy*dy<rSum2){spawnKillFX(phx,phy,S.equipped.kill);p.alive=false;for(let j=0;j<p.segments.length;j+=3)spawnFoodAt(p.segments[j].x,p.segments[j].y);GS.killStreak=0;setTimeout(()=>Game.end(b.name),600);return;}
+        if(dx*dx+dy*dy<rSum2){spawnKillFX(phx,phy,S.equipped.kill);p.alive=false;for(let j=0;j<p.segments.length;j+=3)spawnFoodAt(p.segments[j].x,p.segments[j].y);GS.killStreak=0;const _sid=Game._sessionId;setTimeout(()=>{if(Game._sessionId===_sid)Game.end(b.name);},600);return;}
       }
     }
   }
@@ -3902,7 +4258,7 @@ function checkCollisions(){
         if(dx*dx+dy*dy<rSum2){
           spawnKillFX(phx,phy,S.equipped.kill);p.alive=false;
           for(let j=0;j<p.segments.length;j+=3)spawnFoodAt(p.segments[j].x,p.segments[j].y);
-          GS.killStreak=0;setTimeout(()=>Game.end(rp.name),600);return;
+          GS.killStreak=0;const _sid=Game._sessionId;setTimeout(()=>{if(Game._sessionId===_sid)Game.end(rp.name);},600);return;
         }
       }
     }
@@ -3946,16 +4302,17 @@ function showMilestone(txt){
 }
 
 let _lastScoreFloat=0;
+let _hudEl=null; // cached once for spawnScoreFloat
 function spawnScoreFloat(wx,wy,txt,color){
   const now=performance.now();
-  if(now-_lastScoreFloat<80)return; // max ~12 floats/sec to prevent DOM storm
+  if(now-_lastScoreFloat<80)return;
   _lastScoreFloat=now;
-  const hud=document.getElementById('hud');
+  if(!_hudEl)_hudEl=document.getElementById('hud');
   const el=document.createElement('div');
   el.className='score-float';
   el.textContent=txt;
   el.style.cssText=`color:${color};font-size:14px;left:${canvas.width/2+(wx-GS.camX)-20}px;top:${canvas.height/2+(wy-GS.camY)-30}px;`;
-  hud.appendChild(el);
+  _hudEl.appendChild(el);
   setTimeout(()=>el.remove(),950);
 }
 
@@ -4238,12 +4595,10 @@ canvas.addEventListener('contextmenu',e=>e.preventDefault());
 
 // INIT
 window.addEventListener('DOMContentLoaded',async()=>{
-  // Init Lucide icons for any static HTML icons
-  if(window.lucide) window.lucide.createIcons();
   const bar=document.getElementById('ldBar'),txt=document.getElementById('ldTxt');
   const tick=async(p,m)=>{bar.style.width=p+'%';txt.textContent=m;await new Promise(r=>setTimeout(r,220));};
 
-  await tick(8,'> BOOTING VENOM v10...');
+  await tick(8,'> BOOTING VENOM v11...');
   await tick(20,'> LOADING PLAYFAB SDK...');
 
   let pfOk=false;
