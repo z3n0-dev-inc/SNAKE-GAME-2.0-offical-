@@ -1233,9 +1233,11 @@ let FB_READY = false;
 const _fbQueue = []; // queue writes that happen before Firebase is ready
 async function waitFB(){
   return new Promise(res=>{
-    if(window._fbReady){FB_READY=true;res();return;}
-    const t=setInterval(()=>{if(window._fbReady){clearInterval(t);FB_READY=true;_flushFbQueue();res();}},100);
-    setTimeout(()=>{clearInterval(t);if(window._fbReady){FB_READY=true;_flushFbQueue();}res();},12000);
+    // Check both flags — _fbReady set by module, _db set as side-effect
+    const isReady=()=>!!(window._fbReady&&window._db&&window._ref);
+    if(isReady()){FB_READY=true;res();return;}
+    const t=setInterval(()=>{if(isReady()){clearInterval(t);FB_READY=true;_flushFbQueue();res();}},80);
+    setTimeout(()=>{clearInterval(t);if(isReady()){FB_READY=true;_flushFbQueue();}res();},12000);
   });
 }
 function _flushFbQueue(){
@@ -1275,6 +1277,7 @@ const MP = {
   serverEvents: {},
   chatMessages: [],
   _subscribed: false,
+  _unsubs: [], // store unsubscribe functions for cleanup
 
   subsAll() {
     if(!FB_READY) { console.warn('[MP] subsAll called but FB not ready'); return; }
@@ -1282,12 +1285,18 @@ const MP = {
     this._subscribed = true;
     console.log('[MP] Subscribing to Firebase multiplayer channels...');
 
+    // Helper: subscribe and track for cleanup
+    const sub=(path,cb)=>{
+      const r=fbRef(path);
+      window._onValue(r,cb);
+      this._unsubs.push(()=>window._off(r));
+    };
+
     // ── Connection state monitoring ──────────────────────────────
-    window._onValue(fbRef('.info/connected'), snap => {
+    sub('.info/connected', snap => {
       const connected = snap.val();
       console.log('[MP] Firebase connection:', connected ? 'ONLINE' : 'OFFLINE');
       if(connected && S.pfId){
-        // Re-register onDisconnect every time we reconnect
         const safeId = S.pfId.replace(/[.#$\[\]]/g,'_');
         window._onDisconnect(fbRef('players/'+safeId)).remove();
         window._onDisconnect(fbRef('registry/'+safeId+'/alive')).set(false);
@@ -1297,19 +1306,17 @@ const MP = {
     let _sbTimer = null;
     const _debouncedSB = () => { clearTimeout(_sbTimer); _sbTimer = setTimeout(updateScoreboard, 400); };
 
-    window._onValue(fbRef('players'), snap => {
+    sub('players', snap => {
       const all = snap.val() || {};
       const now = Date.now();
       MP.onlinePlayers = {};
       const safeMyId = S.pfId ? S.pfId.replace(/[.#$\[\]]/g,'_') : null;
       for(const [id, data] of Object.entries(all)) {
         if(id === safeMyId || id === S.pfId) continue;
-        // Drop stale entries (no update in 15s)
         if(!data || (data.t && (now - data.t) > 15000)) { delete MP.remotePlayers[id]; continue; }
         if(data.alive === false) { delete MP.remotePlayers[id]; continue; }
         MP.onlinePlayers[id] = {name:data.name||'?', score:data.score||0, kills:data.kills||0, role:data.role||'player'};
         const segs = data.segs ? data.segs.split(';').map(s=>{const[x,y]=s.split(',');return{x:+x,y:+y};}) : [];
-        // Reuse existing remote player object to avoid GC pressure — only rebuild skin if changed
         const existing = MP.remotePlayers[id];
         const skinId = data.skinId || 'skin_default';
         const skin = (existing && existing._skinId === skinId) ? existing.skin : (CATALOG.skins.find(sk=>sk.id===skinId)||CATALOG.skins[0]);
@@ -1329,7 +1336,7 @@ const MP = {
           };
         }
       }
-      const total = Object.keys(MP.onlinePlayers).length + 1; // +1 = self
+      const total = Object.keys(MP.onlinePlayers).length + 1;
       const onlineEl = document.getElementById('onlineCount');
       if(onlineEl) onlineEl.textContent = total + ' ONLINE';
       if(Game.running){
@@ -1339,7 +1346,7 @@ const MP = {
       _debouncedSB();
     });
 
-    window._onValue(fbRef('serverEvents'), snap => {
+    sub('serverEvents', snap => {
       MP.serverEvents = snap.val() || {};
       const ev = MP.serverEvents;
       if(ev.doubleXP !== GS.doubleXP) {
@@ -1380,7 +1387,7 @@ const MP = {
       }
     });
 
-    window._onValue(fbRef('chat'), snap => {
+    sub('chat', snap => {
       const msgs = snap.val()||{};
       const arr = Object.values(msgs).sort((a,b)=>(a.t||0)-(b.t||0)).slice(-20);
       MP.chatMessages = arr;
@@ -1389,30 +1396,27 @@ const MP = {
 
     if(S.pfId) {
       const safeId = S.pfId.replace(/[.#$\[\]]/g,'_');
-      window._onValue(fbRef('kicks/'+safeId), snap => {
+      sub('kicks/'+safeId, snap => {
         const k = snap.val();
         if(k){ doKick(k.reason||'Kicked by staff.'); fbRemove('kicks/'+safeId); }
       });
-      window._onValue(fbRef('bans/'+safeId), snap => {
+      sub('bans/'+safeId, snap => {
         const b = snap.val();
         if(b && b.active) doBan(b.reason||'Banned by staff.');
       });
-      window._onValue(fbRef('mutes/'+safeId), snap => {
+      sub('mutes/'+safeId, snap => {
         const m = snap.val();
         GS.muted = !!(m && m.until && m.until > Date.now());
       });
     }
-    // Show connected toast
     setTimeout(()=>Toast.show('Multiplayer connected','ok'), 400);
-    // Live reports counter — only listen if staff
     if(S.role==='moderator'||S.role==='owner'){
-      window._onValue(fbRef('reports'), snap=>{
+      sub('reports', snap=>{
         const count=Object.keys(snap.val()||{}).length;
         const badge=document.getElementById('reportsBadge');
         if(!badge)return;
         if(count>0){badge.style.display='inline';badge.textContent=count;}
         else badge.style.display='none';
-        // If reports tab is currently open, auto-refresh it
         const reportsEl=document.getElementById('stReports');
         if(reportsEl&&!reportsEl.classList.contains('hidden'))Staff.loadReports();
       });
@@ -1425,11 +1429,13 @@ const MP = {
     const safeId = S.pfId.replace(/[.#$\[\]]/g,'_');
     const hx = Math.round(player.segments[0]?.x||0);
     const hy = Math.round(player.segments[0]?.y||0);
-    // Skip write if position hasn't changed more than 1px and we pushed recently
+    const aliveNow = !!(player.alive);
+    // Skip write only if position, score AND alive state are all unchanged
     if(this._lastPush){
       const dx=Math.abs(hx-this._lastPush.x), dy=Math.abs(hy-this._lastPush.y);
       const dScore=Math.abs(GS.score-this._lastPush.score);
-      if(dx<2&&dy<2&&dScore<5&&player.alive===this._lastPush.alive) return;
+      // Always push alive state changes immediately — never skip those
+      if(aliveNow===this._lastPush.alive && dx<2 && dy<2 && dScore<5) return;
     }
     const segs = [];
     if(player.segments){
@@ -1437,10 +1443,10 @@ const MP = {
         segs.push(Math.round(player.segments[i].x)+','+Math.round(player.segments[i].y));
       }
     }
-    this._lastPush = {x:hx, y:hy, score:GS.score, alive:player.alive};
+    this._lastPush = {x:hx, y:hy, score:GS.score, alive:aliveNow};
     fbUpdate('players/'+safeId, {
       name:     S.displayName,
-      alive:    !!(player.alive),
+      alive:    aliveNow,
       angle:    +( player.angle||0).toFixed(3),
       segs:     segs.join(';'),
       skinId:   S.equipped.skin,
@@ -1462,8 +1468,15 @@ const MP = {
       fbRemove('players/'+safeId);
     }
     clearInterval(syncInterval);
+    // Unsubscribe all Firebase listeners — prevents leaks on logout/page reload
+    for(const unsub of this._unsubs){ try{unsub();}catch(e){} }
+    this._unsubs = [];
     this._subscribed = false;
     this._lastPush = null;
+    // Clear remote state so stale players don't linger after re-login
+    this.remotePlayers = {};
+    this.onlinePlayers = {};
+    this.chatMessages = [];
   }
 };
 
