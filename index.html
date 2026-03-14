@@ -6,6 +6,7 @@
 <title>VENOM v10 — Multiplayer Snake</title>
 <!-- VENOM v10 — Upgrades, role tags, multiplayer fixes, lag reduction -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 /* =====================================================
    VENOM v4 — OVERHAULED
@@ -444,6 +445,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 .upg-btn{width:100%;padding:7px;border-radius:2px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;border:1px solid rgba(57,255,138,.35);background:transparent;color:var(--g);transition:all .15s;}
 .upg-btn:hover:not(:disabled){background:rgba(57,255,138,.08);border-color:var(--g);}
 .upg-btn:disabled{opacity:.35;cursor:not-allowed;color:var(--dim2);border-color:var(--border);}
+/* ── LUCIDE ICONS ── */
+.ic{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;flex-shrink:0;}
+.ic svg{display:block;stroke-width:1.8;}
+.btn .ic,.hibtn .ic,.wd-cat .ic,.tb .ic,.stab .ic{pointer-events:none;}
+.ic-spin svg{animation:spin .8s linear infinite;}
 </style>
 </head>
 <body>
@@ -468,7 +474,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 
 <!-- BAN SCREEN -->
 <div id="banScreen" class="hidden">
-  <div class="ban-skull">💀</div>
+  <div class="ban-skull"><i data-lucide="skull" style="width:32px;height:32px;margin-right:5px;vertical-align:middle;"></i></div>
   <div class="btt">BANNED</div>
   <div class="brs">You have been permanently removed from VENOM.<br><span class="breason" id="banReasonTxt">Reason not specified.</span></div>
   <div style="font-family:var(--mono);font-size:12px;color:var(--dim2);margin-top:8px;">Contact staff to appeal.</div>
@@ -516,16 +522,16 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
       <div class="card hidden" id="profileCard">
         <div class="phdr">
           <div class="av" id="pAv">
-            <span id="pAvIco">🐍</span>
-            <div class="av-crown hidden" id="pCrown">👑</div>
-            <div class="av-mod hidden" id="pModB">🛡</div>
+            <span id="pAvIco"><i data-lucide="zap" style="width:22px;height:22px;"></i></span>
+            <div class="av-crown hidden" id="pCrown"><i data-lucide="crown" style="width:14px;height:14px;"></i></div>
+            <div class="av-mod hidden" id="pModB"><i data-lucide="shield-check" style="width:15px;height:15px;"></i></div>
           </div>
           <div style="flex:1;min-width:0;">
             <div class="pn" id="pName">Player</div>
             <div class="prk" id="pRankLbl">RANK: HATCHLING</div>
             <div style="font-size:11px;color:var(--dim2);margin-top:1px;" id="pRoleLbl"></div>
           </div>
-          <div class="pvc" id="pCoins">🪙 0</div>
+          <div class="pvc" id="pCoins"><i data-lucide="circle-dollar-sign" style="width:14px;height:14px;margin-right:4px;vertical-align:middle;color:var(--gold)"></i><span id="pCoinsVal">0</span></div>
         </div>
         <div class="srow">
           <div class="st"><span id="sBest">0</span><label>BEST</label></div>
@@ -533,15 +539,15 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
           <div class="st"><span id="sGames">0</span><label>GAMES</label></div>
         </div>
         <div class="mbtns">
-          <button class="btn bg" onclick="Game.start()" style="font-size:18px;padding:14px;">▶ PLAY</button>
+          <button class="btn bg" onclick="Game.start()" style="font-size:18px;padding:14px;"><i data-lucide="play" style="width:18px;height:18px;margin-right:6px;vertical-align:middle;"></i>PLAY</button>
           <div class="g2btn">
-            <button class="btn bo" onclick="Wardrobe.open()">🎨 WARDROBE</button>
-            <button class="btn bo" onclick="UI.open('lbPanel')">🏆 RANKS</button>
+            <button class="btn bo" onclick="Wardrobe.open()"><i data-lucide="palette" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i>WARDROBE</button>
+            <button class="btn bo" onclick="UI.open('lbPanel')"><i data-lucide="trophy" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i>RANKS</button>
           </div>
-          <button class="btn bo" onclick="UI.open('upgradesPanel')">⚡ UPGRADES</button>
-          <button class="btn bo" onclick="UI.open('settPanel')">⚙️ SETTINGS</button>
-          <button class="btn bb hidden" id="staffBtn" onclick="UI.open('staffPanel')">🛡 STAFF DASHBOARD</button>
-          <button class="btn bgold hidden" id="ownerBtn" onclick="UI.open('ownerPanel')">👑 OWNER PANEL</button>
+          <button class="btn bo" onclick="UI.open('upgradesPanel')"><i data-lucide="trending-up" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i>UPGRADES</button>
+          <button class="btn bo" onclick="UI.open('settPanel')"><i data-lucide="settings" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i>SETTINGS</button>
+          <button class="btn bb hidden" id="staffBtn" onclick="UI.open('staffPanel')"><i data-lucide="shield-check" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i>STAFF DASHBOARD</button>
+          <button class="btn bgold hidden" id="ownerBtn" onclick="UI.open('ownerPanel')"><i data-lucide="crown" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i>OWNER PANEL</button>
           <button class="bghost" onclick="doLogout()">LOGOUT</button>
         </div>
       </div>
@@ -552,7 +558,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <!-- WARDROBE / COSMETICS -->
 <div class="overlay hidden" id="wardrobePanel">
   <div class="pbox pg" style="max-width:860px;max-height:92vh;">
-    <div class="phd"><div class="pt g">🎨 WARDROBE</div><button class="cbtn" onclick="UI.close('wardrobePanel')">✕</button></div>
+    <div class="phd"><div class="pt g"><i data-lucide="palette" style="width:15px;height:15px;margin-right:7px;vertical-align:middle;"></i>WARDROBE</div><button class="cbtn" onclick="UI.close('wardrobePanel')">✕</button></div>
     <div class="pbody" style="padding:0;display:flex;flex-direction:column;">
       <div class="wd-layout" style="display:flex;min-height:0;flex:1;">
         <div class="wd-preview">
@@ -560,10 +566,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
           <div class="wd-equipped-name" id="wdEquippedName">Classic</div>
           <div class="wd-equipped-sub" id="wdEquippedSub">EQUIPPED</div>
           <div style="width:100%;height:1px;background:var(--border);margin:4px 0;"></div>
-          <button class="wd-cat on" id="wdCatSkin" onclick="Wardrobe.showCat('skin',this)">🐍 SKINS</button>
-          <button class="wd-cat" id="wdCatTrail" onclick="Wardrobe.showCat('trail',this)">✨ TRAILS</button>
-          <button class="wd-cat" id="wdCatKill" onclick="Wardrobe.showCat('kill',this)">💥 KILL FX</button>
-          <div id="wdCoinsDisplay" style="font-family:var(--head);font-size:14px;color:var(--gold);margin-top:auto;text-align:center;">🪙 0</div>
+          <button class="wd-cat on" id="wdCatSkin" onclick="Wardrobe.showCat('skin',this)"><i data-lucide="layers" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>SKINS</button>
+          <button class="wd-cat" id="wdCatTrail" onclick="Wardrobe.showCat('trail',this)"><i data-lucide="sparkles" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>TRAILS</button>
+          <button class="wd-cat" id="wdCatKill" onclick="Wardrobe.showCat('kill',this)"><i data-lucide="swords" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>KILL FX</button>
+          <div id="wdCoinsDisplay" style="font-family:var(--head);font-size:14px;color:var(--gold);margin-top:auto;text-align:center;"><i data-lucide="circle-dollar-sign" style="width:13px;height:13px;margin-right:3px;vertical-align:middle;"></i>0</div>
         </div>
         <div class="wd-items" id="wdItemsPane"></div>
       </div>
@@ -575,7 +581,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <!-- UPGRADES PANEL -->
 <div class="overlay hidden" id="upgradesPanel">
   <div class="pbox pg" style="max-width:740px;">
-    <div class="phd"><div class="pt g">⚡ UPGRADES</div><button class="cbtn" onclick="UI.close('upgradesPanel')">✕</button></div>
+    <div class="phd"><div class="pt g"><i data-lucide="trending-up" style="width:15px;height:15px;margin-right:7px;vertical-align:middle;"></i>UPGRADES</div><button class="cbtn" onclick="UI.close('upgradesPanel')">✕</button></div>
     <div class="pbody">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--dim2);">Permanently upgrade your serpent with coins. Upgrades persist between games.</div>
@@ -590,7 +596,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <!-- LEADERBOARD -->
 <div class="overlay hidden" id="lbPanel">
   <div class="pbox pg">
-    <div class="phd"><div class="pt g">🏆 LEADERBOARD</div><button class="cbtn" onclick="UI.close('lbPanel')">✕</button></div>
+    <div class="phd"><div class="pt g"><i data-lucide="trophy" style="width:15px;height:15px;margin-right:7px;vertical-align:middle;"></i>LEADERBOARD</div><button class="cbtn" onclick="UI.close('lbPanel')">✕</button></div>
     <div class="pbody">
       <div class="tabs">
         <button class="tb on" onclick="LB.load('BestScore',this)">TOP SCORE</button>
@@ -605,7 +611,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <!-- SETTINGS -->
 <div class="overlay hidden" id="settPanel">
   <div class="pbox pg">
-    <div class="phd"><div class="pt g">⚙️ SETTINGS</div><button class="cbtn" onclick="UI.close('settPanel')">✕</button></div>
+    <div class="phd"><div class="pt g"><i data-lucide="settings" style="width:15px;height:15px;margin-right:7px;vertical-align:middle;"></i>SETTINGS</div><button class="cbtn" onclick="UI.close('settPanel')">✕</button></div>
     <div class="pbody">
       <div class="sblk"><div class="slbl">CONTROLS</div>
         <div class="setrow">
@@ -650,23 +656,23 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <!-- ── STAFF DASHBOARD ── -->
 <div class="overlay hidden" id="staffPanel">
   <div class="pbox pb" style="max-width:800px;">
-    <div class="phd"><div class="pt b">🛡 STAFF DASHBOARD</div><button class="cbtn" onclick="UI.close('staffPanel')">✕</button></div>
+    <div class="phd"><div class="pt b"><i data-lucide="shield-check" style="width:15px;height:15px;margin-right:7px;vertical-align:middle;"></i>STAFF DASHBOARD</div><button class="cbtn" onclick="UI.close('staffPanel')">✕</button></div>
     <div class="pbody">
       <div class="stabs">
-        <button class="stab on" onclick="Staff.tab('live',this)">🟢 LIVE</button>
-        <button class="stab" onclick="Staff.tab('lookup',this)">🔍 SEARCH</button>
-        <button class="stab" onclick="Staff.tab('tools',this)">🔧 MOD TOOLS</button>
+        <button class="stab on" onclick="Staff.tab('live',this)"><i data-lucide="activity" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>LIVE</button>
+        <button class="stab" onclick="Staff.tab('lookup',this)"><i data-lucide="search" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>SEARCH</button>
+        <button class="stab" onclick="Staff.tab('tools',this)"><i data-lucide="wrench" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>MOD TOOLS</button>
         <button class="stab" onclick="Staff.tab('idlookup',this)">🆔 ID LOOKUP</button>
-        <button class="stab" onclick="Staff.tab('logs',this)">📋 LOGS</button>
-        <button class="stab" onclick="Staff.tab('bcast',this)">📢 BROADCAST</button>
-        <button class="stab" onclick="Staff.tab('reports',this)" id="stReportsTab">🚨 REPORTS<span id="reportsBadge" style="display:none;background:var(--r);color:#fff;font-size:9px;padding:1px 5px;border-radius:2px;margin-left:4px;vertical-align:middle;">0</span></button>
+        <button class="stab" onclick="Staff.tab('logs',this)"><i data-lucide="scroll-text" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>LOGS</button>
+        <button class="stab" onclick="Staff.tab('bcast',this)"><i data-lucide="radio" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>BROADCAST</button>
+        <button class="stab" onclick="Staff.tab('reports',this)" id="stReportsTab"><i data-lucide="alert-triangle" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>REPORTS<span id="reportsBadge" style="display:none;background:var(--r);color:#fff;font-size:9px;padding:1px 5px;border-radius:2px;margin-left:4px;vertical-align:middle;">0</span></button>
       </div>
 
       <!-- LIVE PLAYERS -->
       <div id="stLive">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
           <div class="slbl" style="margin:0;">PLAYERS IN GAME NOW</div>
-          <button class="btn bb bsm" style="margin:0;" onclick="Staff.loadLive()">🔄 REFRESH</button>
+          <button class="btn bb bsm" style="margin:0;" onclick="Staff.loadLive()"><i data-lucide="refresh-cw" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>REFRESH</button>
         </div>
         <div id="liveList"></div>
       </div>
@@ -675,7 +681,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
       <div id="stLookup" class="hidden">
         <div class="search-bar">
           <input class="search-input" id="lookupQ" placeholder="Search by display name or PlayFab ID..." onkeydown="if(event.key==='Enter')Staff.lookup()">
-          <button class="btn bb bsm" style="margin:0;white-space:nowrap;" onclick="Staff.lookup()">🔍 SEARCH</button>
+          <button class="btn bb bsm" style="margin:0;white-space:nowrap;" onclick="Staff.lookup()"><i data-lucide="search" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>SEARCH</button>
         </div>
         <div id="lookupRes"></div>
       </div>
@@ -685,7 +691,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
         <div class="slbl" style="margin-bottom:12px;">FIND PLAYFAB ID BY NAME</div>
         <div class="search-bar" style="margin-bottom:10px;">
           <input class="search-input" id="idlookupQ" placeholder="Type display name to find PlayFab ID..." onkeydown="if(event.key==='Enter')Staff.idLookup()">
-          <button class="btn bb bsm" style="margin:0;white-space:nowrap;" onclick="Staff.idLookup()">🔍 FIND</button>
+          <button class="btn bb bsm" style="margin:0;white-space:nowrap;" onclick="Staff.idLookup()"><i data-lucide="search" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>FIND</button>
         </div>
         <div style="font-size:11px;color:var(--dim2);margin-bottom:14px;line-height:1.7;">
           Searches all currently online players + local session cache. Click any result to copy the PlayFab ID or auto-fill it into Mod Tools.
@@ -693,13 +699,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
         <div id="idlookupRes"></div>
         <div class="slbl" style="margin-top:18px;margin-bottom:10px;">YOUR OWN INFO</div>
         <div style="background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.15);border-radius:10px;padding:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-          <div style="font-size:22px;">👤</div>
+          <div style="display:flex;align-items:center;justify-content:center;"><i data-lucide="user" style="width:22px;height:22px;margin-right:5px;vertical-align:middle;"></i></div>
           <div style="flex:1;min-width:0;">
             <div style="font-family:var(--head);font-size:14px;color:var(--g);" id="idSelfName">—</div>
             <div style="font-family:var(--mono);font-size:12px;color:var(--dim2);margin-top:3px;" id="idSelfId">—</div>
             <div style="font-size:11px;color:var(--dim2);margin-top:2px;" id="idSelfRole">—</div>
           </div>
-          <button class="btn bb bsm" style="margin:0;" onclick="Staff.copyId(document.getElementById('idSelfId').textContent)">📋 COPY MY ID</button>
+          <button class="btn bb bsm" style="margin:0;" onclick="Staff.copyId(document.getElementById('idSelfId').textContent)"><i data-lucide="copy" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>COPY MY ID</button>
         </div>
       </div>
 
@@ -724,11 +730,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
           </div>
           <div class="sblk">
             <div class="slbl">ACTIONS</div>
-            <button class="btn br" style="margin-bottom:7px;" onclick="Staff.ban()">🔨 BAN PLAYER</button>
-            <button class="btn bo" style="margin-bottom:7px;" onclick="Staff.unban()">✅ UNBAN</button>
-            <button class="btn bgold" style="margin-bottom:7px;" onclick="Staff.warn()">⚠️ WARN</button>
-            <button class="btn bb" style="margin-bottom:7px;" onclick="Staff.kick()">👢 KICK</button>
-            <button class="btn bpur" onclick="Staff.mute()">🔇 MUTE 1H</button>
+            <button class="btn br" style="margin-bottom:7px;" onclick="Staff.ban()"><i data-lucide="ban" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>BAN PLAYER</button>
+            <button class="btn bo" style="margin-bottom:7px;" onclick="Staff.unban()"><i data-lucide="check-circle-2" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>UNBAN</button>
+            <button class="btn bgold" style="margin-bottom:7px;" onclick="Staff.warn()"><i data-lucide="alert-triangle" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>WARN</button>
+            <button class="btn bb" style="margin-bottom:7px;" onclick="Staff.kick()"><i data-lucide="user-x" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>KICK</button>
+            <button class="btn bpur" onclick="Staff.mute()"><i data-lucide="mic-off" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>MUTE 1H</button>
           </div>
         </div>
         <div class="sm hidden" id="staffMsg"></div>
@@ -738,7 +744,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
       <div id="stLogs" class="hidden">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
           <div class="slbl" style="margin:0;">RECENT ACTIONS</div>
-          <button class="btn bo bsm" style="margin:0;" onclick="Staff.loadLogs()">🔄 REFRESH</button>
+          <button class="btn bo bsm" style="margin:0;" onclick="Staff.loadLogs()"><i data-lucide="refresh-cw" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>REFRESH</button>
         </div>
         <div id="logList"></div>
       </div>
@@ -749,11 +755,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
           <div class="slbl">SERVER BROADCAST</div>
           <input class="inp" id="staffBcastMsg" placeholder="Message to all players...">
           <select class="inp" id="staffBcastType">
-            <option value="info">📢 Info</option>
-            <option value="warning">⚠️ Warning</option>
-            <option value="event">⚡ Event</option>
+            <option value="info">Info</option>
+            <option value="warning">Warning</option>
+            <option value="event">Event</option>
           </select>
-          <button class="btn bb" onclick="Staff.broadcast()">📡 BROADCAST TO ALL</button>
+          <button class="btn bb" onclick="Staff.broadcast()"><i data-lucide="radio" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>BROADCAST TO ALL</button>
         </div>
       </div>
 
@@ -762,8 +768,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
           <div class="slbl" style="margin:0;">PLAYER REPORTS</div>
           <div style="display:flex;gap:6px;">
-            <button class="btn bb bsm" style="margin:0;" onclick="Staff.loadReports()">🔄 REFRESH</button>
-            <button class="btn br bsm" style="margin:0;" onclick="Staff.clearReports()">🗑 CLEAR ALL</button>
+            <button class="btn bb bsm" style="margin:0;" onclick="Staff.loadReports()"><i data-lucide="refresh-cw" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>REFRESH</button>
+            <button class="btn br bsm" style="margin:0;" onclick="Staff.clearReports()"><i data-lucide="trash-2" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>CLEAR ALL</button>
           </div>
         </div>
         <div style="font-family:var(--mono);font-size:10px;color:var(--dim2);margin-bottom:12px;line-height:1.6;">Reports submitted from the Live tab. Each report captures a full real-time snapshot of the player.</div>
@@ -776,7 +782,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <!-- OWNER PANEL -->
 <div class="overlay hidden" id="ownerPanel">
   <div class="pbox po" style="max-width:720px;">
-    <div class="phd"><div class="pt o">👑 OWNER PANEL</div><button class="cbtn" onclick="UI.close('ownerPanel')">✕</button></div>
+    <div class="phd"><div class="pt o"><i data-lucide="crown" style="width:15px;height:15px;margin-right:7px;vertical-align:middle;"></i>OWNER PANEL</div><button class="cbtn" onclick="UI.close('ownerPanel')">✕</button></div>
     <div class="pbody">
       <div class="stabs">
         <button class="stab on" style="color:var(--gold);border-bottom-color:var(--gold);" onclick="Own.tab('cmds',this)">COMMANDS</button>
@@ -788,26 +794,26 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
       <div id="owCmds">
         <div class="slbl">FUN SERVER EVENTS — KEYS 1–8</div>
         <div class="cgd" style="margin-top:10px;margin-bottom:14px;">
-          <button class="ocb" id="ocbDoubleXP" onclick="Own.cmd('doubleXP')"><span class="oci">⚡</span>2× XP EVENT</button>
+          <button class="ocb" id="ocbDoubleXP" onclick="Own.cmd('doubleXP')"><span class="oci"><i data-lucide="zap" style="width:18px;height:18px;"></i></span>2× XP EVENT</button>
           <button class="ocb" id="ocbCoinRain" onclick="Own.cmd('coinRain')"><span class="oci">🪙</span>COIN RAIN</button>
-          <button class="ocb" id="ocbSpawnBoss" onclick="Own.cmd('spawnBoss')"><span class="oci">👑</span>SPAWN BOSS</button>
-          <button class="ocb" id="ocbNukeMap" onclick="Own.cmd('nukeMap')"><span class="oci">💥</span>NUKE MAP</button>
-          <button class="ocb" id="ocbGrowAll" onclick="Own.cmd('growAll')"><span class="oci">🐍</span>GROW ALL</button>
-          <button class="ocb" id="ocbSpeedFrenzy" onclick="Own.cmd('speedFrenzy')"><span class="oci">🚀</span>SPEED FRENZY</button>
-          <button class="ocb" id="ocbFoodFrenzy" onclick="Own.cmd('foodFrenzy')"><span class="oci">🌟</span>FOOD FRENZY</button>
-          <button class="ocb" id="ocbInvertCtrl" onclick="Own.cmd('invertCtrl')"><span class="oci">😈</span>INVERT CTRL</button>
+          <button class="ocb" id="ocbSpawnBoss" onclick="Own.cmd('spawnBoss')"><span class="oci"><i data-lucide="crown" style="width:18px;height:18px;"></i></span>SPAWN BOSS</button>
+          <button class="ocb" id="ocbNukeMap" onclick="Own.cmd('nukeMap')"><span class="oci"><i data-lucide="bomb" style="width:18px;height:18px;"></i></span>NUKE MAP</button>
+          <button class="ocb" id="ocbGrowAll" onclick="Own.cmd('growAll')"><span class="oci"><i data-lucide="arrow-up" style="width:18px;height:18px;"></i></span>GROW ALL</button>
+          <button class="ocb" id="ocbSpeedFrenzy" onclick="Own.cmd('speedFrenzy')"><span class="oci"><i data-lucide="gauge" style="width:18px;height:18px;"></i></span>SPEED FRENZY</button>
+          <button class="ocb" id="ocbFoodFrenzy" onclick="Own.cmd('foodFrenzy')"><span class="oci"><i data-lucide="leaf" style="width:18px;height:18px;"></i></span>FOOD FRENZY</button>
+          <button class="ocb" id="ocbInvertCtrl" onclick="Own.cmd('invertCtrl')"><span class="oci"><i data-lucide="flip-horizontal" style="width:18px;height:18px;"></i></span>INVERT CTRL</button>
         </div>
         <div class="slbl">PLAYER MODES — KEYS 9–0</div>
         <div class="cgd3" style="margin-top:10px;margin-bottom:14px;">
-          <button class="ocb staff-cmd" id="ocbGhostMode" onclick="Own.cmd('ghostMode')"><span class="oci">👻</span>GHOST MODE</button>
-          <button class="ocb staff-cmd" id="ocbMiniSnake" onclick="Own.cmd('miniSnake')"><span class="oci">🔬</span>MINI SNAKE</button>
-          <button class="ocb staff-cmd" id="ocbFireworks" onclick="Own.cmd('fireworks')"><span class="oci">🎆</span>FIREWORKS</button>
+          <button class="ocb staff-cmd" id="ocbGhostMode" onclick="Own.cmd('ghostMode')"><span class="oci"><i data-lucide="ghost" style="width:18px;height:18px;"></i></span>GHOST MODE</button>
+          <button class="ocb staff-cmd" id="ocbMiniSnake" onclick="Own.cmd('miniSnake')"><span class="oci"><i data-lucide="minimize-2" style="width:18px;height:18px;"></i></span>MINI SNAKE</button>
+          <button class="ocb staff-cmd" id="ocbFireworks" onclick="Own.cmd('fireworks')"><span class="oci"><i data-lucide="sparkles" style="width:18px;height:18px;"></i></span>FIREWORKS</button>
         </div>
         <div class="slbl">ADMIN COMMANDS</div>
         <div class="cgd3" style="margin-top:10px;">
-          <button class="ocb danger-cmd" onclick="Own.cmd('killAllBots')"><span class="oci">🤖</span>KILL BOTS</button>
-          <button class="ocb danger-cmd" onclick="Own.cmd('maxFoodFrenzy')"><span class="oci">🍖</span>MAX FOOD</button>
-          <button class="ocb danger-cmd" onclick="Own.cmd('zeroGravity')"><span class="oci">🌌</span>ZERO GRAV</button>
+          <button class="ocb danger-cmd" onclick="Own.cmd('killAllBots')"><span class="oci"><i data-lucide="cpu" style="width:18px;height:18px;"></i></span>KILL BOTS</button>
+          <button class="ocb danger-cmd" onclick="Own.cmd('maxFoodFrenzy')"><span class="oci"><i data-lucide="leaf" style="width:18px;height:18px;"></i></span>MAX FOOD</button>
+          <button class="ocb danger-cmd" onclick="Own.cmd('zeroGravity')"><span class="oci"><i data-lucide="orbit" style="width:18px;height:18px;"></i></span>ZERO GRAV</button>
         </div>
       </div>
 
@@ -816,14 +822,14 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
           <input class="inp" id="grantTgt" placeholder="Player display name or PlayFab ID">
           <select class="inp" id="grantItm">
             <option value="">— Select item —</option>
-            <optgroup label="👑 OWNER SKINS"><option value="skin_owner">👑 Owner Gold</option><option value="skin_owner2">💎 Owner Obsidian</option><option value="skin_owner3">⚡ Blood Crown</option></optgroup>
-            <optgroup label="👑 OWNER TRAILS"><option value="trail_owner">👑 Golden Aura</option><option value="trail_owner2">🌌 Void Rift</option></optgroup>
-            <optgroup label="👑 OWNER KILL FX"><option value="kill_owner">👑 Royal Wrath</option><option value="kill_owner2">🌟 Supernova</option></optgroup>
-            <optgroup label="✨ EXCLUSIVE SKINS"><option value="skin_gold">🌟 Gold Serpent</option><option value="skin_rainbow">🌈 Rainbow</option><option value="skin_void">⬛ Dark Void</option><option value="skin_galaxy">🌌 Galaxy</option><option value="skin_inferno">🔥 Inferno</option><option value="skin_toxic">☢️ Toxic</option></optgroup>
-            <optgroup label="✨ EXCLUSIVE TRAILS"><option value="trail_fire">🔥 Fire Trail</option><option value="trail_lightning">⚡ Lightning Trail</option></optgroup>
-            <optgroup label="✨ EXCLUSIVE KILL FX"><option value="kill_explosion">🧨 Explosion</option><option value="kill_vortex">🌀 Vortex</option></optgroup>
-            <optgroup label="🛡 STAFF"><option value="skin_mod">🔷 Staff Blue Skin</option><option value="trail_mod">💙 Blue Pulse Trail</option><option value="kill_thunder">⚡ Thunder Kill FX</option></optgroup>
-            <optgroup label="🔑 ACCESS"><option value="mod_panel">🛡 Mod Panel Access</option><option value="owner_panel">👑 Owner Panel Access</option></optgroup>
+            <optgroup label="OWNER SKINS"><option value="skin_owner">Owner Gold</option><option value="skin_owner2">Owner Obsidian</option><option value="skin_owner3">Blood Crown</option></optgroup>
+            <optgroup label="OWNER TRAILS"><option value="trail_owner">Golden Aura</option><option value="trail_owner2">Void Rift</option></optgroup>
+            <optgroup label="OWNER KILL FX"><option value="kill_owner">Royal Wrath</option><option value="kill_owner2">Supernova</option></optgroup>
+            <optgroup label="EXCLUSIVE SKINS"><option value="skin_gold">Gold Serpent</option><option value="skin_rainbow">Rainbow</option><option value="skin_void">⬛ Dark Void</option><option value="skin_galaxy">Galaxy</option><option value="skin_inferno">Inferno</option><option value="skin_toxic">Toxic</option></optgroup>
+            <optgroup label="EXCLUSIVE TRAILS"><option value="trail_fire">Fire Trail</option><option value="trail_lightning">Lightning Trail</option></optgroup>
+            <optgroup label="EXCLUSIVE KILL FX"><option value="kill_explosion">Explosion</option><option value="kill_vortex">Vortex</option></optgroup>
+            <optgroup label="STAFF"><option value="skin_mod">Staff Blue Skin</option><option value="trail_mod">Blue Pulse Trail</option><option value="kill_thunder">Thunder Kill FX</option></optgroup>
+            <optgroup label="ACCESS"><option value="mod_panel">Mod Panel Access</option><option value="owner_panel">Owner Panel Access</option></optgroup>
           </select>
           <button class="btn bgold" onclick="Own.grantItem()">GRANT ITEM</button>
         </div>
@@ -837,15 +843,15 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
       <div id="owBcast" class="hidden">
         <div class="sblk"><div class="slbl">SERVER BROADCAST</div>
           <input class="inp" id="bcastMsg" placeholder="Message to broadcast...">
-          <select class="inp" id="bcastType"><option value="info">📢 Info</option><option value="warning">⚠️ Warning</option><option value="event">⚡ Event</option></select>
-          <button class="btn bgold" onclick="Own.broadcast()">📡 BROADCAST TO ALL</button>
+          <select class="inp" id="bcastType"><option value="info">Info</option><option value="warning">Warning</option><option value="event">Event</option></select>
+          <button class="btn bgold" onclick="Own.broadcast()"><i data-lucide="radio" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>BROADCAST TO ALL</button>
         </div>
       </div>
 
       <div id="owProm" class="hidden">
         <div class="sblk"><div class="slbl">PROMOTE / DEMOTE</div>
           <input class="inp" id="promTgt" placeholder="Player display name or PlayFab ID">
-          <select class="inp" id="promRole"><option value="moderator">🛡 Moderator</option><option value="owner">👑 Owner</option><option value="player">👤 Player (demote)</option></select>
+          <select class="inp" id="promRole"><option value="moderator">Moderator</option><option value="owner">Owner</option><option value="player">Player (demote)</option></select>
           <button class="btn bgold" onclick="Own.promote()">CONFIRM</button>
           <div style="font-size:12px;color:var(--dim2);margin-top:8px;line-height:1.6;">Grants or removes <b style="color:var(--gold)">mod_panel</b>/<b style="color:var(--gold)">owner_panel</b> catalog items.</div>
         </div>
@@ -863,7 +869,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <div id="hud" class="hidden">
   <div id="xpBarWrap"><div id="xpBarFill"></div></div>
   <div id="hudScore">0</div>
-  <div id="hudKills">💀 0</div>
+  <div id="hudKills"><i data-lucide="skull" style="width:11px;height:11px;margin-right:4px;vertical-align:middle;"></i>0</div>
   <div id="hudStreak"></div>
   <div id="hudRank"></div>
   <div id="hudLen"></div>
@@ -878,13 +884,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
   <div id="killfeed"></div>
   <div id="streakDisplay"></div>
   <div class="hudbtns">
-    <button class="hibtn" onclick="Game.pause()" title="Menu [ESC]">☰</button>
-    <button class="hibtn" onclick="UI.open('settPanel')" title="Settings">⚙</button>
-    <button class="hibtn" onclick="toggleScoreboard()" title="Scoreboard [TAB]">📊</button>
-    <button class="hibtn hidden" id="hudStaffBtn" onclick="UI.open('staffPanel')" title="Staff Dashboard [F1]">🛡</button>
-    <button class="hibtn hidden" id="hudOwnerBtn" onclick="UI.open('ownerPanel')" title="Owner Panel [F2]" style="border-color:rgba(255,215,0,.35);color:var(--gold);">👑</button>
+    <button class="hibtn" onclick="Game.pause()" title="Menu [ESC]"><i data-lucide="menu" style="width:15px;height:15px;"></i></button>
+    <button class="hibtn" onclick="UI.open('settPanel')" title="Settings"><i data-lucide="settings" style="width:15px;height:15px;"></i></button>
+    <button class="hibtn" onclick="toggleScoreboard()" title="Scoreboard [TAB]"><i data-lucide="bar-chart-2" style="width:15px;height:15px;"></i></button>
+    <button class="hibtn hidden" id="hudStaffBtn" onclick="UI.open('staffPanel')" title="Staff Dashboard [F1]"><i data-lucide="shield-check" style="width:15px;height:15px;"></i></button>
+    <button class="hibtn hidden" id="hudOwnerBtn" onclick="UI.open('ownerPanel')" title="Owner Panel [F2]" style="border-color:rgba(255,215,0,.35);color:var(--gold);"><i data-lucide="crown" style="width:15px;height:15px;"></i></button>
   </div>
-  <div id="scoreboard" class="hidden"><h3>SCOREBOARD</h3><div id="sbList"></div></div>
+  <div id="scoreboard" class="hidden"><h3><i data-lucide="bar-chart-2" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;"></i>SCOREBOARD</h3><div id="sbList"></div></div>
   <div id="chatBox">
     <div id="chatMsgs"></div>
     <input id="chatInput" placeholder="Press T to chat..." maxlength="80">
@@ -904,7 +910,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <div id="gameOver" class="hidden">
   <div class="gobox">
     <div class="gotitle" id="goTitleTxt">DEAD</div>
-    <div class="gonew hidden" id="goNew">🏆 NEW BEST!</div>
+    <div class="gonew hidden" id="goNew"><i data-lucide="trophy" style="width:14px;height:14px;margin-right:5px;vertical-align:middle;"></i>NEW BEST!</div>
     <div class="gostreak" id="goStreak" style="display:none;"></div>
     <div class="gokill" id="goKiller">Eliminated</div>
     <div class="gostats">
@@ -913,9 +919,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
       <div class="gost"><span id="goTime">0s</span><label>TIME</label></div>
     </div>
     <div id="goExtras" style="display:flex;gap:8px;justify-content:center;margin-bottom:10px;flex-wrap:wrap;"></div>
-    <div class="gocoins" id="goCoins">+0 🪙</div>
+    <div class="gocoins" id="goCoins">+0 <i data-lucide="circle-dollar-sign" style="width:12px;height:12px;margin-left:2px;vertical-align:middle;color:var(--gold)"></i></div>
     <div id="goVerdict" style="font-family:var(--mono);font-size:11px;color:var(--dim2);margin-bottom:16px;font-style:italic;"></div>
-    <button class="btn bg" style="font-size:17px;" onclick="Game.start()">▶ PLAY AGAIN</button>
+    <button class="btn bg" style="font-size:17px;" onclick="Game.start()"><i data-lucide="play" style="width:16px;height:16px;margin-right:6px;vertical-align:middle;"></i>PLAY AGAIN</button>
     <button class="btn bo" onclick="Game.backToMenu()">MAIN MENU</button>
   </div>
 </div>
@@ -955,6 +961,54 @@ console.log("Firebase ready");
 </script>
 
 <script>
+// ── ICON HELPER ──────────────────────────────────────────────
+// ic('name', size, color) → inline SVG HTML string via Lucide
+// Usage: ic('shield') or ic('crown',18,'#ffd700')
+function ic(name, size=16, color='currentColor'){
+  // Map common game names to Lucide icon names
+  const aliases={
+    'crown':'crown','shield':'shield','snake':'zap','skull':'skull',
+    'fire':'flame','bolt':'zap','gear':'settings','settings':'settings',
+    'chart':'bar-chart-2','trophy':'trophy','palette':'palette',
+    'coin':'circle-dollar-sign','coins':'circle-dollar-sign',
+    'sword':'sword','dagger':'sword','kill':'swords','swords':'swords',
+    'trail':'sparkles','sparkle':'sparkles','sparkles':'sparkles',
+    'smoke':'cloud','heart':'heart','star':'star','lightning':'zap',
+    'play':'play','menu':'menu','close':'x','check':'check',
+    'info':'info','warn':'alert-triangle','error':'alert-circle',
+    'ban':'ban','kick':'user-x','mute':'mic-off','unmute':'mic',
+    'user':'user','users':'users','search':'search','copy':'copy',
+    'report':'flag','broadcast':'radio','log':'scroll-text',
+    'promote':'arrow-up-circle','demote':'arrow-down-circle',
+    'refresh':'refresh-cw','trash':'trash-2','key':'key',
+    'lock':'lock','unlock':'unlock','eye':'eye','eyeoff':'eye-off',
+    'bomb':'bomb','magnet':'magnet','mystery':'help-circle',
+    'speed':'gauge','armor':'shield-plus','boost':'battery-charging',
+    'combo':'layers','upgrade':'trending-up','fireworks':'sparkles',
+    'ghost':'ghost','mini':'minimize-2','nuke':'zap',
+    'double':'x','food':'leaf','vip':'star',
+    'mod':'shield-check','owner':'crown',
+    'back':'arrow-left','exit':'log-out',
+    'new':'badge-check','streak':'flame','kill-feed':'crosshair',
+  };
+  const lucideName = aliases[name] || name;
+  // Build SVG using lucide if available, fallback to text
+  if(window.lucide){
+    const icons = window.lucide.icons || lucide;
+    const iconData = icons[lucideName] || icons['circle'];
+    if(iconData){
+      const [w,h,,,path] = iconData;
+      return `<span class="ic" style="width:${size}px;height:${size}px;"><svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${w} ${h}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${Array.isArray(path)?path.join(''):path}</svg></span>`;
+    }
+  }
+  return `<span class="ic" style="width:${size}px;height:${size}px;display:inline-flex;align-items:center;justify-content:center;"></span>`;
+}
+
+// Render all lucide placeholders after DOM loads
+function initIcons(){
+  if(window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+}
+
 const PF_TITLE   = "100286";
 const PF_CAT     = "VenomSnake_v1";
 const PF_SDK_URL = "https://download.playfab.com/PlayFabClientApi.js";
@@ -970,16 +1024,16 @@ let PF = null;
 // ═══════════════════════════════════════════════════════════════
 const ROLE_TAGS = {
   owner: {
-    label:'OWNER NIGGA', icon:'👑', color:'#ffd700',
-    aura:'rgba(255,215,0,{a})', shadowColor:'#ffd700', chatBadge:'TIGGA '
+    label:'OWNER', icon:'crown', color:'#ffd700',
+    aura:'rgba(255,215,0,{a})', shadowColor:'#ffd700', chatBadge:'<i data-lucide="crown" style="width:11px;height:11px;margin-right:3px;vertical-align:middle;"></i>'
   },
   moderator: {
-    label:'MOD', icon:'🛡', color:'#44aaff',
-    aura:'rgba(68,170,255,{a})', shadowColor:'#44aaff', chatBadge:'🛡 '
+    label:'MOD', icon:'shield-plus', color:'#44aaff',
+    aura:'rgba(68,170,255,{a})', shadowColor:'#44aaff', chatBadge:'<i data-lucide="shield-check" style="width:11px;height:11px;margin-right:3px;vertical-align:middle;"></i>'
   },
   vip: {
-    label:'VIP', icon:'⭐', color:'#c678f5',
-    aura:'rgba(198,120,245,{a})', shadowColor:'#c678f5', chatBadge:'⭐ '
+    label:'VIP', icon:'star', color:'#c678f5',
+    aura:'rgba(198,120,245,{a})', shadowColor:'#c678f5', chatBadge:'<i data-lucide="star" style="width:11px;height:11px;margin-right:3px;vertical-align:middle;"></i>'
   },
   player: {
     label:'', icon:'', color:'#00ff88',
@@ -993,7 +1047,7 @@ function getTag(role){ return ROLE_TAGS[role] || ROLE_TAGS.player; }
 // ═══════════════════════════════════════════════════════════════
 const UPGRADES = [
   {
-    id:'speed', name:'Speed Boost', icon:'⚡', desc:'Move faster across the pit',
+    id:'speed', name:'Speed Boost', icon:'zap', desc:'Move faster across the pit',
     tiers:[
       {cost:50,  label:'Tier 1', value:0.08, desc:'+8% move speed'},
       {cost:150, label:'Tier 2', value:0.18, desc:'+18% move speed'},
@@ -1001,7 +1055,7 @@ const UPGRADES = [
     ]
   },
   {
-    id:'boost_regen', name:'Boost Regen', icon:'🔋', desc:'Boost stamina regenerates faster',
+    id:'boost_regen', name:'Boost Regen', icon:'battery-charging', desc:'Boost stamina regenerates faster',
     tiers:[
       {cost:60,  label:'Tier 1', value:0.3,  desc:'+30% boost regen'},
       {cost:180, label:'Tier 2', value:0.65, desc:'+65% boost regen'},
@@ -1009,7 +1063,7 @@ const UPGRADES = [
     ]
   },
   {
-    id:'armor', name:'Armor', icon:'🛡', desc:'Survive longer on respawn (extra length)',
+    id:'armor', name:'Armor', icon:'shield-check', desc:'Survive longer on respawn (extra length)',
     tiers:[
       {cost:80,  label:'Tier 1', value:10, desc:'+10 starting length'},
       {cost:200, label:'Tier 2', value:22, desc:'+22 starting length'},
@@ -1017,7 +1071,7 @@ const UPGRADES = [
     ]
   },
   {
-    id:'magnet', name:'Magnet Radius', icon:'🧲', desc:'Attract food from further away',
+    id:'magnet', name:'Magnet Radius', icon:'magnet', desc:'Attract food from further away',
     tiers:[
       {cost:75,  label:'Tier 1', value:60,  desc:'+60px magnet radius'},
       {cost:200, label:'Tier 2', value:130, desc:'+130px magnet radius'},
@@ -1025,7 +1079,7 @@ const UPGRADES = [
     ]
   },
   {
-    id:'coin_bonus', name:'Coin Magnet', icon:'🪙', desc:'Earn more coins per kill & food',
+    id:'coin_bonus', name:'Coin Magnet', icon:'circle-dollar-sign', desc:'Earn more coins per kill & food',
     tiers:[
       {cost:100, label:'Tier 1', value:1,  desc:'+1 coin per kill'},
       {cost:280, label:'Tier 2', value:3,  desc:'+3 coins per kill'},
@@ -1033,7 +1087,7 @@ const UPGRADES = [
     ]
   },
   {
-    id:'combo_hold', name:'Combo Hold', icon:'🔥', desc:'Combo timer lasts longer',
+    id:'combo_hold', name:'Combo Hold', icon:'flame', desc:'Combo timer lasts longer',
     tiers:[
       {cost:90,  label:'Tier 1', value:30, desc:'+30 frames combo window'},
       {cost:240, label:'Tier 2', value:70, desc:'+70 frames combo window'},
@@ -1053,45 +1107,45 @@ function getUpgValue(id){
 
 const CATALOG = {
   skins:[
-    {id:'skin_default', name:'Classic',      icon:'🟢',free:true,   color:'#00ff88',bc:['#00ff88','#00cc77']},
-    {id:'skin_red',     name:'Blood Snake',  icon:'🔴',price:100,   color:'#ff3355',bc:['#ff3355','#cc1133']},
-    {id:'skin_blue',    name:'Ice Serpent',  icon:'🔵',price:100,   color:'#44aaff',bc:['#44aaff','#2288ee']},
-    {id:'skin_purple',  name:'Void Crawler', icon:'🟣',price:150,   color:'#9b59b6',bc:['#9b59b6','#7d3c98']},
-    {id:'skin_orange',  name:'Ember',        icon:'🟠',price:150,   color:'#ff8800',bc:['#ff8800','#cc5500']},
-    {id:'skin_pink',    name:'Neon Rose',    icon:'🩷',price:200,   color:'#ff66aa',bc:['#ff66aa','#cc3388']},
-    {id:'skin_cyan',    name:'Cyber Eel',    icon:'🩵',price:200,   color:'#00ffee',bc:['#00ffee','#00bbcc']},
-    {id:'skin_gold',    name:'Gold Serpent', icon:'🌟',exclusive:true,color:'#ffd700',bc:['#ffd700','#ffaa00']},
-    {id:'skin_rainbow', name:'Rainbow',      icon:'🌈',exclusive:true,color:'rainbow',bc:['rainbow']},
-    {id:'skin_void',    name:'Dark Void',    icon:'⬛',exclusive:true,color:'#220044',bc:['#220044','#440088']},
-    {id:'skin_galaxy',  name:'Galaxy',       icon:'🌌',exclusive:true,color:'#0a0a3a',bc:['#0a0a3a','#1a1a5a']},
-    {id:'skin_inferno', name:'Inferno',      icon:'🔥',exclusive:true,color:'#ff2200',bc:['#ff2200','#ff6600','#ff2200']},
-    {id:'skin_toxic',   name:'Toxic',        icon:'☢️', exclusive:true,color:'#88ff00',bc:['#88ff00','#44cc00']},
-    {id:'skin_mod',     name:'Staff Blue',   icon:'🔷',staff:true,  color:'#44aaff',bc:['#44aaff','#0066cc']},
-    {id:'skin_owner',   name:'Owner Gold',   icon:'👑',ownerOnly:true,color:'#ffd700',bc:['#ffd700','#ff8800','#ffd700']},
-    {id:'skin_owner2',  name:'Owner Obsidian',icon:'💎',ownerOnly:true,color:'#8800ff',bc:['#8800ff','#cc00ff','#5500aa']},
-    {id:'skin_owner3',  name:'Blood Crown',  icon:'⚡',ownerOnly:true,color:'#ff0055',bc:['#ff0055','#ff4400','#ff0055']},
+    {id:'skin_default', name:'Classic',      icon:'circle',free:true,   color:'#00ff88',bc:['#00ff88','#00cc77']},
+    {id:'skin_red',     name:'Blood Snake',  icon:'circle',price:100,   color:'#ff3355',bc:['#ff3355','#cc1133']},
+    {id:'skin_blue',    name:'Ice Serpent',  icon:'circle',price:100,   color:'#44aaff',bc:['#44aaff','#2288ee']},
+    {id:'skin_purple',  name:'Void Crawler', icon:'circle',price:150,   color:'#9b59b6',bc:['#9b59b6','#7d3c98']},
+    {id:'skin_orange',  name:'Ember',        icon:'circle',price:150,   color:'#ff8800',bc:['#ff8800','#cc5500']},
+    {id:'skin_pink',    name:'Neon Rose',    icon:'circle',price:200,   color:'#ff66aa',bc:['#ff66aa','#cc3388']},
+    {id:'skin_cyan',    name:'Cyber Eel',    icon:'circle',price:200,   color:'#00ffee',bc:['#00ffee','#00bbcc']},
+    {id:'skin_gold',    name:'Gold Serpent', icon:'star',exclusive:true,color:'#ffd700',bc:['#ffd700','#ffaa00']},
+    {id:'skin_rainbow', name:'Rainbow',      icon:'sparkles',exclusive:true,color:'rainbow',bc:['rainbow']},
+    {id:'skin_void',    name:'Dark Void',    icon:'square',exclusive:true,color:'#220044',bc:['#220044','#440088']},
+    {id:'skin_galaxy',  name:'Galaxy',       icon:'orbit',exclusive:true,color:'#0a0a3a',bc:['#0a0a3a','#1a1a5a']},
+    {id:'skin_inferno', name:'Inferno',      icon:'flame',exclusive:true,color:'#ff2200',bc:['#ff2200','#ff6600','#ff2200']},
+    {id:'skin_toxic',   name:'Toxic',        icon:'radiation', exclusive:true,color:'#88ff00',bc:['#88ff00','#44cc00']},
+    {id:'skin_mod',     name:'Staff Blue',   icon:'diamond',staff:true,  color:'#44aaff',bc:['#44aaff','#0066cc']},
+    {id:'skin_owner',   name:'Owner Gold',   icon:'crown',ownerOnly:true,color:'#ffd700',bc:['#ffd700','#ff8800','#ffd700']},
+    {id:'skin_owner2',  name:'Owner Obsidian',icon:'gem',ownerOnly:true,color:'#8800ff',bc:['#8800ff','#cc00ff','#5500aa']},
+    {id:'skin_owner3',  name:'Blood Crown',  icon:'zap',ownerOnly:true,color:'#ff0055',bc:['#ff0055','#ff4400','#ff0055']},
   ],
   trails:[
     {id:'trail_none',      name:'None',       icon:'⬜',free:true,  fx:null},
-    {id:'trail_sparkle',   name:'Sparkle',    icon:'✨',price:75,   fx:'sparkle'},
-    {id:'trail_smoke',     name:'Smoke',      icon:'💨',price:75,   fx:'smoke'},
-    {id:'trail_hearts',    name:'Hearts',     icon:'💖',price:200,  fx:'hearts'},
-    {id:'trail_star',      name:'Stardust',   icon:'⭐',price:250,  fx:'sparkle'},
-    {id:'trail_fire',      name:'Fire',       icon:'🔥',exclusive:true,fx:'fire'},
-    {id:'trail_lightning', name:'Lightning',  icon:'⚡',exclusive:true,fx:'lightning'},
-    {id:'trail_mod',       name:'Blue Pulse', icon:'💙',staff:true, fx:'modpulse'},
-    {id:'trail_owner',     name:'Golden Aura',icon:'👑',ownerOnly:true,fx:'owneraura'},
-    {id:'trail_owner2',    name:'Void Rift',  icon:'🌌',ownerOnly:true,fx:'voidrift'},
+    {id:'trail_sparkle',   name:'Sparkle',    icon:'sparkles',price:75,   fx:'sparkle'},
+    {id:'trail_smoke',     name:'Smoke',      icon:'wind',price:75,   fx:'smoke'},
+    {id:'trail_hearts',    name:'Hearts',     icon:'heart',price:200,  fx:'hearts'},
+    {id:'trail_star',      name:'Stardust',   icon:'star',price:250,  fx:'sparkle'},
+    {id:'trail_fire',      name:'Fire',       icon:'flame',exclusive:true,fx:'fire'},
+    {id:'trail_lightning', name:'Lightning',  icon:'zap',exclusive:true,fx:'lightning'},
+    {id:'trail_mod',       name:'Blue Pulse', icon:'heart',staff:true, fx:'modpulse'},
+    {id:'trail_owner',     name:'Golden Aura',icon:'crown',ownerOnly:true,fx:'owneraura'},
+    {id:'trail_owner2',    name:'Void Rift',  icon:'orbit',ownerOnly:true,fx:'voidrift'},
   ],
   kills:[
-    {id:'kill_default',   name:'Default',    icon:'💥',free:true,  fx:'default'},
-    {id:'kill_shatter',   name:'Shatter',    icon:'💎',price:100,  fx:'shatter'},
-    {id:'kill_coins',     name:'Coin Shower',icon:'🪙',price:250,  fx:'coins'},
-    {id:'kill_explosion', name:'Explosion',  icon:'🧨',exclusive:true,fx:'explosion'},
-    {id:'kill_vortex',    name:'Vortex',     icon:'🌀',exclusive:true,fx:'vortex'},
-    {id:'kill_thunder',   name:'Thunder',    icon:'⚡',staff:true, fx:'thunder'},
-    {id:'kill_owner',     name:'Royal Wrath',icon:'👑',ownerOnly:true,fx:'royalwrath'},
-    {id:'kill_owner2',    name:'Supernova',  icon:'🌟',ownerOnly:true,fx:'supernova'},
+    {id:'kill_default',   name:'Default',    icon:'zap',free:true,  fx:'default'},
+    {id:'kill_shatter',   name:'Shatter',    icon:'gem',price:100,  fx:'shatter'},
+    {id:'kill_coins',     name:'Coin Shower',icon:'circle-dollar-sign',price:250,  fx:'coins'},
+    {id:'kill_explosion', name:'Explosion',  icon:'bomb',exclusive:true,fx:'explosion'},
+    {id:'kill_vortex',    name:'Vortex',     icon:'loader',exclusive:true,fx:'vortex'},
+    {id:'kill_thunder',   name:'Thunder',    icon:'zap',staff:true, fx:'thunder'},
+    {id:'kill_owner',     name:'Royal Wrath',icon:'crown',ownerOnly:true,fx:'royalwrath'},
+    {id:'kill_owner2',    name:'Supernova',  icon:'star',ownerOnly:true,fx:'supernova'},
   ]
 };
 
@@ -1153,14 +1207,14 @@ function _flushFbQueue(){
 let myFbRef = null;
 let syncInterval = null;
 function fbSet(path,val){
-  const run=()=>window._set(fbRef(path),val).catch(()=>{});
+  const run=()=>window._set(fbRef(path),val).catch(e=>console.warn('[FB] set failed:',path,e?.message||e));
   if(!FB_READY){_fbQueue.push(run);}else{run();}
 }
 function fbUpdate(path,val){
-  const run=()=>window._update(fbRef(path),val).catch(()=>{});
+  const run=()=>window._update(fbRef(path),val).catch(e=>console.warn('[FB] update failed:',path,e?.message||e));
   if(!FB_READY){_fbQueue.push(run);}else{run();}
 }
-function fbRemove(path){if(!FB_READY)return;window._remove(fbRef(path)).catch(()=>{});}
+function fbRemove(path){if(!FB_READY)return;window._remove(fbRef(path)).catch(e=>console.warn('[FB] remove failed:',path,e?.message||e));}
 
 // ─── WARNS (stored locally + Firebase) ─────────────────
 const WARNS = {
@@ -1186,10 +1240,22 @@ const MP = {
   _subscribed: false,
 
   subsAll() {
-    if(!FB_READY) return;
-    if(this._subscribed) return; // prevent duplicate listeners
+    if(!FB_READY) { console.warn('[MP] subsAll called but FB not ready'); return; }
+    if(this._subscribed) return;
     this._subscribed = true;
     console.log('[MP] Subscribing to Firebase multiplayer channels...');
+
+    // ── Connection state monitoring ──────────────────────────────
+    window._onValue(fbRef('.info/connected'), snap => {
+      const connected = snap.val();
+      console.log('[MP] Firebase connection:', connected ? 'ONLINE' : 'OFFLINE');
+      if(connected && S.pfId){
+        // Re-register onDisconnect every time we reconnect
+        const safeId = S.pfId.replace(/[.#$\[\]]/g,'_');
+        window._onDisconnect(fbRef('players/'+safeId)).remove();
+        window._onDisconnect(fbRef('registry/'+safeId+'/alive')).set(false);
+      }
+    });
     window._onValue(fbRef('players'), snap => {
       const all = snap.val() || {};
       const now = Date.now();
@@ -1197,9 +1263,11 @@ const MP = {
       for(const [id, data] of Object.entries(all)) {
         const safeMyId = S.pfId ? S.pfId.replace(/[.#$\[\]]/g,'_') : null;
         if(id === safeMyId || id === S.pfId) continue;
-        // Drop stale entries (no update in 8s)
-        if(data && data.t && (now - data.t) > 8000) { delete MP.remotePlayers[id]; continue; }
-        if(!data || !data.alive) { delete MP.remotePlayers[id]; continue; }
+        // Drop stale entries (no update in 15s — bumped from 8s for reliability)
+        if(data && data.t && (now - data.t) > 15000) { delete MP.remotePlayers[id]; continue; }
+        // alive=false means they explicitly left — but missing alive still shows them
+        if(!data) { delete MP.remotePlayers[id]; continue; }
+        if(data.alive === false) { delete MP.remotePlayers[id]; continue; }
         MP.onlinePlayers[id] = {name:data.name||'?', score:data.score||0, kills:data.kills||0, role:data.role||'player'};
         const segs = data.segs ? data.segs.split(';').map(s=>{const[x,y]=s.split(',');return{x:+x,y:+y};}) : [];
         const skin = CATALOG.skins.find(sk=>sk.id===data.skinId)||CATALOG.skins[0];
@@ -1207,13 +1275,17 @@ const MP = {
           id, name:data.name||'?', segments:segs, angle:data.angle||0,
           skin, trailId:data.trailId||'trail_none', killId:data.killId||'kill_default',
           role:data.role||'player', score:data.score||0, kills:data.kills||0,
-          alive:data.alive!==false, hue:data.hue||0, boosting:data.boosting||false,
+          alive:true, hue:data.hue||0, boosting:data.boosting||false,
           length:segs.length
         };
       }
       const total = Object.keys(MP.onlinePlayers).length + 1; // +1 = self
-      document.getElementById('onlineCount').textContent = total + ' ONLINE';
-      if(Game.running) document.getElementById('hudOnline').textContent = '● '+total+' ONLINE';
+      const onlineEl = document.getElementById('onlineCount');
+      if(onlineEl) onlineEl.textContent = total + ' ONLINE';
+      if(Game.running){
+        const hud = document.getElementById('hudOnline');
+        if(hud) hud.textContent = '● '+total+' ONLINE';
+      }
       updateScoreboard();
     });
 
@@ -1222,7 +1294,7 @@ const MP = {
       const ev = MP.serverEvents;
       if(ev.doubleXP !== GS.doubleXP) {
         GS.doubleXP = !!ev.doubleXP;
-        if(GS.doubleXP && Game.running) {showAnn('⚡ 2× XP EVENT!',4000); showEvBanner('⚡ 2× XP ACTIVE!','xp');}
+        if(GS.doubleXP && Game.running) {showAnn('2× XP EVENT!',4000); showEvBanner('2× XP ACTIVE!','xp');}
         else if(!GS.doubleXP) hideEvBanner();
       }
       if(ev.invertCtrl !== undefined && Game.running) GS.invertCtrl = !!ev.invertCtrl;
@@ -1230,27 +1302,27 @@ const MP = {
       if(ev.ghostMode !== undefined && Game.running) {
         GS.ghostMode = !!ev.ghostMode;
         document.getElementById('ghostOverlay').style.display = GS.ghostMode?'block':'none';
-        if(GS.ghostMode){showEvBanner('👻 GHOST MODE!','ghost');showAnn('👻 GHOST MODE — pass through bots!',4000);}
+        if(GS.ghostMode){showEvBanner('GHOST MODE','ghost');showAnn('GHOST MODE — pass through bots!',4000);}
         else hideEvBanner();
       }
       if(ev.miniMode !== undefined && Game.running) {
         GS.miniMode = !!ev.miniMode;
         document.getElementById('miniOverlay').style.display = GS.miniMode?'block':'none';
-        if(GS.miniMode){showEvBanner('🔬 MINI SNAKE!','mini');showAnn('🔬 MINI SNAKE MODE!',4000);}
+        if(GS.miniMode){showEvBanner('MINI SNAKE','mini');showAnn('MINI SNAKE MODE',4000);}
         else hideEvBanner();
       }
       if(ev.announcement && ev.announcement !== window._lastAnn) {
         window._lastAnn = ev.announcement;
-        if(Game.running) showAnn('📢 '+ev.announcement, 6000);
+        if(Game.running) showAnn(''+ev.announcement, 6000);
       }
       if(ev.nukeMap && ev.nukeMap !== window._lastNuke) {
         window._lastNuke = ev.nukeMap;
-        if(Game.running){ for(const b of GS.bots) killBot(b,false); flashScreen('#ff4400',.8); showAnn('💥 OWNER NUKE!',3000);}
+        if(Game.running){ for(const b of GS.bots) killBot(b,false); flashScreen('#ff4400',.8); showAnn('OWNER NUKE',3000);}
       }
       if(ev.foodFrenzy && ev.foodFrenzy !== window._lastFood) {
         window._lastFood = ev.foodFrenzy;
         for(let i=0;i<200;i++) spawnFood();
-        if(Game.running) showAnn('🌟 FOOD FRENZY!',3000);
+        if(Game.running) showAnn('FOOD FRENZY',3000);
       }
       if(ev.fireworks && ev.fireworks !== window._lastFireworks) {
         window._lastFireworks = ev.fireworks;
@@ -1281,7 +1353,7 @@ const MP = {
       });
     }
     // Show connected toast
-    setTimeout(()=>Toast.show('🟢 Multiplayer connected','ok'), 400);
+    setTimeout(()=>Toast.show('Multiplayer connected','ok'), 400);
     // Live reports counter — only listen if staff
     if(S.role==='moderator'||S.role==='owner'){
       window._onValue(fbRef('reports'), snap=>{
@@ -1298,34 +1370,38 @@ const MP = {
   },
 
   pushState(player) {
-    if(!FB_READY || !player || !player.alive || !S.pfId) return;
-    // Sanitize pfId for Firebase path safety (replace forbidden chars)
+    if(!FB_READY || !S.pfId) return;
+    if(!player) return;
     const safeId = S.pfId.replace(/[.#$\[\]]/g,'_');
     const segs = [];
-    for(let i=0;i<player.segments.length&&segs.length<40;i+=2) {
-      segs.push(Math.round(player.segments[i].x)+','+Math.round(player.segments[i].y));
+    if(player.segments){
+      for(let i=0;i<player.segments.length&&segs.length<40;i+=2){
+        segs.push(Math.round(player.segments[i].x)+','+Math.round(player.segments[i].y));
+      }
     }
-    fbUpdate('registry/'+safeId, {name:S.displayName,role:S.role,lastSeen:Date.now(),score:GS.score,kills:GS.kills+(S.stats.TotalKills||0)}).catch(()=>{});
     fbUpdate('players/'+safeId, {
-      name:   S.displayName,
-      alive:  true,
-      angle:  +player.angle.toFixed(3),
-      segs:   segs.join(';'),
-      skinId: S.equipped.skin,
-      trailId:S.equipped.trail,
-      killId: S.equipped.kill,
-      role:   S.role,
-      score:  GS.score,
-      kills:  GS.kills,
-      streak: GS.killStreak,
-      hue:    Math.round(player.hue),
-      boosting: player.boosting,
-      t:      Date.now()
+      name:     S.displayName,
+      alive:    !!(player.alive),
+      angle:    +( player.angle||0).toFixed(3),
+      segs:     segs.join(';'),
+      skinId:   S.equipped.skin,
+      trailId:  S.equipped.trail,
+      killId:   S.equipped.kill,
+      role:     S.role,
+      score:    GS.score,
+      kills:    GS.kills,
+      streak:   GS.killStreak,
+      hue:      Math.round(player.hue||0),
+      boosting: !!(player.boosting),
+      t:        Date.now()
     });
   },
 
   leave() {
-    if(S.pfId) fbRemove('players/'+S.pfId);
+    if(S.pfId){
+      const safeId = S.pfId.replace(/[.#$\[\]]/g,'_');
+      fbRemove('players/'+safeId);
+    }
     clearInterval(syncInterval);
     this._subscribed = false;
   }
@@ -1488,8 +1564,8 @@ const Toast={
     const stack=document.getElementById('toastStack');
     const t=document.createElement('div');
     t.className=`toast ${type}`;
-    const icons={ok:'✅',er:'❌',in:'ℹ️',gold:'🪙'};
-    t.innerHTML=`<span>${icons[type]||'•'}</span><span>${msg}</span>`;
+    const icons={ok:'<i data-lucide="check-circle-2" style="width:13px;height:13px;"></i>',er:'<i data-lucide="alert-circle" style="width:13px;height:13px;"></i>',in:'<i data-lucide="info" style="width:13px;height:13px;"></i>',gold:'<i data-lucide="circle-dollar-sign" style="width:13px;height:13px;"></i>'};
+    t.innerHTML=`<span class="ic">${icons[type]||'•'}</span><span>${msg}</span>`;
     stack.appendChild(t);
     setTimeout(()=>{if(t.parentNode)t.remove();},dur+200);
   }
@@ -1550,7 +1626,7 @@ const Cosm={
   },
 
   async buy(item,cat){
-    if(S.vc<item.price){Toast.show('Not enough coins! Need 🪙'+item.price,'er');return;}
+    if(S.vc<item.price){Toast.show('Not enough coins! Need <i data-lucide="circle-dollar-sign" style="width:11px;height:11px;margin:0 2px;vertical-align:middle;color:var(--gold)"></i>'+item.price,'er');return;}
     if(!confirm(`Buy ${item.name} for 🪙${item.price}?`))return;
     try{
       await PFApi.purchaseItem(item.id,item.price);
@@ -1568,8 +1644,8 @@ const Cosm={
       this.load(S.inventory.map(id=>({ItemId:id})));
     }
     this.equip(item.id,cat);
-    document.getElementById('pCoins').textContent='🪙 '+S.vc;
-    document.getElementById('wdCoinsDisplay').textContent='🪙 '+S.vc;
+    document.getElementById('pCoinsVal').textContent=S.vc;
+    document.getElementById('wdCoinsDisplay').innerHTML='<i data-lucide="circle-dollar-sign" style="width:13px;height:13px;margin-right:3px;vertical-align:middle;"></i>'+S.vc;
     PFApi.setData({vc:String(S.vc)}).catch(()=>{});
     Toast.show('Purchased '+item.name+'!','gold');
   },
@@ -1583,7 +1659,7 @@ const Wardrobe={
   _animFrame:null,
   open(){
     UI.open('wardrobePanel');
-    document.getElementById('wdCoinsDisplay').textContent='🪙 '+S.vc;
+    document.getElementById('wdCoinsDisplay').innerHTML='<i data-lucide="circle-dollar-sign" style="width:13px;height:13px;margin-right:3px;vertical-align:middle;"></i>'+S.vc;
     this.showCat('skin',document.getElementById('wdCatSkin'));
     this.startPreview();
   },
@@ -1637,7 +1713,7 @@ const Wardrobe={
         : !owned && isLocked
           ? `<div class="wd-price" style="color:var(--dim2);font-size:9px">${isOwnerTag?ownerTag.label:isStaffTag?modTag.label:'EXCLUSIVE'}</div>`
           : '';
-      return`<div class="${cls}" onclick="Wardrobe.click('${item.id}','${cat}')">${badge}<span class="wd-icon">${item.icon}</span><div class="wd-name">${item.name}</div>${price}</div>`;
+      return`<div class="${cls}" onclick="Wardrobe.click('${item.id}','${cat}')">${badge}<span class="wd-icon"><i data-lucide="${item.icon}" style="width:24px;height:24px;"></i></span><div class="wd-name">${item.name}</div>${price}</div>`;
     };
 
     if(ownerItems.length && S.role==='owner'){
@@ -1650,6 +1726,7 @@ const Wardrobe={
 
     pane.innerHTML=html;
     pane.querySelectorAll('.wd-item').forEach((el,i)=>{ el.style.animationDelay=(i*0.03)+'s'; el.classList.add('anim-fadeup'); });
+    if(window.lucide) window.lucide.createIcons();
 
     // Update equipped label
     const eqItem=items.find(i=>i.id===eq)||items[0];
@@ -1714,7 +1791,7 @@ window.Wardrobe=Wardrobe;
 // ─── UPGRADES ───────────────────────────────────────────────
 const Upgrades = {
   open() {
-    document.getElementById('upgCoinsDisplay').textContent = '🪙 ' + S.vc;
+    document.getElementById('upgCoinsDisplay').innerHTML = '<i data-lucide="circle-dollar-sign" style="width:13px;height:13px;margin-right:3px;vertical-align:middle;"></i>' + S.vc;
     this.render();
     UI.open('upgradesPanel');
   },
@@ -1748,18 +1825,18 @@ const Upgrades = {
       }
 
       const infoTxt = maxed
-        ? `<span style="color:var(--g)">✓ MAXED${bonusTxt ? ' — ' + bonusTxt : ''}</span>`
+        ? `<span style="color:var(--g)"><i data-lucide="check" style="width:11px;height:11px;margin-right:3px;vertical-align:middle;"></i>MAXED${bonusTxt ? ' — ' + bonusTxt : ''}</span>`
         : lvl > 0
-          ? `Current: ${bonusTxt} · Next: ${nextTier.desc} — costs 🪙${nextTier.cost}`
-          : `${nextTier.desc} — costs 🪙${nextTier.cost}`;
+          ? `Current: ${bonusTxt} · Next: ${nextTier.desc} — costs <i data-lucide="circle-dollar-sign" style="width:10px;height:10px;margin:0 2px;vertical-align:middle;color:var(--gold)"></i>${nextTier.cost}`
+          : `${nextTier.desc} — costs <i data-lucide="circle-dollar-sign" style="width:10px;height:10px;margin:0 2px;vertical-align:middle;color:var(--gold)"></i>${nextTier.cost}`;
 
       const btnLabel = maxed
-        ? 'MAX LEVEL'
-        : `UPGRADE → ${nextTier.label}  🪙${nextTier.cost}`;
+        ? '<i data-lucide="check-circle-2" style="width:12px;height:12px;margin-right:5px;vertical-align:middle;"></i>MAX LEVEL'
+        : `UPGRADE → ${nextTier.label} &nbsp;<i data-lucide="circle-dollar-sign" style="width:11px;height:11px;margin:0 2px;vertical-align:middle;color:var(--gold)"></i>${nextTier.cost}`;
 
       card.innerHTML = `
         <div class="upg-header">
-          <div class="upg-icon">${upg.icon}</div>
+          <div class="upg-icon"><i data-lucide="${upg.icon}" style="width:22px;height:22px;"></i></div>
           <div>
             <div class="upg-name">${upg.name}</div>
             <div class="upg-desc">${upg.desc}</div>
@@ -1773,6 +1850,7 @@ const Upgrades = {
       `;
       list.appendChild(card);
     }
+    if(window.lucide) window.lucide.createIcons();
   },
 
   buy(id) {
@@ -1781,16 +1859,16 @@ const Upgrades = {
     const lvl = getUpgLevel(id);
     if (lvl >= upg.tiers.length) { UI.msg('upgMsg', 'Already maxed!', 'er'); return; }
     const tier = upg.tiers[lvl];
-    if (S.vc < tier.cost) { UI.msg('upgMsg', `Not enough coins! Need 🪙${tier.cost}`, 'er'); return; }
+    if (S.vc < tier.cost) { UI.msg('upgMsg', `Not enough coins! Need <i data-lucide="circle-dollar-sign" style="width:11px;height:11px;margin:0 2px;vertical-align:middle;color:var(--gold)"></i>${tier.cost}`, 'er'); return; }
     S.vc -= tier.cost;
     if (!S.upgrades) S.upgrades = {};
     S.upgrades[id] = lvl + 1;
     document.getElementById('pCoins').textContent = '🪙 ' + S.vc;
-    document.getElementById('upgCoinsDisplay').textContent = '🪙 ' + S.vc;
+    document.getElementById('upgCoinsDisplay').innerHTML = '<i data-lucide="circle-dollar-sign" style="width:13px;height:13px;margin-right:3px;vertical-align:middle;"></i>' + S.vc;
     // Persist
     PFApi.setData({ vc: String(S.vc), upgrades: JSON.stringify(S.upgrades) }).catch(() => {});
-    Toast.show(`⚡ ${upg.name} upgraded to ${tier.label}!`, 'ok');
-    UI.msg('upgMsg', `✅ ${upg.name} → ${tier.label}`, 'ok');
+    Toast.show(`${upg.name} upgraded to ${tier.label}!`, 'ok');
+    UI.msg('upgMsg', `${upg.name} → ${tier.label}`, 'ok');
     this.render();
   }
 };
@@ -1808,6 +1886,8 @@ const UI={
     if(id==='wardrobePanel')Wardrobe.open();
     if(id==='upgradesPanel')Upgrades.open();
     if(id==='staffPanel'&&window.Staff)Staff._updateReportsBadge();
+    // Re-render Lucide icons for any new data-lucide elements
+    setTimeout(()=>{ if(window.lucide) window.lucide.createIcons(); }, 50);
   },
   close(id){
     const el=document.getElementById(id);
@@ -1886,7 +1966,7 @@ async function doLogin(){
 
   // Offline ban check — block before even hitting network
   const offlineBan=_checkOfflineBan(username);
-  if(offlineBan){UI.msg('authMsg','⛔ You are banned: '+offlineBan.reason,'er');return;}
+  if(offlineBan){UI.msg('authMsg','You are banned: '+offlineBan.reason,'er');return;}
 
   UI.msg('authMsg','Logging in…','in');
   try{
@@ -1913,14 +1993,14 @@ async function doRegister(){
 
   // Offline ban check on username
   const offlineBan=_checkOfflineBan(name);
-  if(offlineBan){UI.msg('authMsg','⛔ This username is banned: '+offlineBan.reason,'er');return;}
+  if(offlineBan){UI.msg('authMsg','This username is banned: '+offlineBan.reason,'er');return;}
 
   const btn=document.getElementById('regBtn');
   btn.disabled=true;btn.textContent='CREATING…';
   UI.msg('authMsg','Creating your account…','in');
   try{
     await PFApi.register(name,pass);
-    UI.msg('authMsg','✅ Account created! Entering the pit…','ok');
+    UI.msg('authMsg','Account created! Entering the pit...','ok');
     await new Promise(r=>setTimeout(r,700));
     const d=await PFApi.login(name,pass);
     LS.set('session',{username:name,pass}); // always remember after register
@@ -1985,7 +2065,7 @@ async function onLoginSuccess(data){
 
   // ── Step 3: Local ban check ───────────────────────────────────────────────
   const localBan = BAN.check(S.pfId) || _checkOfflineBan(S.displayName);
-  if(localBan){ UI.msg('authMsg','⛔ You are banned: '+localBan.reason,'er'); LS.del('session'); return; }
+  if(localBan){ UI.msg('authMsg','You are banned: '+localBan.reason,'er'); LS.del('session'); return; }
 
   // ── Step 4: Firebase ban check (authoritative live source) ────────────────
   if(FB_READY){
@@ -1997,7 +2077,7 @@ async function onLoginSuccess(data){
         const bans = LS.get('bans',{});
         bans[S.pfId.toLowerCase()] = {name:S.displayName,reason:fbBan.reason||'Banned by staff.',by:fbBan.by||'Staff',time:fbBan.time||Date.now()};
         LS.set('bans',bans);
-        UI.msg('authMsg','❌ You are banned: '+(fbBan.reason||'Banned by staff.'),'er');
+        UI.msg('authMsg','You are banned: '+(fbBan.reason||'Banned by staff.'),'er');
         LS.del('session');
         return;
       }
@@ -2029,7 +2109,7 @@ async function onLoginSuccess(data){
         if(changed){
           PFApi.setData({vc:String(S.vc)}).catch(()=>{});
           fbRemove(grantKey);
-          Toast.show('🎁 Gifts received from '+(pending.by||'Owner')+'!','gold');
+          Toast.show('Gifts received from '+(pending.by||'Owner')+'!','gold');
         }
       }
       if(revoke && revoke.role){
@@ -2044,7 +2124,7 @@ async function onLoginSuccess(data){
 
   Object.assign(S.settings, LS.get('settings',{}));
   showProfile();
-  UI.msg('authMsg','✅ Welcome, '+S.displayName+'!','ok');
+  UI.msg('authMsg','Welcome, '+S.displayName+'!','ok');
 
   // ── Register presence in Firebase ─────────────────────────────────────────
   if(S.pfId){
@@ -2057,26 +2137,26 @@ async function onLoginSuccess(data){
     const localReg = LS.get('playerRegistry',{});
     localReg[S.pfId] = regEntry;
     LS.set('playerRegistry', localReg);
-    if(FB_READY){
-      window._onDisconnect(fbRef('registry/'+safeId+'/alive')).set(false);
-    } else {
-      const _tryDisconnect=()=>{
-        if(FB_READY) window._onDisconnect(fbRef('registry/'+safeId+'/alive')).set(false);
-        else setTimeout(_tryDisconnect,500);
-      };
-      setTimeout(_tryDisconnect,500);
-    }
   }
 
-  if(FB_READY) MP.subsAll();
-  else { const _waitSubs=()=>{ if(FB_READY) MP.subsAll(); else setTimeout(_waitSubs,300); }; setTimeout(_waitSubs,300); }
+  // ── Start multiplayer listeners ────────────────────────────────────────────
+  if(FB_READY){
+    MP.subsAll();
+  } else {
+    // FB module loads async — wait for it then subscribe
+    const _waitSubs=()=>{
+      if(FB_READY){ MP.subsAll(); }
+      else setTimeout(_waitSubs,300);
+    };
+    setTimeout(_waitSubs,300);
+  }
 }
 
 function showProfile(){
   document.getElementById('authCard').classList.add('hidden');
   document.getElementById('profileCard').classList.remove('hidden');
   document.getElementById('pName').textContent=S.displayName;
-  document.getElementById('pCoins').textContent='🪙 '+S.vc;
+  document.getElementById('pCoinsVal').textContent=S.vc;
   document.getElementById('sBest').textContent=(S.stats.BestScore||0).toLocaleString();
   document.getElementById('sKills').textContent=(S.stats.TotalKills||0).toLocaleString();
   document.getElementById('sGames').textContent=(S.stats.GamesPlayed||0).toLocaleString();
@@ -2098,7 +2178,7 @@ function showProfile(){
   document.getElementById('pModB').classList.add('hidden');
 
   if(S.role !== 'player'){
-    roleLbl.textContent = tag.icon + ' ' + tag.label;
+    roleLbl.innerHTML = '<i data-lucide="' + tag.icon + '" style="width:12px;height:12px;margin-right:4px;vertical-align:middle;"></i>' + tag.label;
     roleLbl.style.color = tag.color;
     pAv.style.borderColor = tag.color;
     pName.style.color = tag.color;
@@ -2118,7 +2198,8 @@ function showProfile(){
   }
 
   const skin=CATALOG.skins.find(sk=>sk.id===S.equipped.skin)||CATALOG.skins[0];
-  document.getElementById('pAvIco').textContent=skin.icon;
+  document.getElementById('pAvIco').innerHTML='<i data-lucide="zap" style="width:22px;height:22px;"></i>';
+  setTimeout(()=>{ if(window.lucide) window.lucide.createIcons(); }, 30);
 }
 
 function doLogout(){
@@ -2145,7 +2226,7 @@ const LB={async load(stat,btn){
   try{
     const entries=await PFApi.getLB(stat);
     if(!entries.length){list.innerHTML='<div style="text-align:center;color:var(--dim2);padding:20px">Play some games first!</div>';return;}
-    const medals=['🥇','🥈','🥉'],cols={0:'var(--gold)',1:'#ccc',2:'#cd7f32'};
+    const medals=['1','2','3'],cols={0:'var(--gold)',1:'#ccc',2:'#cd7f32'};
     list.innerHTML=entries.map((e,i)=>{const me=e.DisplayName===S.displayName;return`<div class="lbrow${me?' me':''}"><div class="lbpos" style="color:${cols[i]||'var(--dim2)'}">${medals[i]||i+1}</div><div class="lbnm">${e.DisplayName||'?'}${me?` <span style="background:rgba(0,255,136,.15);color:var(--g);font-size:10px;padding:2px 6px;border-radius:5px;margin-left:5px">YOU</span>`:''}</div><div class="lbval">${(e.StatValue||0).toLocaleString()}</div></div>`;}).join('');
   }catch(e){list.innerHTML='<div style="color:var(--dim2);text-align:center;padding:20px">PlayFab leaderboard not configured yet.</div>';}
 }};
@@ -2188,11 +2269,11 @@ const Staff={
     const el=document.getElementById('liveList');
     if(!el)return;
     if(!FB_READY){
-      el.innerHTML='<div class="no-results">⚠️ Firebase not connected — host on GitHub Pages for live data</div>';
+      el.innerHTML='<div class="no-results">Firebase not connected — host on GitHub Pages for live data</div>';
       this._renderLiveFallback(el);
       return;
     }
-    el.innerHTML='<div class="no-results" style="opacity:.6">🔄 Loading...</div>';
+    el.innerHTML='<div class="no-results" style="opacity:.6"><i data-lucide="refresh-cw" style="width:13px;height:13px;margin-right:5px;vertical-align:middle;" class="ic-spin"></i>Loading...</div>';
     window._get(fbRef('players')).then(snap=>{
       const all=snap.val()||{};
       const entries=Object.entries(all);
@@ -2212,13 +2293,13 @@ const Staff={
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
               <span class="spc-name" style="color:${roleColor}">${esc(d.name)||'Unknown'}</span>
               <span class="spc-role ${d.role||'player'}">${(d.role||'PLAYER').toUpperCase()}</span>
-              ${warns>0?`<span style="color:var(--gold);font-size:11px;font-weight:700">⚠️ ${warns}W</span>`:''}
-              ${ban?'<span style="color:var(--r);font-size:11px;font-weight:700">⛔ BANNED</span>':''}
+              ${warns>0?`<span style="color:var(--gold);font-size:11px;font-weight:700">${warns}W</span>`:''}
+              ${ban?'<span style="color:var(--r);font-size:11px;font-weight:700">BANNED</span>':''}
             </div>
-            <div class="spc-stats">Score: <b style="color:var(--text)">${(d.score||0).toLocaleString()}</b> · Kills: <b style="color:var(--r)">${d.kills||0}</b>${d.streak>2?` · 🔥 <b style="color:var(--gold)">${d.streak}</b>`:''} · <span style="opacity:.5">${id.substring(0,8)}…</span></div>
+            <div class="spc-stats">Score: <b style="color:var(--text)">${(d.score||0).toLocaleString()}</b> · Kills: <b style="color:var(--r)">${d.kills||0}</b>${d.streak>2?` ·  <b style="color:var(--gold)">${d.streak}</b>`:''} · <span style="opacity:.5">${id.substring(0,8)}…</span></div>
           </div>
           <div class="spc-actions" style="flex-direction:column;gap:4px;">
-            <button class="quick-action-btn" style="border-color:rgba(255,34,68,.5);color:var(--r);font-weight:900;letter-spacing:0;" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')">⚑ REPORT</button>
+            <button class="quick-action-btn" style="border-color:rgba(255,34,68,.5);color:var(--r);font-weight:900;letter-spacing:0;" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')"><i data-lucide="flag" style="width:11px;height:11px;margin-right:3px;vertical-align:middle;"></i>REPORT</button>
             <button class="quick-action-btn qa-kick" onclick="event.stopPropagation();Staff.quickKick('${esc(id)}','${esc(d.name||'?')}')">KICK</button>
             ${ban
               ? `<button class="quick-action-btn qa-unban" onclick="event.stopPropagation();Staff.quickUnban('${esc(id)}','${esc(d.name||'?')}')">UNBAN</button>`
@@ -2229,7 +2310,7 @@ const Staff={
         el.appendChild(card);
       });
     }).catch(e=>{
-      el.innerHTML=`<div class="no-results">❌ Could not load: ${e.message||'unknown error'}</div>`;
+      el.innerHTML=`<div class="no-results"> Could not load: ${e.message||'unknown error'}</div>`;
     });
   },
 
@@ -2324,7 +2405,7 @@ const Staff={
       <div style="display:flex;align-items:flex-start;gap:10px;">
         <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;">
           <div style="width:34px;height:34px;border-radius:2px;background:rgba(0,0,0,.5);border:1px solid ${roleColor}44;display:flex;align-items:center;justify-content:center;font-size:17px;">
-            ${d.role==='owner'?'👑':d.role==='moderator'?'🛡':'🐍'}
+            ${d.role==='owner'?'◆':d.role==='moderator'?'■':'·'}
           </div>
           <div style="font-family:var(--mono);font-size:8px;padding:1px 4px;border:1px solid ${isOnline?'rgba(57,255,138,.35)':'var(--border)'};color:${isOnline?'var(--g)':'var(--dim2)'};">${isOnline?'● LIVE':'○ OFF'}</div>
         </div>
@@ -2332,8 +2413,8 @@ const Staff={
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:6px;">
             <span style="font-family:var(--mono);font-size:14px;font-weight:700;color:${roleColor}">${esc(d.name)||'Unknown'}</span>
             <span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:${d.role==='owner'?'rgba(232,200,50,.1)':d.role==='moderator'?'rgba(58,154,238,.1)':'rgba(57,255,138,.07)'};border:1px solid ${roleColor}55;color:${roleColor};">${(d.role||'player').toUpperCase()}</span>
-            ${ban?`<span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:rgba(255,34,68,.1);border:1px solid rgba(255,34,68,.4);color:var(--r);">⛔ BANNED</span>`:''}
-            ${warns>0?`<span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:rgba(232,200,50,.1);border:1px solid rgba(232,200,50,.4);color:var(--gold);">⚠ ${warns}W</span>`:''}
+            ${ban?`<span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:rgba(255,34,68,.1);border:1px solid rgba(255,34,68,.4);color:var(--r);">BANNED</span>`:''}
+            ${warns>0?`<span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:rgba(232,200,50,.1);border:1px solid rgba(232,200,50,.4);color:var(--gold);">${warns}W</span>`:''}
           </div>
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:7px;">
             ${[['SCORE',(d.score||0).toLocaleString(),'var(--g)'],['KILLS',d.kills||0,'var(--r)'],['RANK',rank.icon+' '+rank.name,rank.color],['GAMES',d.games||'?','var(--dim2)']].map(([lbl,val,col])=>`
@@ -2346,17 +2427,17 @@ const Staff={
                style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.4);border:1px solid var(--border);padding:4px 8px;cursor:pointer;margin-bottom:${ban||!isOnline?'5px':'0'};">
             <span style="font-family:var(--mono);font-size:8px;color:var(--dim2);">PFID</span>
             <span style="font-family:var(--mono);font-size:10px;color:var(--mod);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${id}</span>
-            <span style="font-size:10px;opacity:.5;">📋</span>
+            <span style="opacity:.5;display:inline-flex;"><i data-lucide="copy" style="width:10px;height:10px;margin-right:4px;vertical-align:middle;"></i></span>
           </div>
-          ${ban?`<div style="font-family:var(--mono);font-size:9px;color:var(--r);margin-top:3px;">⛔ ${esc((ban.reason||'no reason').substring(0,45))}</div>`:''}
+          ${ban?`<div style="font-family:var(--mono);font-size:9px;color:var(--r);margin-top:3px;">${esc((ban.reason||'no reason').substring(0,45))}</div>`:''}
           ${!isOnline&&d.lastSeen?`<div style="font-family:var(--mono);font-size:9px;color:var(--dim2);margin-top:3px;">Last seen: ${lastSeen}</div>`:''}
         </div>
         <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;">
-          <button class="quick-action-btn" style="border-color:rgba(58,154,238,.5);color:var(--mod);min-width:54px;font-size:9px;" onclick="event.stopPropagation();Staff.idToTools('${esc(id)}','${esc(d.name||'?')}')">⚙ TOOLS</button>
+          <button class="quick-action-btn" style="border-color:rgba(58,154,238,.5);color:var(--mod);min-width:54px;font-size:9px;" onclick="event.stopPropagation();Staff.idToTools('${esc(id)}','${esc(d.name||'?')}')"><i data-lucide="settings" style="width:10px;height:10px;margin-right:3px;vertical-align:middle;"></i>TOOLS</button>
           ${isOnline?`<button class="quick-action-btn qa-kick" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickKick('${esc(id)}','${esc(d.name||'?')}')">KICK</button>`:''}
           ${ban?`<button class="quick-action-btn qa-unban" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickUnban('${esc(id)}','${esc(d.name||'?')}')">UNBAN</button>`
                :`<button class="quick-action-btn qa-ban" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickBan('${esc(id)}','${esc(d.name||'?')}')">BAN</button>`}
-          ${isOnline?`<button class="quick-action-btn" style="border-color:rgba(255,34,68,.4);color:var(--r);font-size:9px;" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')">⚑ RPT</button>`:''}
+          ${isOnline?`<button class="quick-action-btn" style="border-color:rgba(255,34,68,.4);color:var(--r);font-size:9px;" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')"><i data-lucide="flag" style="width:10px;height:10px;margin-right:3px;vertical-align:middle;"></i>RPT</button>`:''}
         </div>
       </div>`;
     card.onclick=()=>this.idToTools(id,d.name||'?');
@@ -2366,7 +2447,7 @@ const Staff={
   _renderResults(el,matches,context){
     if(!matches.length){
       el.innerHTML=`<div style="text-align:center;padding:28px;font-family:var(--mono);">
-        <div style="font-size:28px;margin-bottom:8px;">🔍</div>
+        <div style="margin-bottom:8px;"><i data-lucide="search" style="width:28px;height:28px;color:var(--dim2);"></i></div>
         <div style="color:var(--text);font-size:12px;">No player found</div>
         <div style="color:var(--dim2);font-size:10px;margin-top:5px;">Try a partial name or their PlayFab ID</div>
         <div style="color:var(--dim2);font-size:9px;margin-top:3px;opacity:.6;">${context||''}</div>
@@ -2440,20 +2521,20 @@ const Staff={
     const t=this._getTarget();if(!t)return;
     const r=(document.getElementById('modReason')?.value||'').trim()||'No reason given';
     const hrs=parseInt(document.getElementById('modDurHrs')?.value)||0;
-    if(!confirm(`⚠️ Ban "${t}"?\nReason: ${r}\nDuration: ${hrs>0?hrs+'h':'PERMANENT'}`))return;
+    if(!confirm(`Ban "${t}"?\nReason: ${r}\nDuration: ${hrs>0?hrs+'h':'PERMANENT'}`))return;
     // Use selected player's pfId if it matches, otherwise use typed target as-is
     const banId=this._selectedId&&(this._selectedId===t||this._selectedName===t)?this._selectedId:t;
     BAN.ban(banId,this._selectedName||t,r,S.displayName);
     this._kick(banId,'You are banned: '+r,true);
     Toast.show(`${this._selectedName||t} banned${hrs>0?` for ${hrs}h`:' permanently'}!`,'gold');
-    UI.msg('staffMsg',`✅ ${this._selectedName||t} banned.`,'ok');
+    UI.msg('staffMsg',`${this._selectedName||t} banned.`,'ok');
   },
 
   unban(){
     const t=this._getTarget();if(!t)return;
     BAN.unban(t.toLowerCase());
     Toast.show(t+' unbanned!','ok');
-    UI.msg('staffMsg','✅ '+t+' unbanned.','ok');
+    UI.msg('staffMsg',t+' unbanned.','ok');
   },
 
   warn(){
@@ -2462,8 +2543,8 @@ const Staff={
     const r=(document.getElementById('modReason')?.value||'').trim()||'No reason given';
     const count=WARNS.add(t.toLowerCase(),t,r,S.displayName);
     if(FB_READY)fbSet('warns/'+t,{latest:r,count,by:S.displayName,time:Date.now()});
-    Toast.show(`⚠️ Warning #${count} issued to ${t}`,'gold');
-    UI.msg('staffMsg',`⚠️ ${t} warned (${count} total).`,'ok');
+    Toast.show(`Warning #${count} to ${t}`,'gold');
+    UI.msg('staffMsg',`${t} warned (${count} total).`,'ok');
   },
 
   kick(){
@@ -2472,7 +2553,7 @@ const Staff={
     const r=(document.getElementById('modReason')?.value||'').trim()||'Kicked by staff';
     this._kick(t,r,false);
     Toast.show(t+' kicked!','in');
-    UI.msg('staffMsg','✅ '+t+' kicked.','ok');
+    UI.msg('staffMsg',t+' kicked.','ok');
   },
 
   mute(){
@@ -2482,7 +2563,7 @@ const Staff={
     if(FB_READY)fbSet('mutes/'+t,{until,by:S.displayName});
     AL.add(S.displayName,'MUTE',t,'1h');
     Toast.show(t+' muted for 1 hour','in');
-    UI.msg('staffMsg','🔇 '+t+' muted 1h.','ok');
+    UI.msg('staffMsg',t+' muted 1h (muted).','ok');
   },
 
   broadcast(){
@@ -2490,11 +2571,11 @@ const Staff={
     const msg=(document.getElementById('staffBcastMsg')?.value||'').trim();
     if(!msg){Toast.show('Enter a message to broadcast','er');return;}
     if(FB_READY)fbUpdate('serverEvents',{announcement:msg,annTime:Date.now()});
-    if(Game.running)showAnn('📢 '+msg,6000);
+    if(Game.running)showAnn(''+msg,6000);
     AL.add(S.displayName,'BROADCAST','ALL',msg.substring(0,40));
     const el=document.getElementById('staffBcastMsg');if(el)el.value='';
     Toast.show('Broadcast sent to all players!','ok');
-    UI.msg('staffMsg','✅ Broadcast sent!','ok');
+    UI.msg('staffMsg','Broadcast sent!','ok');
   },
 
   _kick(targetId,reason,isBan=false){
@@ -2542,7 +2623,7 @@ const Staff={
       const r=prompt('Warn reason for '+name+':');
       if(r===null)return;
       const c=WARNS.add(id,name,r||'No reason',S.displayName);
-      Toast.show(`⚠️ Warning #${c} issued to ${name}`,'gold');
+      Toast.show(`Warning #${c} to ${name}`,'gold');
     }
     setTimeout(()=>this.loadLive(),600);
   },
@@ -2577,7 +2658,7 @@ const Staff={
   copyId(id){
     if(!id||id==='—'){Toast.show('No ID to copy','er');return;}
     navigator.clipboard.writeText(id)
-      .then(()=>Toast.show('✅ Copied: '+id,'ok'))
+      .then(()=>Toast.show('Copied: '+id,'ok'))
       .catch(()=>{
         // Fallback for browsers that block clipboard
         const ta=document.createElement('textarea');
@@ -2585,7 +2666,7 @@ const Staff={
         document.body.appendChild(ta);ta.select();
         document.execCommand('copy');
         document.body.removeChild(ta);
-        Toast.show('✅ Copied: '+id,'ok');
+        Toast.show('Copied: '+id,'ok');
       });
   },
 
@@ -2640,7 +2721,7 @@ const Staff={
       if(FB_READY){
         const reportKey='report_'+Date.now()+'_'+id.substring(0,6);
         fbSet('reports/'+reportKey, report).then(()=>{
-          Toast.show('⚑ Report submitted for '+name,'gold');
+          Toast.show('Report submitted for '+name,'gold');
           AL.add('REPORT', S.displayName, name, reason);
           this._updateReportsBadge();
         }).catch(()=>{
@@ -2648,13 +2729,13 @@ const Staff={
           const local=JSON.parse(localStorage.getItem('vn5_reports')||'[]');
           local.unshift(report);
           localStorage.setItem('vn5_reports',JSON.stringify(local.slice(0,50)));
-          Toast.show('⚑ Report saved locally (offline)','gold');
+          Toast.show('Report saved locally (offline)','gold');
         });
       } else {
         const local=JSON.parse(localStorage.getItem('vn5_reports')||'[]');
         local.unshift(report);
         localStorage.setItem('vn5_reports',JSON.stringify(local.slice(0,50)));
-        Toast.show('⚑ Report saved locally','gold');
+        Toast.show('Report saved locally','gold');
       }
     };
     // Try to get fresh live data for the player
@@ -2671,7 +2752,7 @@ const Staff={
   loadReports(){
     const el=document.getElementById('reportsList');
     if(!el)return;
-    el.innerHTML='<div class="no-results" style="opacity:.6">🔄 Loading reports…</div>';
+    el.innerHTML='<div class="no-results" style="opacity:.6"><i data-lucide="refresh-cw" style="width:12px;height:12px;margin-right:4px;vertical-align:middle;" class="ic-spin"></i>Loading reports...</div>';
 
     const renderReports=(reports)=>{
       if(!reports.length){el.innerHTML='<div class="no-results">No reports yet.</div>';return;}
@@ -2684,7 +2765,7 @@ const Staff={
         div.innerHTML=`
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
             <div>
-              <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--r);">⚑ ${r.reportedName||'Unknown'}</span>
+              <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--r);"><i data-lucide="flag" style="width:12px;height:12px;margin-right:3px;vertical-align:middle;color:var(--r)"></i>${r.reportedName||'Unknown'}</span>
               <span style="font-family:var(--mono);font-size:10px;color:var(--dim2);margin-left:8px;">${r.role||'player'}</span>
             </div>
             <span style="font-family:var(--mono);font-size:10px;color:var(--dim2);white-space:nowrap;">${t}</span>
@@ -2699,12 +2780,12 @@ const Staff={
             <span>Banned: <b style="color:${r.isBanned?'var(--r)':'var(--dim2)'}">${r.isBanned?'YES':'NO'}</b></span>
           </div>
           <div style="font-family:var(--mono);font-size:10px;color:var(--dim2);background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:2px;padding:6px;cursor:pointer;word-break:break-all;" onclick="Staff.copyId('${r.reportedId||''}')">
-            PFID: <span style="color:var(--mod);">${r.reportedId||'—'}</span> 📋
+            PFID: <span style="color:var(--mod);">${r.reportedId||'—'}</span> <i data-lucide='copy' style='width:10px;height:10px;opacity:.5;vertical-align:middle;'></i>
           </div>
           <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
             <button class="quick-action-btn qa-ban" onclick="Staff.quickBan('${r.reportedId||''}','${(r.reportedName||'').replace(/'/g,"\\'")}')">BAN</button>
             <button class="quick-action-btn qa-kick" onclick="Staff.quickKick('${r.reportedId||''}','${(r.reportedName||'').replace(/'/g,"\\'")}')">KICK</button>
-            <button class="quick-action-btn" style="border-color:rgba(58,154,238,.4);color:var(--mod);" onclick="Staff.idToTools('${r.reportedId||''}','${(r.reportedName||'').replace(/'/g,"\\'")}')">⚙ TOOLS</button>
+            <button class="quick-action-btn" style="border-color:rgba(58,154,238,.4);color:var(--mod);" onclick="Staff.idToTools('${r.reportedId||''}','${(r.reportedName||'').replace(/'/g,"\\'")}')"><i data-lucide="settings" style="width:10px;height:10px;margin-right:3px;vertical-align:middle;"></i>TOOLS</button>
             <span style="font-family:var(--mono);font-size:10px;color:var(--dim2);align-self:center;margin-left:auto;">Reported by: ${r.reportedBy||'?'}</span>
           </div>`;
         el.appendChild(div);
@@ -2772,20 +2853,20 @@ const Own={
     if(S.role!=='owner'){UI.msg('ownMsg','Access denied.','er');return;}
     const ev={};
     const actions={
-      doubleXP:()=>{GS.doubleXP=!GS.doubleXP;ev.doubleXP=GS.doubleXP;this.setActive('doubleXP',GS.doubleXP);UI.msg('ownMsg',GS.doubleXP?'⚡ 2×XP ON!':'2×XP off.','ok');AL.add(S.displayName,'CMD','SERVER','doubleXP');},
-      coinRain:()=>{S.vc+=500;document.getElementById('pCoins').textContent='🪙 '+S.vc;ev.announcement='🪙 COIN RAIN! Grab coins!';if(Game.running){showAnn('🪙 COIN RAIN!',4000);showEvBanner('🪙 COIN RAIN!','coins');for(let i=0;i<80;i++)spawnCoin();}setTimeout(()=>hideEvBanner(),20000);UI.msg('ownMsg','🪙 Coin rain! +500 coins.','ok');AL.add(S.displayName,'CMD','SERVER','coinRain');},
-      spawnBoss:()=>{if(!Game.running){UI.msg('ownMsg','Start a game first!','er');return;}spawnBoss();ev.announcement='👑 BOSS SNAKE SPAWNED!';UI.msg('ownMsg','👑 Boss spawned!','ok');AL.add(S.displayName,'CMD','SERVER','spawnBoss');},
-      nukeMap:()=>{ev.nukeMap=Date.now();if(Game.running){for(const b of GS.bots)killBot(b,false);flashScreen('#ff4400',.9);showAnn('💥 NUKE MAP!',3000);}UI.msg('ownMsg','💥 Nuked!','ok');AL.add(S.displayName,'CMD','SERVER','nukeMap');},
-      growAll:()=>{if(!Game.running){UI.msg('ownMsg','Start game first!','er');return;}if(GS.player)GS.player.length+=120;for(const b of GS.bots)if(b.alive)b.length+=40;ev.announcement='🐍 GROW ALL!';showAnn('🐍 GROW ALL! Everyone is MASSIVE!',3000);UI.msg('ownMsg','🐍 Grown!','ok');AL.add(S.displayName,'CMD','SERVER','growAll');},
-      speedFrenzy:()=>{GS.speedMult=2;ev.speedMult=2;ev.announcement='🚀 SPEED FRENZY for 20s!';showEvBanner('🚀 SPEED FRENZY!','xp');this.setActive('speedFrenzy',true);if(Game.running)showAnn('🚀 SPEED FRENZY!',3000);setTimeout(()=>{GS.speedMult=1;ev.speedMult=1;if(FB_READY)fbUpdate('serverEvents',{speedMult:1});hideEvBanner();this.setActive('speedFrenzy',false);},20000);UI.msg('ownMsg','🚀 Speed frenzy!','ok');AL.add(S.displayName,'CMD','SERVER','speedFrenzy');},
-      foodFrenzy:()=>{ev.foodFrenzy=Date.now();for(let i=0;i<200;i++)spawnFood();ev.announcement='🌟 FOOD FRENZY!';if(Game.running)showAnn('🌟 FOOD FRENZY!',3000);UI.msg('ownMsg','🌟 Food frenzy!','ok');AL.add(S.displayName,'CMD','SERVER','foodFrenzy');},
-      invertCtrl:()=>{GS.invertCtrl=!GS.invertCtrl;ev.invertCtrl=GS.invertCtrl;this.setActive('invertCtrl',GS.invertCtrl);const m=GS.invertCtrl?'😈 Controls inverted (15s)!':'Controls restored.';if(Game.running)showAnn(m,3000);if(GS.invertCtrl)setTimeout(()=>{GS.invertCtrl=false;if(FB_READY)fbUpdate('serverEvents',{invertCtrl:false});this.setActive('invertCtrl',false);},15000);UI.msg('ownMsg',m,'ok');AL.add(S.displayName,'CMD','SERVER','invertCtrl');},
-      ghostMode:()=>{GS.ghostMode=!GS.ghostMode;ev.ghostMode=GS.ghostMode;this.setActive('ghostMode',GS.ghostMode);document.getElementById('ghostOverlay').style.display=GS.ghostMode&&Game.running?'block':'none';if(GS.ghostMode){showEvBanner('👻 GHOST MODE!','ghost');showAnn('👻 GHOST MODE — pass through bots!',4000);setTimeout(()=>{GS.ghostMode=false;ev.ghostMode=false;if(FB_READY)fbUpdate('serverEvents',{ghostMode:false});document.getElementById('ghostOverlay').style.display='none';hideEvBanner();this.setActive('ghostMode',false);},20000);}else hideEvBanner();UI.msg('ownMsg',GS.ghostMode?'👻 Ghost mode ON!':'Ghost mode off.','ok');AL.add(S.displayName,'CMD','SERVER','ghostMode');},
-      miniSnake:()=>{GS.miniMode=!GS.miniMode;ev.miniMode=GS.miniMode;this.setActive('miniSnake',GS.miniMode);document.getElementById('miniOverlay').style.display=GS.miniMode&&Game.running?'block':'none';if(GS.miniMode){showEvBanner('🔬 MINI SNAKE!','mini');showAnn('🔬 MINI SNAKE MODE!',4000);setTimeout(()=>{GS.miniMode=false;if(FB_READY)fbUpdate('serverEvents',{miniMode:false});document.getElementById('miniOverlay').style.display='none';hideEvBanner();this.setActive('miniSnake',false);},25000);}else hideEvBanner();UI.msg('ownMsg',GS.miniMode?'🔬 Mini mode ON!':'Mini mode off.','ok');AL.add(S.displayName,'CMD','SERVER','miniSnake');},
-      fireworks:()=>{ev.fireworks=Date.now();startFireworks();showAnn('🎆 FIREWORKS!',4000);UI.msg('ownMsg','🎆 Fireworks!','ok');AL.add(S.displayName,'CMD','SERVER','fireworks');},
-      killAllBots:()=>{if(!Game.running){UI.msg('ownMsg','Start game first!','er');return;}for(const b of [...GS.bots])killBot(b,false);flashScreen('#ff4400',.6);showAnn('🤖 ALL BOTS ELIMINATED!',3000);UI.msg('ownMsg','🤖 Bots killed!','ok');AL.add(S.displayName,'CMD','SERVER','killAllBots');},
-      maxFoodFrenzy:()=>{for(let i=0;i<400;i++)spawnFood();for(let i=0;i<50;i++)spawnCoin();showAnn('🍖 MAX FOOD FRENZY!',3000);UI.msg('ownMsg','🍖 Max food!','ok');AL.add(S.displayName,'CMD','SERVER','maxFood');},
-      zeroGravity:()=>{GS.zeroGravity=!GS.zeroGravity;this.setActive('zeroGravity',GS.zeroGravity);showAnn(GS.zeroGravity?'🌌 ZERO GRAVITY!':'Gravity restored.',3000);UI.msg('ownMsg',GS.zeroGravity?'🌌 Zero grav ON!':'Zero grav off.','ok');AL.add(S.displayName,'CMD','SERVER','zeroGravity');},
+      doubleXP:()=>{GS.doubleXP=!GS.doubleXP;ev.doubleXP=GS.doubleXP;this.setActive('doubleXP',GS.doubleXP);UI.msg('ownMsg',GS.doubleXP?'2×XP ON!':'2×XP off.','ok');AL.add(S.displayName,'CMD','SERVER','doubleXP');},
+      coinRain:()=>{S.vc+=500;document.getElementById('pCoinsVal').textContent=S.vc;ev.announcement='🪙 COIN RAIN! Grab coins!';if(Game.running){showAnn('🪙 COIN RAIN!',4000);showEvBanner('🪙 COIN RAIN!','coins');for(let i=0;i<80;i++)spawnCoin();}setTimeout(()=>hideEvBanner(),20000);UI.msg('ownMsg','🪙 Coin rain! +500 coins.','ok');AL.add(S.displayName,'CMD','SERVER','coinRain');},
+      spawnBoss:()=>{if(!Game.running){UI.msg('ownMsg','Start a game first!','er');return;}spawnBoss();ev.announcement='BOSS SNAKE SPAWNED!';UI.msg('ownMsg','Boss spawned!','ok');AL.add(S.displayName,'CMD','SERVER','spawnBoss');},
+      nukeMap:()=>{ev.nukeMap=Date.now();if(Game.running){for(const b of GS.bots)killBot(b,false);flashScreen('#ff4400',.9);showAnn('NUKE MAP!',3000);}UI.msg('ownMsg','Nuked!','ok');AL.add(S.displayName,'CMD','SERVER','nukeMap');},
+      growAll:()=>{if(!Game.running){UI.msg('ownMsg','Start game first!','er');return;}if(GS.player)GS.player.length+=120;for(const b of GS.bots)if(b.alive)b.length+=40;ev.announcement='GROW ALL!';showAnn('GROW ALL! Everyone is MASSIVE!',3000);UI.msg('ownMsg','Grown!','ok');AL.add(S.displayName,'CMD','SERVER','growAll');},
+      speedFrenzy:()=>{GS.speedMult=2;ev.speedMult=2;ev.announcement='SPEED FRENZY for 20s!';showEvBanner('SPEED FRENZY','xp');this.setActive('speedFrenzy',true);if(Game.running)showAnn('SPEED FRENZY',3000);setTimeout(()=>{GS.speedMult=1;ev.speedMult=1;if(FB_READY)fbUpdate('serverEvents',{speedMult:1});hideEvBanner();this.setActive('speedFrenzy',false);},20000);UI.msg('ownMsg','Speed frenzy!','ok');AL.add(S.displayName,'CMD','SERVER','speedFrenzy');},
+      foodFrenzy:()=>{ev.foodFrenzy=Date.now();for(let i=0;i<200;i++)spawnFood();ev.announcement='FOOD FRENZY';if(Game.running)showAnn('FOOD FRENZY',3000);UI.msg('ownMsg','Food frenzy!','ok');AL.add(S.displayName,'CMD','SERVER','foodFrenzy');},
+      invertCtrl:()=>{GS.invertCtrl=!GS.invertCtrl;ev.invertCtrl=GS.invertCtrl;this.setActive('invertCtrl',GS.invertCtrl);const m=GS.invertCtrl?'Controls inverted (15s)!':'Controls restored.';if(Game.running)showAnn(m,3000);if(GS.invertCtrl)setTimeout(()=>{GS.invertCtrl=false;if(FB_READY)fbUpdate('serverEvents',{invertCtrl:false});this.setActive('invertCtrl',false);},15000);UI.msg('ownMsg',m,'ok');AL.add(S.displayName,'CMD','SERVER','invertCtrl');},
+      ghostMode:()=>{GS.ghostMode=!GS.ghostMode;ev.ghostMode=GS.ghostMode;this.setActive('ghostMode',GS.ghostMode);document.getElementById('ghostOverlay').style.display=GS.ghostMode&&Game.running?'block':'none';if(GS.ghostMode){showEvBanner('GHOST MODE','ghost');showAnn('GHOST MODE — pass through bots!',4000);setTimeout(()=>{GS.ghostMode=false;ev.ghostMode=false;if(FB_READY)fbUpdate('serverEvents',{ghostMode:false});document.getElementById('ghostOverlay').style.display='none';hideEvBanner();this.setActive('ghostMode',false);},20000);}else hideEvBanner();UI.msg('ownMsg',GS.ghostMode?'Ghost mode ON!':'Ghost mode off.','ok');AL.add(S.displayName,'CMD','SERVER','ghostMode');},
+      miniSnake:()=>{GS.miniMode=!GS.miniMode;ev.miniMode=GS.miniMode;this.setActive('miniSnake',GS.miniMode);document.getElementById('miniOverlay').style.display=GS.miniMode&&Game.running?'block':'none';if(GS.miniMode){showEvBanner('MINI SNAKE','mini');showAnn('MINI SNAKE MODE',4000);setTimeout(()=>{GS.miniMode=false;if(FB_READY)fbUpdate('serverEvents',{miniMode:false});document.getElementById('miniOverlay').style.display='none';hideEvBanner();this.setActive('miniSnake',false);},25000);}else hideEvBanner();UI.msg('ownMsg',GS.miniMode?'Mini mode ON!':'Mini mode off.','ok');AL.add(S.displayName,'CMD','SERVER','miniSnake');},
+      fireworks:()=>{ev.fireworks=Date.now();startFireworks();showAnn('FIREWORKS',4000);UI.msg('ownMsg','Fireworks!','ok');AL.add(S.displayName,'CMD','SERVER','fireworks');},
+      killAllBots:()=>{if(!Game.running){UI.msg('ownMsg','Start game first!','er');return;}for(const b of [...GS.bots])killBot(b,false);flashScreen('#ff4400',.6);showAnn('ALL BOTS ELIMINATED!',3000);UI.msg('ownMsg','Bots killed!','ok');AL.add(S.displayName,'CMD','SERVER','killAllBots');},
+      maxFoodFrenzy:()=>{for(let i=0;i<400;i++)spawnFood();for(let i=0;i<50;i++)spawnCoin();showAnn('MAX FOOD FRENZY!',3000);UI.msg('ownMsg','Max food!','ok');AL.add(S.displayName,'CMD','SERVER','maxFood');},
+      zeroGravity:()=>{GS.zeroGravity=!GS.zeroGravity;this.setActive('zeroGravity',GS.zeroGravity);showAnn(GS.zeroGravity?'ZERO GRAVITY!':'Gravity restored.',3000);UI.msg('ownMsg',GS.zeroGravity?'Zero grav ON!':'Zero grav off.','ok');AL.add(S.displayName,'CMD','SERVER','zeroGravity');},
     };
     if(actions[name]){actions[name]();if(FB_READY&&Object.keys(ev).length)fbUpdate('serverEvents',ev);}
   },
@@ -2800,8 +2881,8 @@ const Own={
       if(item==='owner_panel'){S.role='owner';showProfile();}
       PFApi.setData({ownedCosmetics:JSON.stringify([...Cosm.owned])}).catch(()=>{});
       Cosm.renderAll();
-      Toast.show('✅ Granted '+item+' to yourself!','gold');
-      UI.msg('ownMsg','✅ Granted '+item+'!','ok');
+      Toast.show('Granted '+item+' to yourself!','gold');
+      UI.msg('ownMsg','Granted '+item+'!','ok');
     } else {
       // Write a pending grant to Firebase — picked up when the player next logs in
       if(FB_READY){
@@ -2811,13 +2892,13 @@ const Own={
           if(!existing.items.includes(item))existing.items.push(item);
           existing.by=S.displayName;existing.t=Date.now();
           fbSet(grantKey,existing);
-          Toast.show('✅ Grant queued for '+t+' — active on next login','gold');
-          UI.msg('ownMsg','✅ Grant queued for '+t+'. They\'ll receive it on next login.','ok');
+          Toast.show('Grant queued for '+t+' — active on next login','gold');
+          UI.msg('ownMsg','Grant queued for '+t+'. They\'ll receive it on next login.','ok');
         }).catch(()=>{
-          UI.msg('ownMsg','⚠️ Firebase error. Use PlayFab Dashboard → Player → Inventory → Add "'+item+'".','er');
+          UI.msg('ownMsg','Firebase error. Use PlayFab Dashboard → Player → Inventory → Add "'+item+'".','er');
         });
       } else {
-        UI.msg('ownMsg','⚠️ Firebase offline. Use PlayFab Dashboard → Player → Inventory → Add "'+item+'" (catalog: VenomSnake_v1).','in');
+        UI.msg('ownMsg','Firebase offline. Use PlayFab Dashboard → Player → Inventory → Add "'+item+'" (catalog: VenomSnake_v1).','in');
       }
     }
     AL.add(S.displayName,'GRANT',t,item);
@@ -2830,11 +2911,11 @@ const Own={
     const isSelf=t.toLowerCase()===S.displayName.toLowerCase()||t===S.pfId;
     if(isSelf){
       S.vc+=amt;
-      document.getElementById('pCoins').textContent='🪙 '+S.vc;
-      document.getElementById('wdCoinsDisplay').textContent='🪙 '+S.vc;
+      document.getElementById('pCoinsVal').textContent=S.vc;
+      document.getElementById('wdCoinsDisplay').innerHTML='<i data-lucide="circle-dollar-sign" style="width:13px;height:13px;margin-right:3px;vertical-align:middle;"></i>'+S.vc;
       PFApi.setData({vc:String(S.vc)}).catch(()=>{});
-      Toast.show('+'+amt+' 🪙 coins added!','gold');
-      UI.msg('ownMsg','✅ +'+amt+' coins!','ok');
+      Toast.show('+'+amt+' coins added!','gold');
+      UI.msg('ownMsg','+'+amt+' coins added!','ok');
     } else {
       if(FB_READY){
         const grantKey='grants/'+t.replace(/[.#$/\[\]]/g,'_');
@@ -2843,13 +2924,13 @@ const Own={
           existing.coins=(existing.coins||0)+amt;
           existing.by=S.displayName;existing.t=Date.now();
           fbSet(grantKey,existing);
-          Toast.show('✅ '+amt+' coins queued for '+t,'gold');
-          UI.msg('ownMsg','✅ '+amt+' coins queued for '+t+'. Active on next login.','ok');
+          Toast.show('+'+amt+' coins queued for '+t,'gold');
+          UI.msg('ownMsg','+'+amt+' coins queued for '+t+'. Active on next login.','ok');
         }).catch(()=>{
-          UI.msg('ownMsg','⚠️ Firebase error. Use PlayFab Dashboard to grant coins manually.','er');
+          UI.msg('ownMsg','Firebase error. Use PlayFab Dashboard to grant coins manually.','er');
         });
       } else {
-        UI.msg('ownMsg','⚠️ Firebase offline. Use PlayFab Dashboard → Players → "'+t+'" → Virtual Currency → Add '+amt+' VC.','in');
+        UI.msg('ownMsg','Firebase offline. Use PlayFab Dashboard → Players → "'+t+'" → Virtual Currency → Add '+amt+' VC.','in');
       }
     }
     AL.add(S.displayName,'GRANT',t,amt+' coins');
@@ -2860,9 +2941,9 @@ const Own={
     const msg=document.getElementById('bcastMsg').value.trim();
     if(!msg){UI.msg('ownMsg','Enter a message.','er');return;}
     if(FB_READY)fbUpdate('serverEvents',{announcement:msg,annTime:Date.now()});
-    if(Game.running)showAnn('📢 '+msg,6000);
+    if(Game.running)showAnn(''+msg,6000);
     AL.add(S.displayName,'CMD','SERVER','broadcast: '+msg.substring(0,40));
-    document.getElementById('bcastMsg').value='';UI.msg('ownMsg','✅ Broadcast sent!','ok');
+    document.getElementById('bcastMsg').value='';UI.msg('ownMsg','Broadcast sent!','ok');
   },
   promote(){
     if(S.role!=='owner')return;
@@ -2872,7 +2953,7 @@ const Own={
     if(isSelf){
       S.role=r;showProfile();
       Toast.show('Your role set to '+r,'gold');
-      UI.msg('ownMsg','✅ Your role: '+r,'ok');
+      UI.msg('ownMsg','Role set: '+r,'ok');
     } else {
       const item=r==='owner'?'owner_panel':r==='moderator'?'mod_panel':null;
       if(FB_READY&&item){
@@ -2882,20 +2963,20 @@ const Own={
           if(!existing.items.includes(item))existing.items.push(item);
           existing.by=S.displayName;existing.t=Date.now();existing.role=r;
           fbSet(grantKey,existing);
-          Toast.show('✅ Role "'+r+'" queued for '+t,'gold');
-          UI.msg('ownMsg','✅ Role grant queued for '+t+'. They\'ll receive it on next login.','ok');
-        }).catch(()=>UI.msg('ownMsg','⚠️ Firebase error — grant failed.','er'));
+          Toast.show('Role "'+r+'" queued for '+t,'gold');
+          UI.msg('ownMsg','Role grant queued for '+t+'. They\'ll receive it on next login.','ok');
+        }).catch(()=>UI.msg('ownMsg','Firebase error — grant failed.','er'));
       } else if(r==='player'){
         // Demotion: write a revoke flag
         if(FB_READY){
           fbSet('revoke/'+t.replace(/[.#$/\[\]]/g,'_'),{role:'player',by:S.displayName,t:Date.now()});
           Toast.show('Demotion queued for '+t,'in');
-          UI.msg('ownMsg','⚠️ Demotion queued for '+t+'. Active on next login.','ok');
+          UI.msg('ownMsg','Demotion queued for '+t+'. Active on next login.','ok');
         } else {
-          UI.msg('ownMsg','⚠️ Firebase offline. Use PlayFab Dashboard to remove role items.','in');
+          UI.msg('ownMsg','Firebase offline. Use PlayFab Dashboard to remove role items.','in');
         }
       } else {
-        UI.msg('ownMsg','⚠️ Firebase offline. Use PlayFab Dashboard → Player → "'+t+'" → Inventory → Add "'+(item||'')+'" (catalog: VenomSnake_v1).','in');
+        UI.msg('ownMsg','Firebase offline. Use PlayFab Dashboard → Player → "'+t+'" → Inventory → Add "'+(item||'')+'" (catalog: VenomSnake_v1).','in');
       }
     }
     AL.add(S.displayName,'CMD',t,'promote to '+r);
@@ -2943,7 +3024,7 @@ function renderChat(){
   const el=document.getElementById('chatMsgs');
   el.innerHTML=MP.chatMessages.slice(-8).map(m=>{
     const tag=getTag(m.role);
-    return`<div class="chatmsg"><span style="color:${tag.color}">${tag.chatBadge}${m.name||'?'}: </span><span style="color:var(--text)">${m.msg}</span></div>`;
+    return`<div class="chatmsg"><span style="color:${tag.color}">${tag.chatBadge||''}${m.name||'?'}: </span><span style="color:var(--text)">${m.msg}</span></div>`;
   }).join('');
   el.scrollTop=el.scrollHeight;
 }
@@ -2961,7 +3042,7 @@ function updateScoreboard(){
   ].sort((a,b)=>b.score-a.score).slice(0,12);
   document.getElementById('sbList').innerHTML=all.map((p,i)=>{
     const c=p.role==='owner'?'var(--gold)':p.role==='moderator'?'var(--mod)':p.me?'var(--g)':'var(--text)';
-    return`<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;"><span style="font-family:var(--head);font-size:16px;width:22px;color:var(--dim2)">${i+1}</span><span style="flex:1;color:${c};font-weight:700;">${p.name}</span>${p.streak>2?`<span style="font-size:11px;color:var(--gold)">🔥${p.streak}</span>`:`<span style="font-size:11px;color:var(--dim2)">💀${p.kills}</span>`}<span style="font-family:var(--head);color:var(--g)">${p.score.toLocaleString()}</span></div>`;
+    return`<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;"><span style="font-family:var(--head);font-size:16px;width:22px;color:var(--dim2)">${i+1}</span><span style="flex:1;color:${c};font-weight:700;">${p.name}</span>${p.streak>2?`<span style="font-size:11px;color:var(--gold)">${p.streak}</span>`:`<span style="font-size:11px;color:var(--dim2)">${p.kills}</span>`}<span style="font-family:var(--head);color:var(--g)">${p.score.toLocaleString()}</span></div>`;
   }).join('');
 }
 
@@ -2970,7 +3051,7 @@ function addKillFeed(killer,victim,isPlayer=false){
   const feed=document.getElementById('killfeed');
   const el=document.createElement('div');
   el.className='kf-entry';
-  el.innerHTML=`<span class="kf-icon">${isPlayer?'🎯':'💀'}</span><span class="kf-killer">${killer}</span><span style="color:var(--dim2);margin:0 4px">killed</span><span class="kf-victim">${victim}</span>`;
+  el.innerHTML=`<span class="kf-icon">${isPlayer?'>':'x'}</span><span class="kf-killer">${killer}</span><span style="color:var(--dim2);margin:0 4px">killed</span><span class="kf-victim">${victim}</span>`;
   feed.insertBefore(el,feed.firstChild);
   while(feed.children.length>6)feed.lastChild.remove();
   setTimeout(()=>{el.style.transition='opacity .5s';el.style.opacity='0';setTimeout(()=>el.remove(),500);},4000);
@@ -2981,18 +3062,18 @@ function onKillStreak(streak){
   if(streak<2)return;
   const el=document.getElementById('streakDisplay');
   const msgs={
-    2:'DOUBLE KILL! 🔥',
-    3:'TRIPLE KILL! 🔥🔥',
-    4:'QUAD KILL! 💀💀',
-    5:'RAMPAGE! 💥',
-    6:'MURDER SPREE! ☠',
-    7:'UNSTOPPABLE! ⚡',
-    8:'DOMINATING! 👿',
-    9:'MEGA KILL! 🌟',
-    10:'GODLIKE! 👑',
-    15:'BEYOND GODLIKE! 💎',
+    2:'DOUBLE KILL',
+    3:'TRIPLE KILL',
+    4:'QUAD KILL',
+    5:'RAMPAGE',
+    6:'MURDER SPREE',
+    7:'UNSTOPPABLE',
+    8:'DOMINATING',
+    9:'MEGA KILL',
+    10:'GODLIKE',
+    15:'BEYOND GODLIKE',
   };
-  const msg=msgs[streak]||(streak>=10?streak+'× KILL STREAK! 👑':'');
+  const msg=msgs[streak]||(streak>=10?streak+'× KILL STREAK':'');
   if(!msg)return;
   el.textContent=msg;
   el.style.display='block';
@@ -3003,7 +3084,7 @@ function onKillStreak(streak){
   clearTimeout(el._t);
   el._t=setTimeout(()=>{el.style.display='none';},2500);
   // Bonus coins for streaks
-  if(streak%5===0){S.vc+=streak;document.getElementById('pCoins').textContent='🪙 '+S.vc;Toast.show('🔥 '+streak+'× streak! +'+streak+' coins','gold');}
+  if(streak%5===0){S.vc+=streak;document.getElementById('pCoinsVal').textContent=S.vc;Toast.show(' '+streak+'× streak! +'+streak+' coins','gold');}
 }
 
 // GAME ENGINE
@@ -3065,21 +3146,28 @@ const Game={
     GS.startTime=Date.now();
     this._last=performance.now();
     clearInterval(syncInterval);
+    // Push immediately so friends see you right away, then every 100ms
+    MP.pushState(GS.player);
     syncInterval=setInterval(()=>{
-      if(document.hidden) return; // don't push when tab is not visible
+      if(document.hidden) return;
       MP.pushState(GS.player);
     },100);
     if(FB_READY&&S.pfId){
       const safeId=S.pfId.replace(/[.#$\[\]]/g,'_');
-      const pRef=fbRef('players/'+safeId);
-      window._onDisconnect(pRef).remove();
+      // onDisconnect is re-registered by the .info/connected listener in subsAll
+      // but also set it here as a fallback
+      window._onDisconnect(fbRef('players/'+safeId)).remove();
     }
     this._raf=requestAnimationFrame(t=>this.loop(t));
   },
 
   loop(ts){
     if(!this.running)return;
-    const dt=Math.min((ts-this._last)/16.67,2.5);this._last=ts;
+    // dt is normalized to 60fps. Clamp to [0,1] so slow/fast devices move identically.
+    // This prevents mobile at 30fps moving 2x faster than desktop at 60fps.
+    const rawDt=Math.min((ts-this._last)/16.67,2.5);
+    const dt=Math.min(rawDt,1.0); // movement dt: never exceed 1 frame-equivalent
+    this._last=ts;
     updatePlayer(dt);updateBots(dt);checkCollisions();updateCam();
     while(GS.food.length<FOOD_MAX)spawnFood();
     draw();updateHUD();drawMinimap();
@@ -3100,7 +3188,7 @@ const Game={
 
   async end(killer){
     this.stop();
-    if(S.pfId)fbUpdate('players/'+S.pfId,{alive:false,score:GS.score,kills:GS.kills});
+    if(S.pfId){const safeId=S.pfId.replace(/[.#$\[\]]/g,'_');fbUpdate('players/'+safeId,{alive:false,score:GS.score,kills:GS.kills});}
     canvas.style.display='none';
     document.getElementById('hud').classList.add('hidden');
     document.getElementById('ghostOverlay').style.display='none';
@@ -3120,8 +3208,8 @@ const Game={
     document.getElementById('goKills').textContent=GS.kills;
     const mins=Math.floor(t/60),secs=t%60;
     document.getElementById('goTime').textContent=mins>0?`${mins}m ${secs}s`:t+'s';
-    document.getElementById('goKiller').textContent=killer?'☠ Eliminated by '+killer:'☠ Died';
-    document.getElementById('goCoins').textContent='+'+coins+' 🪙';
+    document.getElementById('goKiller').textContent=killer?'<i data-lucide="skull" style="width:12px;height:12px;margin-right:5px;vertical-align:middle;"></i>Eliminated by '+killer:'<i data-lucide="skull" style="width:12px;height:12px;margin-right:5px;vertical-align:middle;"></i>Died';
+    document.getElementById('goCoins').innerHTML='+'+coins+' <i data-lucide="circle-dollar-sign" style="width:12px;height:12px;margin-left:2px;vertical-align:middle;color:var(--gold)"></i>';
 
     // New best
     const isNew=GS.score>(S.stats.BestScore||0);
@@ -3130,15 +3218,15 @@ const Game={
 
     // Streak display
     const streakEl=document.getElementById('goStreak');
-    if(GS.bestStreak>=2){streakEl.textContent='Best streak: '+GS.bestStreak+'× 🔥';streakEl.style.display='block';}
+    if(GS.bestStreak>=2){streakEl.textContent='Best streak: '+GS.bestStreak+'×';streakEl.style.display='block';}
     else streakEl.style.display='none';
 
     // Extra stat pills
     const extras=document.getElementById('goExtras');
     if(extras){
       const pills=[];
-      if(GS.foodEaten>0)pills.push(['🍖',GS.foodEaten,'eaten']);
-      if(GS.bestStreak>=3)pills.push(['🔥',GS.bestStreak+'×','streak']);
+      if(GS.foodEaten>0)pills.push(['food',GS.foodEaten,'eaten']);
+      if(GS.bestStreak>=3)pills.push(['×',GS.bestStreak+'×','streak']);
       if(GS.score>0){const kd=GS.kills>0?(t/GS.kills).toFixed(0)+'s/kill':'—';pills.push(['⏱',kd,'pace']);}
       extras.innerHTML=pills.map(([ic,v,lbl])=>`
         <div style="background:rgba(0,0,0,.4);border:1px solid var(--border2);padding:7px 12px;text-align:center;min-width:64px;">
@@ -3150,15 +3238,15 @@ const Game={
 
     // Funny verdict
     const verdicts=[
-      [v=>v>50000,'You are literally a god serpent. 🐍👑'],
+      [v=>v>50000,'You are literally a god serpent.'],
       [v=>v>25000,'The pit trembled in your presence.'],
       [v=>v>10000,'A legendary performance. Few survive this long.'],
       [v=>v>5000,'Solid run. The snakes fear you.'],
       [v=>v>1000,'Not bad. The pit respects the effort.'],
       [v=>v>500,'Getting warmer. Touch grass then come back.'],
-      [()=>GS.kills>=3,'At least you took some down with you. 🔥'],
-      [()=>t<5,'Wow. Just... wow. Try again. 😬'],
-      [()=>true,'The pit always wins. Eventually. 🐍'],
+      [()=>GS.kills>=3,'At least you took some down with you.'],
+      [()=>t<5,'Wow. Just... wow. Try again.'],
+      [()=>true,'The pit always wins. Eventually.'],
     ];
     const verdict=verdicts.find(([fn])=>fn(GS.score));
     const goVerdictEl=document.getElementById('goVerdict');
@@ -3171,7 +3259,7 @@ const Game={
     document.getElementById('sBest').textContent=(S.stats.BestScore||0).toLocaleString();
     document.getElementById('sKills').textContent=S.stats.TotalKills;
     document.getElementById('sGames').textContent=S.stats.GamesPlayed;
-    document.getElementById('pCoins').textContent='🪙 '+S.vc;
+    document.getElementById('pCoinsVal').textContent=S.vc;
     try{await PFApi.updateStats([{StatisticName:'GamesPlayed',Value:S.stats.GamesPlayed},{StatisticName:'TotalKills',Value:S.stats.TotalKills},{StatisticName:'BestScore',Value:S.stats.BestScore}]);}catch(e){}
     try{await PFApi.setData({vc:String(S.vc)});}catch(e){}
   },
@@ -3292,18 +3380,60 @@ class Snake{
     const hx=this.segments[0].x-camX+W/2,hy=this.segments[0].y-camY+H/2;
     const er=Math.max(this.radius*.28,1.5);
     for(const off of[-.45,.45]){const ea=this.angle+off,ex=hx+Math.cos(ea)*this.radius*.42,ey=hy+Math.sin(ea)*this.radius*.42;ctx.beginPath();ctx.arc(ex,ey,er,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.beginPath();ctx.arc(ex+Math.cos(this.angle)*er*.4,ey+Math.sin(this.angle)*er*.4,er*.55,0,Math.PI*2);ctx.fillStyle='#000';ctx.fill();}
-    if(this.isBoss){ctx.font='20px serif';ctx.textAlign='center';ctx.fillText('👑',hx,hy-this.radius-18);}
+    if(this.isBoss){ctx.font='20px serif';ctx.textAlign='center';ctx.fillText('*',hx,hy-this.radius-18);}
     if(S.settings.names&&!this.isPlayer){ctx.font='bold 11px "Exo 2",sans-serif';ctx.textAlign='center';ctx.fillStyle='rgba(255,255,255,.65)';ctx.fillText(this.name,hx,hy-this.radius-7);}
     if(this.isPlayer){
-      ctx.font='bold 12px "Exo 2",sans-serif';ctx.textAlign='center';
-      const tag=getTag(S.role);
-      const nc=GS.ghostMode?'#c678f5':tag.color;
-      const badge=GS.ghostMode?'👻 ':(tag.icon ? tag.icon+' ' : '');
-      ctx.fillStyle=nc;
-      if(S.role==='owner'||S.role==='moderator'){ctx.shadowColor=tag.shadowColor;ctx.shadowBlur=8;}
-      ctx.fillText(badge+S.displayName,W/2,H/2-this.radius-8);
-      ctx.shadowBlur=0;
-      if(GS.killStreak>=3){ctx.font='bold 10px "Exo 2",sans-serif';ctx.fillStyle='#ffd700';ctx.fillText('🔥×'+GS.killStreak,W/2,H/2-this.radius-22);}
+      const tag = getTag(S.role);
+      const nameStr = S.displayName;
+      const ghostMode = GS.ghostMode;
+      const baseY = H/2 - this.radius - 8;
+
+      // ── Name (white, always) ──────────────────────────────────────
+      ctx.font = 'bold 12px "Exo 2",sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = ghostMode ? '#c678f5' : '#ffffff';
+      if(ghostMode){ctx.shadowColor='#c678f5';ctx.shadowBlur=8;}
+      ctx.fillText(nameStr, W/2, baseY);
+      ctx.shadowBlur = 0;
+
+      // ── Role tag pill (only if not plain player) ─────────────────
+      if(S.role !== 'player' && !ghostMode){
+        const tagLabel = tag.label.toUpperCase();
+        ctx.font = 'bold 9px "Exo 2",sans-serif';
+        const tw = ctx.measureText(tagLabel).width;
+        const ph = 13, pw = tw + 10, px = W/2 - pw/2, py = baseY - ph - 4;
+        // pill background
+        ctx.beginPath();
+        const rad = ph/2;
+        ctx.moveTo(px+rad,py); ctx.lineTo(px+pw-rad,py);
+        ctx.arcTo(px+pw,py,px+pw,py+ph,rad);
+        ctx.lineTo(px+pw,py+rad); ctx.arcTo(px+pw,py+ph,px+pw-rad,py+ph,rad);
+        ctx.lineTo(px+rad,py+ph); ctx.arcTo(px,py+ph,px,py+ph-rad,rad);
+        ctx.lineTo(px,py+rad); ctx.arcTo(px,py,px+rad,py,rad);
+        ctx.closePath();
+        ctx.fillStyle = tag.color;
+        ctx.globalAlpha = 0.22;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        // pill border
+        ctx.strokeStyle = tag.color;
+        ctx.lineWidth = 1;
+        ctx.shadowColor = tag.shadowColor;
+        ctx.shadowBlur = 6;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        // tag text
+        ctx.fillStyle = tag.color;
+        ctx.fillText(tagLabel, W/2, py + ph - 3);
+      }
+
+      // ── Kill streak ───────────────────────────────────────────────
+      if(GS.killStreak>=3){
+        ctx.font='bold 10px "Exo 2",sans-serif';
+        ctx.fillStyle='#ffd700';
+        const tagOffset = (S.role!=='player'&&!ghostMode) ? 20 : 0;
+        ctx.fillText('×'+GS.killStreak+' STREAK', W/2, baseY - this.radius - tagOffset - 4);
+      }
     }
   }
 }
@@ -3329,10 +3459,45 @@ function drawRemotePlayers(camX,camY){
     const hx=rp.segments[0].x-camX+W/2,hy=rp.segments[0].y-camY+H/2;
     for(const off of[-.45,.45]){const ea=rp.angle+off,er=3,ex=hx+Math.cos(ea)*5,ey=hy+Math.sin(ea)*5;ctx.beginPath();ctx.arc(ex,ey,er,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.beginPath();ctx.arc(ex+Math.cos(rp.angle)*er*.4,ey+Math.sin(rp.angle)*er*.4,er*.55,0,Math.PI*2);ctx.fillStyle='#000';ctx.fill();}
     if(S.settings.names){
-      const tag=getTag(rp.role);
-      const badge=tag.icon ? tag.icon+' ' : '';
-      ctx.font='bold 11px "Exo 2",sans-serif';ctx.textAlign='center';ctx.fillStyle=tag.color;
-      ctx.fillText(badge+rp.name,hx,hy-12);
+      const tag = getTag(rp.role);
+      const nameStr = rp.name;
+      const baseY = hy - 12;
+
+      // ── Name (white) ──────────────────────────────────────────────
+      ctx.font = 'bold 11px "Exo 2",sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ffffff';
+      ctx.globalAlpha = 0.85;
+      ctx.fillText(nameStr, hx, baseY);
+      ctx.globalAlpha = 1;
+
+      // ── Role tag pill (only if not plain player) ──────────────────
+      if(rp.role !== 'player'){
+        const tagLabel = tag.label.toUpperCase();
+        ctx.font = 'bold 9px "Exo 2",sans-serif';
+        const tw = ctx.measureText(tagLabel).width;
+        const ph = 12, pw = tw + 9, px = hx - pw/2, py = baseY - ph - 3;
+        ctx.beginPath();
+        const r2 = ph/2;
+        ctx.moveTo(px+r2,py); ctx.lineTo(px+pw-r2,py);
+        ctx.arcTo(px+pw,py,px+pw,py+ph,r2);
+        ctx.lineTo(px+pw,py+r2); ctx.arcTo(px+pw,py+ph,px+pw-r2,py+ph,r2);
+        ctx.lineTo(px+r2,py+ph); ctx.arcTo(px,py+ph,px,py+ph-r2,r2);
+        ctx.lineTo(px,py+r2); ctx.arcTo(px,py,px+r2,py,r2);
+        ctx.closePath();
+        ctx.fillStyle = tag.color;
+        ctx.globalAlpha = 0.2;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = tag.color;
+        ctx.lineWidth = 1;
+        ctx.shadowColor = tag.shadowColor;
+        ctx.shadowBlur = 5;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = tag.color;
+        ctx.fillText(tagLabel, hx, py + ph - 2);
+      }
     }
     if(rp.boosting&&S.settings.particles!=='off'&&Math.random()<.4){
       const trail=CATALOG.trails.find(t=>t.id===rp.trailId)||CATALOG.trails[0];
@@ -3354,28 +3519,82 @@ class Food{
     const sx=this.x-cx+canvas.width/2,sy=this.y-cy+canvas.height/2;
     if(sx<-15||sx>canvas.width+15||sy<-15||sy>canvas.height+15)return;
     const p=Math.sin(Date.now()*.003+this.ph)*1.5;
-    const drawEmoji=(em,glow,glowC)=>{
-      const pr=this.r+p+2;
-      ctx.font=`${pr*2+6}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
-      if(glow){ctx.shadowColor=glowC;ctx.shadowBlur=14+p*3;}
-      ctx.fillText(em,sx,sy);ctx.shadowBlur=0;ctx.textBaseline='alphabetic';
-    };
-    if(this.isShield){drawEmoji('🛡',true,'#44aaff');return;}
-    if(this.isSpeedOrb){drawEmoji('⚡',true,'#ff8800');return;}
-    if(this.isMagnet){drawEmoji('🧲',true,'#ff44cc');return;}
+    const r=this.r+p;
+
+    // ── Helper: draw a glowing icon using canvas shapes only ──────
+    const glow=(color)=>{ctx.shadowColor=color;ctx.shadowBlur=14+Math.abs(p)*3;};
+    const clearGlow=()=>{ctx.shadowBlur=0;};
+
+    if(this.isShield){
+      // Shield icon — rounded square + inner cross
+      glow('#44aaff'); ctx.strokeStyle='#44aaff'; ctx.lineWidth=1.8;
+      const s=r+2;
+      ctx.beginPath();ctx.roundRect(sx-s*.7,sy-s,s*1.4,s*1.9,s*.3);ctx.fillStyle='rgba(68,170,255,0.15)';ctx.fill();ctx.stroke();
+      ctx.beginPath();ctx.moveTo(sx,sy-s*.5);ctx.lineTo(sx,sy+s*.4);ctx.moveTo(sx-s*.35,sy);ctx.lineTo(sx+s*.35,sy);
+      ctx.strokeStyle='#44aaff';ctx.lineWidth=1.5;ctx.stroke();
+      clearGlow();return;
+    }
+    if(this.isSpeedOrb){
+      // Lightning bolt — two angled lines
+      glow('#ff8800'); const s=r+3;
+      ctx.beginPath();
+      ctx.moveTo(sx+s*.2,sy-s);ctx.lineTo(sx-s*.2,sy);ctx.lineTo(sx+s*.2,sy);ctx.lineTo(sx-s*.2,sy+s);
+      ctx.strokeStyle='#ff8800';ctx.lineWidth=2;ctx.lineJoin='round';ctx.stroke();
+      ctx.fillStyle='rgba(255,136,0,0.12)';ctx.beginPath();ctx.arc(sx,sy,r*1.4,0,Math.PI*2);ctx.fill();
+      clearGlow();return;
+    }
+    if(this.isMagnet){
+      // U-shape magnet
+      glow('#ff44cc'); const s=r+2;
+      ctx.strokeStyle='#ff44cc';ctx.lineWidth=2.2;ctx.lineCap='round';
+      ctx.beginPath();ctx.arc(sx,sy+s*.2,s*.7,Math.PI,0);
+      ctx.moveTo(sx-s*.7,sy+s*.2);ctx.lineTo(sx-s*.7,sy+s*.9);
+      ctx.moveTo(sx+s*.7,sy+s*.2);ctx.lineTo(sx+s*.7,sy+s*.9);
+      ctx.stroke();
+      // pole tips
+      ctx.fillStyle='#ff44cc';
+      ctx.beginPath();ctx.arc(sx-s*.7,sy+s*.9,2,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(sx+s*.7,sy+s*.9,2,0,Math.PI*2);ctx.fill();
+      clearGlow();return;
+    }
     if(this.isBomb){
-      // Pulsing red bomb
-      const pr=this.r+Math.abs(p)+2;
-      ctx.font=`${pr*2+6}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.shadowColor='#ff2244';ctx.shadowBlur=8+Math.abs(p)*4;
-      ctx.fillText('💣',sx,sy);ctx.shadowBlur=0;ctx.textBaseline='alphabetic';
+      // Circle with fuse
+      const pulse=0.85+Math.abs(Math.sin(Date.now()*.006))*0.3;
+      ctx.shadowColor='#ff2244';ctx.shadowBlur=(8+Math.abs(p)*4)*pulse;
+      const s=r+1;
+      ctx.beginPath();ctx.arc(sx,sy+s*.2,s,0,Math.PI*2);
+      ctx.fillStyle=`rgba(40,0,0,0.9)`;ctx.fill();
+      ctx.strokeStyle='#ff2244';ctx.lineWidth=1.5;ctx.stroke();
+      // fuse line
+      ctx.beginPath();ctx.moveTo(sx+s*.5,sy-s*.4);ctx.quadraticCurveTo(sx+s*.9,sy-s*1.1,sx+s*.6,sy-s*1.4);
+      ctx.strokeStyle='#888';ctx.lineWidth=1.2;ctx.stroke();
+      // fuse spark
+      ctx.beginPath();ctx.arc(sx+s*.6,sy-s*1.4,2,0,Math.PI*2);ctx.fillStyle='#ff8800';ctx.shadowColor='#ff8800';ctx.shadowBlur=6;ctx.fill();
+      ctx.shadowBlur=0;return;
+    }
+    if(this.isMystery){
+      // Question mark circle
+      glow('#c678f5');
+      ctx.beginPath();ctx.arc(sx,sy,r+2,0,Math.PI*2);ctx.fillStyle='rgba(198,120,245,0.12)';ctx.fill();
+      ctx.strokeStyle='#c678f5';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.font=`bold ${Math.round(r*1.6)+4}px "Exo 2",sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillStyle='#c678f5';ctx.fillText('?',sx,sy);ctx.textBaseline='alphabetic';
+      clearGlow();return;
+    }
+    if(this.isCoin){
+      // Gold coin — circle with $ or C mark
+      const cr=r+2;
+      ctx.beginPath();ctx.arc(sx,sy,cr,0,Math.PI*2);
+      ctx.fillStyle='#e8c832';ctx.shadowColor='#e8c832';ctx.shadowBlur=8;ctx.fill();ctx.shadowBlur=0;
+      ctx.strokeStyle='#c8a800';ctx.lineWidth=1.2;ctx.stroke();
+      // inner ring
+      ctx.beginPath();ctx.arc(sx,sy,cr*.68,0,Math.PI*2);ctx.strokeStyle='rgba(200,168,0,0.5)';ctx.lineWidth=1;ctx.stroke();
+      // $ symbol
+      ctx.font=`bold ${Math.round(cr*1.1)}px "Exo 2",sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillStyle='#9a6e00';ctx.fillText('$',sx,sy+.5);ctx.textBaseline='alphabetic';
       return;
     }
-    if(this.isMystery){drawEmoji('❓',true,'#c678f5');return;}
-    if(this.isCoin){
-      ctx.font=`${(this.r+p)*2+5}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.fillText('🪙',sx,sy);ctx.textBaseline='alphabetic';return;
-    }
+    // Normal food — colored circle
     ctx.beginPath();ctx.arc(sx,sy,this.r+p,0,Math.PI*2);
     if(this.special){ctx.fillStyle=`hsl(${(this.hue+Date.now()*.06)%360},100%,65%)`;ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=7;}
     else ctx.fillStyle=`hsl(${this.hue},75%,60%)`;
@@ -3421,9 +3640,9 @@ function spawnCoin(){GS.food.push(new Food(Math.random()*WORLD,Math.random()*WOR
 // ── PARTICLE POOL (performance) ─────────────────────────────
 function spawnBoss(){
   const x=WORLD/2+(Math.random()-.5)*100,y=WORLD/2+(Math.random()-.5)*100;
-  const b=new Snake(x,y,'#ffd700','👑 BOSS');b.isBoss=true;b.length=220;b.color='#ffd700';
+  const b=new Snake(x,y,'#ffd700','BOSS');b.isBoss=true;b.length=220;b.color='#ffd700';
   while(b.segments.length<b.length)b.segments.push({x:x-b.segments.length*SEG_GAP,y});
-  GS.bots.push(b);GS.boss=b;showAnn('👑 BOSS SNAKE has entered the pit! +2000pts for killing it!',5000);
+  GS.bots.push(b);GS.boss=b;showAnn('BOSS SNAKE has entered the pit! +2000pts for killing it!',5000);
 }
 
 function spawnTrailAt(x,y,fx,baseColor){
@@ -3473,7 +3692,7 @@ function updatePlayer(dt){
   else if(ctrl==='joystick'){ta=GS.joyActive?GS.joyAngle:p.angle;}
   if(GS.invertCtrl)ta+=Math.PI;
   // Tick powerup timers
-  if(GS.shieldTimer>0){GS.shieldTimer--;if(GS.shieldTimer===0){GS.shielded=false;showAnn('🛡 Shield expired.',1500);}}
+  if(GS.shieldTimer>0){GS.shieldTimer--;if(GS.shieldTimer===0){GS.shielded=false;showAnn('Shield expired.',1500);}}
   if(GS.speedOrbTimer>0){GS.speedOrbTimer--;GS.speedMult=GS.speedOrbTimer>0?1.7:1;}
   // Boost stamina drain/regen
   if(GS.boosting&&p.length>8){GS.boostStamina=Math.max(0,GS.boostStamina-1.8);if(GS.boostStamina===0)GS.boosting=false;}
@@ -3522,9 +3741,9 @@ function checkCollisions(){
         p.length=Math.max(8,p.length-lostLen);
         for(let j=0;j<12;j++){const a=Math.random()*Math.PI*2,sp=2+Math.random()*3;const _bp=getParticle();_bp.init(p.headX,p.headY,Math.cos(a)*sp,Math.sin(a)*sp,'#ff2244',30,4);GS.particles.push(_bp);}
         flashScreen('#ff2244',.6);GS.combo=1;GS.comboTimer=0;updateComboHUD();
-        showAnn('💣 BOMB! −'+lostLen+' length',2000);
+        showAnn('BOMB! −'+lostLen+' length',2000);
         GS.bombImmune=120;
-        spawnScoreFloat(p.headX,p.headY,'💣 OUCH!','#ff2244');
+        spawnScoreFloat(p.headX,p.headY,'OUCH!','#ff2244');
         continue;
       }
       if(f.isBomb){continue;} // immune, just eat it safely
@@ -3535,17 +3754,17 @@ function checkCollisions(){
       GS.score+=v*10;
       GS.foodEaten++;
 
-      if(f.isCoin){S.vc++;document.getElementById('pCoins').textContent='🪙 '+S.vc;spawnScoreFloat(p.headX,p.headY,'+1🪙','#e8c832');}
-      else if(f.isShield){GS.shielded=true;GS.shieldTimer=180;showAnn('🛡 SHIELD ACTIVE — 3s invincibility!',2500);spawnScoreFloat(p.headX,p.headY,'🛡 SHIELD!','#44aaff');}
-      else if(f.isSpeedOrb){GS.speedOrbTimer=180;showAnn('⚡ SPEED ORB — 3s speed boost!',2500);spawnScoreFloat(p.headX,p.headY,'⚡ SPEED!','#ff8800');}
-      else if(f.isMagnet){GS.magnetTimer=300;showAnn('🧲 MAGNET — 5s food pull!',2500);spawnScoreFloat(p.headX,p.headY,'🧲 MAGNET!','#ff44cc');}
+      if(f.isCoin){S.vc++;document.getElementById('pCoinsVal').textContent=S.vc;spawnScoreFloat(p.headX,p.headY,'+1','#e8c832');}
+      else if(f.isShield){GS.shielded=true;GS.shieldTimer=180;showAnn('SHIELD ACTIVE — 3s invincibility!',2500);spawnScoreFloat(p.headX,p.headY,'SHIELD!','#44aaff');}
+      else if(f.isSpeedOrb){GS.speedOrbTimer=180;showAnn('SPEED BOOST — 3s!',2500);spawnScoreFloat(p.headX,p.headY,'SPEED!','#ff8800');}
+      else if(f.isMagnet){GS.magnetTimer=300;showAnn('MAGNET — 5s pull!',2500);spawnScoreFloat(p.headX,p.headY,'MAGNET!','#ff44cc');}
       else if(f.isMystery){_triggerMystery(p);}
       else{
         // Normal/special food — build combo
         GS.combo=Math.min(GS.combo+1,10);
         GS.comboTimer=90+Math.floor(getUpgValue('combo_hold')); // ~1.5s base + upgrade
         updateComboHUD();
-        if(GS.combo>=3){spawnScoreFloat(p.headX,p.headY,'+'+v*10+(GS.combo>=5?' 🔥':''),'#e8c832');}
+        if(GS.combo>=3){spawnScoreFloat(p.headX,p.headY,'+'+v*10+(GS.combo>=5?' HOT':''),'#e8c832');}
       }
 
       // Score milestones
@@ -3588,12 +3807,12 @@ function checkCollisions(){
 function _triggerMystery(p){
   const effects=['double_score','grow_big','shrink','coin_burst','speed_burst','shield'];
   const e=effects[Math.floor(Math.random()*effects.length)];
-  if(e==='double_score'){GS.score+=500;spawnScoreFloat(p.headX,p.headY,'❓ +500!','#c678f5');showAnn('❓ MYSTERY: +500 SCORE!',2500);}
-  else if(e==='grow_big'){p.length+=50;spawnScoreFloat(p.headX,p.headY,'❓ GROW!','#c678f5');showAnn('❓ MYSTERY: INSTANT GROWTH!',2500);}
-  else if(e==='shrink'){p.length=Math.max(8,p.length-30);spawnScoreFloat(p.headX,p.headY,'❓ SHRINK','#ff2244');showAnn('❓ MYSTERY: SHRUNK!',2500);}
-  else if(e==='coin_burst'){for(let i=0;i<8;i++)GS.food.push(new Food(p.headX+(Math.random()-.5)*80,p.headY+(Math.random()-.5)*80,3,false,true));spawnScoreFloat(p.headX,p.headY,'❓ COINS!','#e8c832');showAnn('❓ MYSTERY: COIN BURST!',2500);}
-  else if(e==='speed_burst'){GS.speedOrbTimer=120;spawnScoreFloat(p.headX,p.headY,'❓ ZOOM!','#ff8800');showAnn('❓ MYSTERY: SPEED BURST!',2500);}
-  else if(e==='shield'){GS.shielded=true;GS.shieldTimer=120;spawnScoreFloat(p.headX,p.headY,'❓ SHIELD!','#44aaff');showAnn('❓ MYSTERY: SHIELD!',2500);}
+  if(e==='double_score'){GS.score+=500;spawnScoreFloat(p.headX,p.headY,'+500!','#c678f5');showAnn('MYSTERY: +500 SCORE!',2500);}
+  else if(e==='grow_big'){p.length+=50;spawnScoreFloat(p.headX,p.headY,'GROW!','#c678f5');showAnn('MYSTERY: INSTANT GROWTH!',2500);}
+  else if(e==='shrink'){p.length=Math.max(8,p.length-30);spawnScoreFloat(p.headX,p.headY,'SHRINK','#ff2244');showAnn('MYSTERY: SHRUNK!',2500);}
+  else if(e==='coin_burst'){for(let i=0;i<8;i++)GS.food.push(new Food(p.headX+(Math.random()-.5)*80,p.headY+(Math.random()-.5)*80,3,false,true));spawnScoreFloat(p.headX,p.headY,'COINS!','#e8c832');showAnn('MYSTERY: COIN BURST!',2500);}
+  else if(e==='speed_burst'){GS.speedOrbTimer=120;spawnScoreFloat(p.headX,p.headY,'ZOOM!','#ff8800');showAnn('MYSTERY: SPEED BURST!',2500);}
+  else if(e==='shield'){GS.shielded=true;GS.shieldTimer=120;spawnScoreFloat(p.headX,p.headY,'SHIELD!','#44aaff');showAnn('MYSTERY: SHIELD!',2500);}
 }
 
 function _checkMilestone(){
@@ -3601,7 +3820,7 @@ function _checkMilestone(){
   for(const m of milestones){
     if(GS.score>=m&&GS.lastMilestone<m){
       GS.lastMilestone=m;
-      const labels={500:'WARMING UP 🔥',1000:'GETTING GOOD! 💪',2500:'ON FIRE! 🔥🔥',5000:'SERPENT RISING 🐍',10000:'APEX PREDATOR 👑',25000:'LEGENDARY 🌟',50000:'GODLIKE ⚡',100000:'UNTOUCHABLE 💎'};
+      const labels={500:'WARMING UP',1000:'GETTING GOOD',2500:'ON FIRE',5000:'SERPENT RISING',10000:'APEX PREDATOR',25000:'LEGENDARY',50000:'GODLIKE',100000:'UNTOUCHABLE'};
       showMilestone(labels[m]||m.toLocaleString()+' PTS!');
       flashScreen('#39ff8a',.35);
       return;
@@ -3650,8 +3869,8 @@ function killBot(bot,byPlayer=false){
     addKillFeed(S.displayName,bot.name,true);
     onKillStreak(GS.killStreak);
     const killCoins = Math.floor(getUpgValue('coin_bonus'));
-    if(killCoins>0){S.vc+=killCoins;document.getElementById('pCoins').textContent='🪙 '+S.vc;}
-    if(bot.isBoss){GS.score+=2000;S.vc+=50;document.getElementById('pCoins').textContent='🪙 '+S.vc;showAnn('💀 BOSS DEFEATED! +2000 score +50 coins!',4000);}
+    if(killCoins>0){S.vc+=killCoins;document.getElementById('pCoinsVal').textContent=S.vc;}
+    if(bot.isBoss){GS.score+=2000;S.vc+=50;document.getElementById('pCoinsVal').textContent=S.vc;showAnn('BOSS DEFEATED! +2000 score +50 coins!',4000);}
   }
   setTimeout(()=>{if(!Game.running)return;const idx=GS.bots.indexOf(bot);if(idx>=0){const x=Math.random()*WORLD,y=Math.random()*WORLD;const nb=new Snake(x,y,BOTCOLS[Math.floor(Math.random()*BOTCOLS.length)],BOTNAMES[Math.floor(Math.random()*BOTNAMES.length)]);GS.bots[idx]=nb;}},4000+Math.random()*2000);
 }
@@ -3707,16 +3926,16 @@ function updateHUD(){
     }
     GS._prevScore=GS.score;
   }
-  document.getElementById('hudKills').textContent='💀 '+GS.kills;
-  if(GS.killStreak>=2){const el=document.getElementById('hudStreak');el.textContent='🔥 '+GS.killStreak+' STREAK';el.style.opacity='1';}
+  document.getElementById('hudKills').textContent='<i data-lucide="skull" style="width:11px;height:11px;margin-right:3px;vertical-align:middle;"></i> '+GS.kills;
+  if(GS.killStreak>=2){const el=document.getElementById('hudStreak');el.textContent='<i data-lucide="flame" style="width:11px;height:11px;margin-right:3px;vertical-align:middle;color:#ff8800;"></i>'+GS.killStreak+' STREAK';el.style.opacity='1';}
   else document.getElementById('hudStreak').style.opacity='0';
   const rank=getRank(GS.score);
   document.getElementById('hudRank').textContent=rank.name;document.getElementById('hudRank').style.color=rank.color;
   // Status indicators
   let statusIcons='';
-  if(GS.shielded)statusIcons+=' 🛡';
-  if(GS.speedOrbTimer>0)statusIcons+=' ⚡';
-  if(GS.magnetTimer>0)statusIcons+=' 🧲';
+  if(GS.shielded)statusIcons+=' [S]';
+  if(GS.speedOrbTimer>0)statusIcons+=' [+]';
+  if(GS.magnetTimer>0)statusIcons+=' [M]';
   if(GS.combo>=3)statusIcons+=' ×'+GS.combo;
   document.getElementById('hudLen').textContent='LEN: '+Math.floor(p.length)+statusIcons;
   // Boost bar
@@ -3831,6 +4050,8 @@ canvas.addEventListener('contextmenu',e=>e.preventDefault());
 
 // INIT
 window.addEventListener('DOMContentLoaded',async()=>{
+  // Init Lucide icons for any static HTML icons
+  if(window.lucide) window.lucide.createIcons();
   const bar=document.getElementById('ldBar'),txt=document.getElementById('ldTxt');
   const tick=async(p,m)=>{bar.style.width=p+'%';txt.textContent=m;await new Promise(r=>setTimeout(r,220));};
 
@@ -3840,16 +4061,16 @@ window.addEventListener('DOMContentLoaded',async()=>{
   let pfOk=false;
   try{
     await PFApi.init();pfOk=true;
-    await tick(42,'> ✓ PLAYFAB_SDK  OK');
+    await tick(42,'> + PLAYFAB_SDK  OK');
   }catch(e){
-    await tick(42,'⚠ PLAYFAB OFFLINE');
+    await tick(42,'! PLAYFAB OFFLINE');
     await new Promise(r=>setTimeout(r,600));
   }
 
   await tick(58,'CONNECTING FIREBASE...');
   await waitFB();
-  if(FB_READY)await tick(76,'> ✓ FIREBASE     MULTIPLAYER ON');
-  else{await tick(76,'⚠ FIREBASE OFFLINE — SINGLEPLAYER');await new Promise(r=>setTimeout(r,600));}
+  if(FB_READY)await tick(76,'> + FIREBASE     MULTIPLAYER ON');
+  else{await tick(76,'! FIREBASE OFFLINE — SINGLEPLAYER');await new Promise(r=>setTimeout(r,600));}
 
   await tick(90,'> LOADING ASSETS...');
   Object.assign(S.settings,LS.get('settings',{}));
@@ -3876,7 +4097,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   setTimeout(()=>{
     ls.style.display='none';
     document.getElementById('mainMenu').classList.remove('hidden');
-    if(!pfOk)setTimeout(()=>UI.msg('authMsg','⚠️ PlayFab connection failed. Check your internet.','er'),500);
+    if(!pfOk)setTimeout(()=>UI.msg('authMsg','PlayFab connection failed. Check internet.','er'),500);
   },520);
 });
 
