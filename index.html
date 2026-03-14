@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>VENOM — Multiplayer Snake</title>
-<!-- VENOM v8 — Owner panel in-game, shield/speedOrb pickups, boost stamina, FPS counter, ripple animations, dev theme -->
+<title>VENOM v10 — Multiplayer Snake</title>
+<!-- VENOM v10 — Upgrades, role tags, multiplayer fixes, lag reduction -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* =====================================================
@@ -412,7 +412,38 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 #miniOverlay::before{content:'// MINI_MODE';position:absolute;top:8px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;color:var(--mod);letter-spacing:3px;}
 
 @keyframes scorePulse{0%{transform:translateX(-50%) scale(1.2);}100%{transform:translateX(-50%) scale(1);}}
+
+/* ── COMBO COUNTER ── */
+#comboDisplay{position:absolute;top:60px;right:14px;font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:2px;pointer-events:none;transition:opacity .3s;opacity:0;}
+#comboDisplay.active{opacity:1;}
+#comboBig{font-size:28px;font-weight:700;line-height:1;display:block;animation:scorePopIn .25s ease;}
+#comboSub{font-size:9px;color:var(--dim2);}
+/* ── XP / LEVEL BAR ── */
+#xpBarWrap{position:absolute;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,.04);}
+#xpBarFill{height:100%;width:0%;background:linear-gradient(90deg,var(--mod),var(--g));transition:width .4s ease;}
+/* ── MILESTONE FLASH ── */
+@keyframes milestoneIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.6);}40%{opacity:1;transform:translate(-50%,-50%) scale(1.08);}70%{transform:translate(-50%,-50%) scale(.97);}100%{opacity:1;transform:translate(-50%,-50%) scale(1);}}
+#milestoneFlash{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-size:22px;font-weight:700;color:#fff;text-align:center;pointer-events:none;opacity:0;z-index:200;text-shadow:0 0 24px rgba(255,255,255,.5);}
+/* ── FLOATING SCORE POPUPS ── */
+.score-float{position:absolute;font-family:var(--mono);font-weight:700;pointer-events:none;animation:floatUp .9s ease forwards;z-index:150;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1);}60%{opacity:1;transform:translateY(-34px) scale(1.1);}100%{opacity:0;transform:translateY(-56px) scale(.8);}}
+
 @media(max-width:580px){.mwrap{flex-direction:column;}.mleft{display:none;}.mright{max-width:100%;}.cgd{grid-template-columns:1fr;}.cgd3{grid-template-columns:1fr 1fr;}.pbox{max-height:94vh;}#joyWrap{bottom:55px;left:18px;}#boostBtn{bottom:55px;right:18px;}}
+/* ── UPGRADES ── */
+.upg-card{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:3px;padding:14px;position:relative;overflow:hidden;transition:border-color .15s;}
+.upg-card:hover{border-color:var(--border2);}
+.upg-card.maxed{border-color:rgba(57,255,138,.3);}
+.upg-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.upg-icon{font-size:22px;width:36px;text-align:center;flex-shrink:0;}
+.upg-name{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text);}
+.upg-desc{font-family:var(--mono);font-size:10px;color:var(--dim2);margin-top:1px;}
+.upg-tiers{display:flex;gap:5px;margin-bottom:10px;}
+.upg-tier{flex:1;height:6px;border-radius:3px;background:var(--border2);transition:background .25s;}
+.upg-tier.filled{background:var(--g);box-shadow:0 0 6px rgba(57,255,138,.4);}
+.upg-info{font-family:var(--mono);font-size:10px;color:var(--dim2);margin-bottom:8px;min-height:14px;}
+.upg-btn{width:100%;padding:7px;border-radius:2px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;border:1px solid rgba(57,255,138,.35);background:transparent;color:var(--g);transition:all .15s;}
+.upg-btn:hover:not(:disabled){background:rgba(57,255,138,.08);border-color:var(--g);}
+.upg-btn:disabled{opacity:.35;cursor:not-allowed;color:var(--dim2);border-color:var(--border);}
 </style>
 </head>
 <body>
@@ -463,14 +494,21 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
           <button class="tb" onclick="authTab('register')">REGISTER</button>
         </div>
         <div id="loginForm">
-          <input class="inp" id="liUser" type="text" placeholder="Username" autocomplete="username">
-          <input class="inp" id="liPass" type="password" placeholder="Password" autocomplete="current-password">
+          <input class="inp" id="liUser" type="text" placeholder="Username" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
+          <input class="inp" id="liPass" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+          <label style="display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--dim2);margin-bottom:12px;cursor:pointer;">
+            <input type="checkbox" id="rememberMe" checked style="accent-color:var(--g);width:13px;height:13px;cursor:pointer;">
+            Stay logged in
+          </label>
           <button class="btn bg" onclick="doLogin()">▶ ENTER THE PIT</button>
         </div>
         <div id="regForm" class="hidden">
-          <input class="inp" id="rgName" type="text" placeholder="Username (max 16)" maxlength="16" autocomplete="username">
-          <input class="inp" id="rgPass" type="password" placeholder="Password (min 6)" autocomplete="new-password">
-          <button class="btn bg" onclick="doRegister()">CREATE SERPENT</button>
+          <input class="inp" id="rgName" type="text" placeholder="Username (3–16 chars, letters/numbers/_)" maxlength="16" autocomplete="username" oninput="checkRegForm()">
+          <input class="inp" id="rgPass" type="password" placeholder="Password (min 6 chars)" autocomplete="new-password" oninput="checkRegForm()">
+          <input class="inp" id="rgPass2" type="password" placeholder="Confirm password" autocomplete="new-password" oninput="checkRegForm()" onkeydown="if(event.key==='Enter')doRegister()">
+          <div id="pwStrengthBar" style="height:3px;border-radius:1px;background:var(--border);margin-bottom:10px;overflow:hidden;"><div id="pwStrengthFill" style="height:100%;width:0%;transition:width .2s,background .2s;"></div></div>
+          <div id="pwStrengthLbl" style="font-family:var(--mono);font-size:9px;color:var(--dim2);margin-bottom:10px;min-height:12px;"></div>
+          <button class="btn bg" id="regBtn" onclick="doRegister()" disabled style="opacity:.45;">CREATE SERPENT</button>
         </div>
         <div class="sm" id="authMsg" style="display:none;margin-top:4px;"></div>
       </div>
@@ -500,6 +538,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
             <button class="btn bo" onclick="Wardrobe.open()">🎨 WARDROBE</button>
             <button class="btn bo" onclick="UI.open('lbPanel')">🏆 RANKS</button>
           </div>
+          <button class="btn bo" onclick="UI.open('upgradesPanel')">⚡ UPGRADES</button>
           <button class="btn bo" onclick="UI.open('settPanel')">⚙️ SETTINGS</button>
           <button class="btn bb hidden" id="staffBtn" onclick="UI.open('staffPanel')">🛡 STAFF DASHBOARD</button>
           <button class="btn bgold hidden" id="ownerBtn" onclick="UI.open('ownerPanel')">👑 OWNER PANEL</button>
@@ -529,6 +568,21 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
         <div class="wd-items" id="wdItemsPane"></div>
       </div>
       <div class="sm hidden" id="cosMsg" style="margin:10px 20px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- UPGRADES PANEL -->
+<div class="overlay hidden" id="upgradesPanel">
+  <div class="pbox pg" style="max-width:740px;">
+    <div class="phd"><div class="pt g">⚡ UPGRADES</div><button class="cbtn" onclick="UI.close('upgradesPanel')">✕</button></div>
+    <div class="pbody">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--dim2);">Permanently upgrade your serpent with coins. Upgrades persist between games.</div>
+        <div style="font-family:var(--head);font-size:15px;color:var(--gold);white-space:nowrap;margin-left:12px;" id="upgCoinsDisplay">🪙 0</div>
+      </div>
+      <div id="upgradesList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;"></div>
+      <div class="sm hidden" id="upgMsg" style="margin-top:10px;"></div>
     </div>
   </div>
 </div>
@@ -605,6 +659,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
         <button class="stab" onclick="Staff.tab('idlookup',this)">🆔 ID LOOKUP</button>
         <button class="stab" onclick="Staff.tab('logs',this)">📋 LOGS</button>
         <button class="stab" onclick="Staff.tab('bcast',this)">📢 BROADCAST</button>
+        <button class="stab" onclick="Staff.tab('reports',this)" id="stReportsTab">🚨 REPORTS<span id="reportsBadge" style="display:none;background:var(--r);color:#fff;font-size:9px;padding:1px 5px;border-radius:2px;margin-left:4px;vertical-align:middle;">0</span></button>
       </div>
 
       <!-- LIVE PLAYERS -->
@@ -701,6 +756,19 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
           <button class="btn bb" onclick="Staff.broadcast()">📡 BROADCAST TO ALL</button>
         </div>
       </div>
+
+      <!-- REPORTS -->
+      <div id="stReports" class="hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div class="slbl" style="margin:0;">PLAYER REPORTS</div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn bb bsm" style="margin:0;" onclick="Staff.loadReports()">🔄 REFRESH</button>
+            <button class="btn br bsm" style="margin:0;" onclick="Staff.clearReports()">🗑 CLEAR ALL</button>
+          </div>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--dim2);margin-bottom:12px;line-height:1.6;">Reports submitted from the Live tab. Each report captures a full real-time snapshot of the player.</div>
+        <div id="reportsList"><div class="no-results">No reports yet.</div></div>
+      </div>
     </div>
   </div>
 </div>
@@ -789,10 +857,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 </div>
 
 <!-- DEV TAG -->
-<div id="devTag">VENOM v8 // PLAYFAB+FIREBASE // <span id="devFps">--</span> FPS</div>
+<div id="devTag">VENOM v10 // PLAYFAB+FIREBASE // <span id="devFps">--</span> FPS</div>
 
 <!-- HUD -->
 <div id="hud" class="hidden">
+  <div id="xpBarWrap"><div id="xpBarFill"></div></div>
   <div id="hudScore">0</div>
   <div id="hudKills">💀 0</div>
   <div id="hudStreak"></div>
@@ -801,6 +870,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
   <div id="hudOnline">● 0 ONLINE</div>
   <div id="hudCoords">X:0 Y:0</div>
   <div id="boostBar"><div id="boostFill"></div></div>
+  <div id="comboDisplay"><span id="comboBig">x1</span><span id="comboSub">COMBO</span></div>
+  <div id="milestoneFlash"></div>
   <div id="ann" class="hidden"></div>
   <div id="evbanner" class="hidden"></div>
   <div id="minimap"><canvas id="mmcv" width="120" height="120"></canvas></div>
@@ -832,7 +903,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 <!-- GAME OVER -->
 <div id="gameOver" class="hidden">
   <div class="gobox">
-    <div class="gotitle">DEAD</div>
+    <div class="gotitle" id="goTitleTxt">DEAD</div>
     <div class="gonew hidden" id="goNew">🏆 NEW BEST!</div>
     <div class="gostreak" id="goStreak" style="display:none;"></div>
     <div class="gokill" id="goKiller">Eliminated</div>
@@ -841,7 +912,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
       <div class="gost"><span id="goKills">0</span><label>KILLS</label></div>
       <div class="gost"><span id="goTime">0s</span><label>TIME</label></div>
     </div>
+    <div id="goExtras" style="display:flex;gap:8px;justify-content:center;margin-bottom:10px;flex-wrap:wrap;"></div>
     <div class="gocoins" id="goCoins">+0 🪙</div>
+    <div id="goVerdict" style="font-family:var(--mono);font-size:11px;color:var(--dim2);margin-bottom:16px;font-style:italic;"></div>
     <button class="btn bg" style="font-size:17px;" onclick="Game.start()">▶ PLAY AGAIN</button>
     <button class="btn bo" onclick="Game.backToMenu()">MAIN MENU</button>
   </div>
@@ -886,6 +959,97 @@ const PF_TITLE   = "100286";
 const PF_CAT     = "VenomSnake_v1";
 const PF_SDK_URL = "https://download.playfab.com/PlayFabClientApi.js";
 let PF = null;
+
+// ═══════════════════════════════════════════════════════════════
+//  CUSTOMIZABLE ROLE TAGS  — edit these to brand your server
+//  label       = badge text shown in scoreboard / chat
+//  icon        = emoji prefix above snake head
+//  color       = hex/css color for name label
+//  aura        = glow around head — use {a} as alpha placeholder
+//  chatBadge   = prefix in chat messages
+// ═══════════════════════════════════════════════════════════════
+const ROLE_TAGS = {
+  owner: {
+    label:'OWNER NIGGA', icon:'👑', color:'#ffd700',
+    aura:'rgba(255,215,0,{a})', shadowColor:'#ffd700', chatBadge:'TIGGA '
+  },
+  moderator: {
+    label:'MOD', icon:'🛡', color:'#44aaff',
+    aura:'rgba(68,170,255,{a})', shadowColor:'#44aaff', chatBadge:'🛡 '
+  },
+  vip: {
+    label:'VIP', icon:'⭐', color:'#c678f5',
+    aura:'rgba(198,120,245,{a})', shadowColor:'#c678f5', chatBadge:'⭐ '
+  },
+  player: {
+    label:'', icon:'', color:'#00ff88',
+    aura:null, shadowColor:'#00ff88', chatBadge:''
+  }
+};
+function getTag(role){ return ROLE_TAGS[role] || ROLE_TAGS.player; }
+
+// ═══════════════════════════════════════════════════════════════
+//  UPGRADES CATALOG — edit tiers, costs, icons freely
+// ═══════════════════════════════════════════════════════════════
+const UPGRADES = [
+  {
+    id:'speed', name:'Speed Boost', icon:'⚡', desc:'Move faster across the pit',
+    tiers:[
+      {cost:50,  label:'Tier 1', value:0.08, desc:'+8% move speed'},
+      {cost:150, label:'Tier 2', value:0.18, desc:'+18% move speed'},
+      {cost:350, label:'Tier 3', value:0.32, desc:'+32% move speed'},
+    ]
+  },
+  {
+    id:'boost_regen', name:'Boost Regen', icon:'🔋', desc:'Boost stamina regenerates faster',
+    tiers:[
+      {cost:60,  label:'Tier 1', value:0.3,  desc:'+30% boost regen'},
+      {cost:180, label:'Tier 2', value:0.65, desc:'+65% boost regen'},
+      {cost:400, label:'Tier 3', value:1.1,  desc:'+110% boost regen'},
+    ]
+  },
+  {
+    id:'armor', name:'Armor', icon:'🛡', desc:'Survive longer on respawn (extra length)',
+    tiers:[
+      {cost:80,  label:'Tier 1', value:10, desc:'+10 starting length'},
+      {cost:200, label:'Tier 2', value:22, desc:'+22 starting length'},
+      {cost:500, label:'Tier 3', value:40, desc:'+40 starting length'},
+    ]
+  },
+  {
+    id:'magnet', name:'Magnet Radius', icon:'🧲', desc:'Attract food from further away',
+    tiers:[
+      {cost:75,  label:'Tier 1', value:60,  desc:'+60px magnet radius'},
+      {cost:200, label:'Tier 2', value:130, desc:'+130px magnet radius'},
+      {cost:450, label:'Tier 3', value:220, desc:'+220px magnet radius'},
+    ]
+  },
+  {
+    id:'coin_bonus', name:'Coin Magnet', icon:'🪙', desc:'Earn more coins per kill & food',
+    tiers:[
+      {cost:100, label:'Tier 1', value:1,  desc:'+1 coin per kill'},
+      {cost:280, label:'Tier 2', value:3,  desc:'+3 coins per kill'},
+      {cost:600, label:'Tier 3', value:7,  desc:'+7 coins per kill'},
+    ]
+  },
+  {
+    id:'combo_hold', name:'Combo Hold', icon:'🔥', desc:'Combo timer lasts longer',
+    tiers:[
+      {cost:90,  label:'Tier 1', value:30, desc:'+30 frames combo window'},
+      {cost:240, label:'Tier 2', value:70, desc:'+70 frames combo window'},
+      {cost:550, label:'Tier 3', value:120,desc:'+120 frames combo window'},
+    ]
+  },
+];
+function getUpgLevel(id){ return S.upgrades?.[id] ?? 0; }
+function getUpgValue(id){
+  const upg = UPGRADES.find(u=>u.id===id);
+  if(!upg) return 0;
+  let total = 0;
+  const lvl = getUpgLevel(id);
+  for(let i=0;i<lvl;i++) total += upg.tiers[i].value;
+  return total;
+}
 
 const CATALOG = {
   skins:[
@@ -941,13 +1105,22 @@ const RANKS=[
   {name:'VENOM GOD',min:50000, color:'#ffd700'},
 ];
 function getRank(s){let r=RANKS[0];for(const k of RANKS)if(s>=k.min)r=k;return r;}
+function _timeAgo(ts){
+  if(!ts)return'never';
+  const s=Math.floor((Date.now()-ts)/1000);
+  if(s<60)return s+'s ago';
+  if(s<3600)return Math.floor(s/60)+'m ago';
+  if(s<86400)return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
 
 const WORLD    = 3600;
 const BASE_SPD = 2.9;
 const BOOST_SPD= 5.8;
 const SEG_GAP  = 6;
 const BOT_COUNT= 5;
-const FOOD_MAX = 380;
+const FOOD_MAX = 260; // reduced from 380 — big lag source
+const PTCL_MAX = 180; // hard cap on live particles
 
 const S = {
   loggedIn:false, pfId:null, displayName:'', role:'player',
@@ -955,6 +1128,7 @@ const S = {
   inventory:[],
   equipped:{skin:'skin_default',trail:'trail_none',kill:'kill_default'},
   settings:{ctrl:'mouse',boost:'click',names:true,particles:'on'},
+  upgrades:{}, // { speed:2, armor:1, ... }
 };
 
 const LS={
@@ -965,17 +1139,27 @@ const LS={
 
 function fbRef(path){return window._ref(window._db,path);}
 let FB_READY = false;
+const _fbQueue = []; // queue writes that happen before Firebase is ready
 async function waitFB(){
   return new Promise(res=>{
     if(window._fbReady){FB_READY=true;res();return;}
-    const t=setInterval(()=>{if(window._fbReady){clearInterval(t);FB_READY=true;res();}},100);
-    setTimeout(()=>{clearInterval(t);if(window._fbReady){FB_READY=true;}res();},12000);
+    const t=setInterval(()=>{if(window._fbReady){clearInterval(t);FB_READY=true;_flushFbQueue();res();}},100);
+    setTimeout(()=>{clearInterval(t);if(window._fbReady){FB_READY=true;_flushFbQueue();}res();},12000);
   });
+}
+function _flushFbQueue(){
+  while(_fbQueue.length){const fn=_fbQueue.shift();try{fn();}catch(e){}}
 }
 let myFbRef = null;
 let syncInterval = null;
-function fbSet(path,val){if(!FB_READY)return;window._set(fbRef(path),val).catch(()=>{});}
-function fbUpdate(path,val){if(!FB_READY)return;window._update(fbRef(path),val).catch(()=>{});}
+function fbSet(path,val){
+  const run=()=>window._set(fbRef(path),val).catch(()=>{});
+  if(!FB_READY){_fbQueue.push(run);}else{run();}
+}
+function fbUpdate(path,val){
+  const run=()=>window._update(fbRef(path),val).catch(()=>{});
+  if(!FB_READY){_fbQueue.push(run);}else{run();}
+}
 function fbRemove(path){if(!FB_READY)return;window._remove(fbRef(path)).catch(()=>{});}
 
 // ─── WARNS (stored locally + Firebase) ─────────────────
@@ -999,14 +1183,22 @@ const MP = {
   onlinePlayers: {},
   serverEvents: {},
   chatMessages: [],
+  _subscribed: false,
 
   subsAll() {
     if(!FB_READY) return;
+    if(this._subscribed) return; // prevent duplicate listeners
+    this._subscribed = true;
+    console.log('[MP] Subscribing to Firebase multiplayer channels...');
     window._onValue(fbRef('players'), snap => {
       const all = snap.val() || {};
+      const now = Date.now();
       MP.onlinePlayers = {};
       for(const [id, data] of Object.entries(all)) {
-        if(id === S.pfId) continue;
+        const safeMyId = S.pfId ? S.pfId.replace(/[.#$\[\]]/g,'_') : null;
+        if(id === safeMyId || id === S.pfId) continue;
+        // Drop stale entries (no update in 8s)
+        if(data && data.t && (now - data.t) > 8000) { delete MP.remotePlayers[id]; continue; }
         if(!data || !data.alive) { delete MP.remotePlayers[id]; continue; }
         MP.onlinePlayers[id] = {name:data.name||'?', score:data.score||0, kills:data.kills||0, role:data.role||'player'};
         const segs = data.segs ? data.segs.split(';').map(s=>{const[x,y]=s.split(',');return{x:+x,y:+y};}) : [];
@@ -1019,7 +1211,7 @@ const MP = {
           length:segs.length
         };
       }
-      const total = Object.keys(all).length;
+      const total = Object.keys(MP.onlinePlayers).length + 1; // +1 = self
       document.getElementById('onlineCount').textContent = total + ' ONLINE';
       if(Game.running) document.getElementById('hudOnline').textContent = '● '+total+' ONLINE';
       updateScoreboard();
@@ -1074,29 +1266,47 @@ const MP = {
     });
 
     if(S.pfId) {
-      window._onValue(fbRef('kicks/'+S.pfId), snap => {
+      const safeId = S.pfId.replace(/[.#$\[\]]/g,'_');
+      window._onValue(fbRef('kicks/'+safeId), snap => {
         const k = snap.val();
-        if(k){ doKick(k.reason||'Kicked by staff.'); fbRemove('kicks/'+S.pfId); }
+        if(k){ doKick(k.reason||'Kicked by staff.'); fbRemove('kicks/'+safeId); }
       });
-      window._onValue(fbRef('bans/'+S.pfId), snap => {
+      window._onValue(fbRef('bans/'+safeId), snap => {
         const b = snap.val();
         if(b && b.active) doBan(b.reason||'Banned by staff.');
       });
-      window._onValue(fbRef('mutes/'+S.pfId), snap => {
+      window._onValue(fbRef('mutes/'+safeId), snap => {
         const m = snap.val();
         GS.muted = !!(m && m.until && m.until > Date.now());
+      });
+    }
+    // Show connected toast
+    setTimeout(()=>Toast.show('🟢 Multiplayer connected','ok'), 400);
+    // Live reports counter — only listen if staff
+    if(S.role==='moderator'||S.role==='owner'){
+      window._onValue(fbRef('reports'), snap=>{
+        const count=Object.keys(snap.val()||{}).length;
+        const badge=document.getElementById('reportsBadge');
+        if(!badge)return;
+        if(count>0){badge.style.display='inline';badge.textContent=count;}
+        else badge.style.display='none';
+        // If reports tab is currently open, auto-refresh it
+        const reportsEl=document.getElementById('stReports');
+        if(reportsEl&&!reportsEl.classList.contains('hidden'))Staff.loadReports();
       });
     }
   },
 
   pushState(player) {
     if(!FB_READY || !player || !player.alive || !S.pfId) return;
+    // Sanitize pfId for Firebase path safety (replace forbidden chars)
+    const safeId = S.pfId.replace(/[.#$\[\]]/g,'_');
     const segs = [];
     for(let i=0;i<player.segments.length&&segs.length<40;i+=2) {
       segs.push(Math.round(player.segments[i].x)+','+Math.round(player.segments[i].y));
     }
-    fbUpdate('registry/'+S.pfId, {name:S.displayName,role:S.role,lastSeen:Date.now(),score:GS.score,kills:GS.kills+(S.stats.TotalKills||0)}).catch(()=>{});
-    fbUpdate('players/'+S.pfId, {
+    fbUpdate('registry/'+safeId, {name:S.displayName,role:S.role,lastSeen:Date.now(),score:GS.score,kills:GS.kills+(S.stats.TotalKills||0)}).catch(()=>{});
+    fbUpdate('players/'+safeId, {
       name:   S.displayName,
       alive:  true,
       angle:  +player.angle.toFixed(3),
@@ -1117,10 +1327,67 @@ const MP = {
   leave() {
     if(S.pfId) fbRemove('players/'+S.pfId);
     clearInterval(syncInterval);
+    this._subscribed = false;
   }
 };
 
-// PLAYFAB API
+// ═══════════════════════════════════════════════════════════════
+//  PLAYFAB CATALOG TAG MAP  — auto-generated from catalog JSON
+//  Tags drive: role detection, cosmetic unlock, wardrobe display
+//  To add a new item: add it to PlayFab catalog with the right
+//  tags (owner / staff / exclusive / cosmetic) and it works here.
+// ═══════════════════════════════════════════════════════════════
+const PF_ITEM_TAGS = {
+  "mod_panel":      ["role","staff"],
+  "owner_panel":    ["role","owner"],
+  "skin_red":       ["cosmetic","skin"],
+  "skin_blue":      ["cosmetic","skin"],
+  "skin_purple":    ["cosmetic","skin"],
+  "skin_orange":    ["cosmetic","skin"],
+  "skin_pink":      ["cosmetic","skin"],
+  "skin_cyan":      ["cosmetic","skin"],
+  "skin_gold":      ["cosmetic","skin","exclusive"],
+  "skin_rainbow":   ["cosmetic","skin","exclusive"],
+  "skin_void":      ["cosmetic","skin","exclusive"],
+  "skin_galaxy":    ["cosmetic","skin","exclusive"],
+  "skin_inferno":   ["cosmetic","skin","exclusive"],
+  "skin_toxic":     ["cosmetic","skin","exclusive"],
+  "skin_mod":       ["cosmetic","skin","staff"],
+  "skin_owner":     ["cosmetic","skin","owner"],
+  "skin_owner2":    ["cosmetic","skin","owner"],
+  "skin_owner3":    ["cosmetic","skin","owner"],
+  "trail_sparkle":  ["cosmetic","trail"],
+  "trail_smoke":    ["cosmetic","trail"],
+  "trail_hearts":   ["cosmetic","trail"],
+  "trail_star":     ["cosmetic","trail"],
+  "trail_fire":     ["cosmetic","trail","exclusive"],
+  "trail_lightning":["cosmetic","trail","exclusive"],
+  "trail_mod":      ["cosmetic","trail","staff"],
+  "trail_owner":    ["cosmetic","trail","owner"],
+  "trail_owner2":   ["cosmetic","trail","owner"],
+  "kill_shatter":   ["cosmetic","kill"],
+  "kill_coins":     ["cosmetic","kill"],
+  "kill_explosion": ["cosmetic","kill","exclusive"],
+  "kill_vortex":    ["cosmetic","kill","exclusive"],
+  "kill_thunder":   ["cosmetic","kill","staff"],
+  "kill_owner":     ["cosmetic","kill","owner"],
+  "kill_owner2":    ["cosmetic","kill","owner"]
+};
+
+/** Returns true if itemId has the given tag in the catalog */
+function pfItemHasTag(itemId, tag){ return (PF_ITEM_TAGS[itemId]||[]).includes(tag); }
+
+/**
+ * Derive role from a PlayFab inventory array.
+ * Logic: any item tagged "owner" → owner; any item tagged "staff" → moderator.
+ * This means granting ANY owner-tagged item (skin_owner, owner_panel, etc.)
+ * gives owner role. Same for staff-tagged items.
+ */
+function deriveRoleFromInventory(invItemIds){
+  if(invItemIds.some(id => pfItemHasTag(id,'owner'))) return 'owner';
+  if(invItemIds.some(id => pfItemHasTag(id,'staff'))) return 'moderator';
+  return 'player';
+}
 const PFApi = {
   async init(){
     return new Promise((res,rej)=>{
@@ -1176,7 +1443,10 @@ const BAN={
     // Normalize key for local store; preserve raw id for Firebase (PlayFab IDs are case-sensitive)
     const key=id.trim().toLowerCase();
     const b=this.get();
-    b[key]={name,reason,by,time:Date.now(),id:id.trim()};
+    const entry={name,reason,by,time:Date.now(),id:id.trim()};
+    b[key]=entry;
+    // Also index by display name so offline-ban-by-username works
+    if(name)b[name.trim().toLowerCase()]={...entry,_nameKey:true};
     LS.set('bans',b);
     PFApi.setData({bans:b}).catch(()=>{});
     AL.add(by,'BAN',name,reason);
@@ -1228,30 +1498,82 @@ const Toast={
 // COSMETICS / WARDROBE
 const Cosm={
   owned:new Set(['skin_default','trail_none','kill_default']),
+
+  // ── Load ownership purely from PlayFab inventory + catalog tags ───────────
+  // invItems = UserInventory array from LoginWithPlayFab result
+  // S.role must already be set (via deriveRoleFromInventory) before calling this
   load(invItems){
+    // 1. Always own free items
     CATALOG.skins.filter(s=>s.free).forEach(s=>this.owned.add(s.id));
     CATALOG.trails.filter(t=>t.free).forEach(t=>this.owned.add(t.id));
     CATALOG.kills.filter(k=>k.free).forEach(k=>this.owned.add(k.id));
-    invItems.forEach(i=>{if(i.ItemId)this.owned.add(i.ItemId);});
-    if(S.role==='moderator'||S.role==='owner')['skin_mod','trail_mod','kill_thunder'].forEach(id=>this.owned.add(id));
-    if(S.role==='owner')['skin_owner','skin_owner2','skin_owner3','skin_gold','skin_rainbow','skin_void','skin_galaxy','skin_inferno','skin_toxic','trail_fire','trail_lightning','trail_owner','trail_owner2','kill_explosion','kill_vortex','kill_owner','kill_owner2'].forEach(id=>this.owned.add(id));
+
+    // 2. Add every item directly in PlayFab inventory (ground truth)
+    invItems.forEach(i=>{ if(i.ItemId) this.owned.add(i.ItemId); });
+
+    // 3. Tag-driven cosmetic perks:
+    //    Any inventory item tagged "staff"  → unlock ALL staff-tagged cosmetics
+    //    Any inventory item tagged "owner"  → unlock ALL owner-tagged cosmetics
+    //    (This means giving someone skin_mod also unlocks all other staff items)
+    const invIds = invItems.map(i=>i.ItemId).filter(Boolean);
+    const hasStaffTag = invIds.some(id => pfItemHasTag(id,'staff'));
+    const hasOwnerTag = invIds.some(id => pfItemHasTag(id,'owner'));
+
+    if(hasStaffTag || hasOwnerTag){
+      // Unlock all cosmetics tagged "staff"
+      Object.entries(PF_ITEM_TAGS).forEach(([id,tags])=>{
+        if(tags.includes('staff') && tags.includes('cosmetic')) this.owned.add(id);
+      });
+    }
+    if(hasOwnerTag){
+      // Unlock all cosmetics tagged "owner"
+      Object.entries(PF_ITEM_TAGS).forEach(([id,tags])=>{
+        if(tags.includes('owner') && tags.includes('cosmetic')) this.owned.add(id);
+      });
+    }
+
+    // 4. Restore equipped loadout from localStorage (validated against owned)
     const eq=LS.get('eq',{});
     if(eq.skin&&this.owned.has(eq.skin))S.equipped.skin=eq.skin;
     if(eq.trail&&this.owned.has(eq.trail))S.equipped.trail=eq.trail;
     if(eq.kill&&this.owned.has(eq.kill))S.equipped.kill=eq.kill;
   },
-  equip(id,cat){if(!this.owned.has(id))return;S.equipped[cat]=id;LS.set('eq',S.equipped);Wardrobe.render();Toast.show('Equipped!','ok');},
+
+  equip(id,cat){
+    if(!this.owned.has(id))return;
+    S.equipped[cat]=id;
+    LS.set('eq',S.equipped);
+    // Persist equipped to PlayFab so it syncs across devices
+    PFApi.setData({equipped:JSON.stringify(S.equipped)}).catch(()=>{});
+    Wardrobe.render();
+    Toast.show('Equipped!','ok');
+  },
+
   async buy(item,cat){
     if(S.vc<item.price){Toast.show('Not enough coins! Need 🪙'+item.price,'er');return;}
     if(!confirm(`Buy ${item.name} for 🪙${item.price}?`))return;
-    try{await PFApi.purchaseItem(item.id,item.price);S.vc-=item.price;}
-    catch(e){S.vc-=item.price;PFApi.setData({vc:String(S.vc)}).catch(()=>{});}
-    this.owned.add(item.id);this.equip(item.id,cat);
+    try{
+      await PFApi.purchaseItem(item.id,item.price);
+      S.vc-=item.price;
+    }catch(e){
+      S.vc-=item.price;
+      PFApi.setData({vc:String(S.vc)}).catch(()=>{});
+    }
+    this.owned.add(item.id);
+    // After buying, re-check if this item unlocks any tag perks
+    if(pfItemHasTag(item.id,'staff')||pfItemHasTag(item.id,'owner')){
+      const newRole = deriveRoleFromInventory([...S.inventory, item.id]);
+      if(newRole !== S.role){ S.role = newRole; showProfile(); }
+      S.inventory.push(item.id);
+      this.load(S.inventory.map(id=>({ItemId:id})));
+    }
+    this.equip(item.id,cat);
     document.getElementById('pCoins').textContent='🪙 '+S.vc;
     document.getElementById('wdCoinsDisplay').textContent='🪙 '+S.vc;
-    PFApi.setData({ownedCosmetics:JSON.stringify([...this.owned])}).catch(()=>{});
+    PFApi.setData({vc:String(S.vc)}).catch(()=>{});
     Toast.show('Purchased '+item.name+'!','gold');
   },
+
   renderAll(){Wardrobe.render();}
 };
 
@@ -1286,23 +1608,41 @@ const Wardrobe={
 
     let html='<div class="wd-grid" style="margin-bottom:20px;">';
     const renderItem=(item)=>{
-      const owned=Cosm.owned.has(item.id)||item.free;
-      const equipped=eq===item.id;
-      const isOwner=item.ownerOnly;
-      const isRainbow=item.id==='skin_rainbow';
-      let cls='wd-item';
-      if(owned)cls+=' owned';
-      if(equipped)cls+=' equipped';
-      if(!owned&&(item.exclusive||item.staff||item.ownerOnly))cls+=' locked';
-      if(isOwner)cls+=' owner-item';
-      if(isRainbow)cls+=' rainbow-item';
-      const badge=equipped?'<span class="wd-badge eq">ON</span>':isOwner?'<span class="wd-badge own">👑</span>':item.staff?'<span class="wd-badge staff">🛡</span>':item.exclusive?'<span class="wd-badge excl">EX</span>':'';
-      const price=!owned&&item.price?`<div class="wd-price">🪙 ${item.price}</div>`:!owned&&(item.exclusive||item.staff||item.ownerOnly)?`<div class="wd-price" style="color:var(--dim2);font-size:9px">EXCLUSIVE</div>`:'';
+      const owned   = Cosm.owned.has(item.id) || item.free;
+      const equipped = eq === item.id;
+      // Tag-driven flags using catalog
+      const isOwnerTag   = pfItemHasTag(item.id,'owner');
+      const isStaffTag   = pfItemHasTag(item.id,'staff');
+      const isExclTag    = pfItemHasTag(item.id,'exclusive');
+      const isRainbow    = item.id === 'skin_rainbow';
+      const isLocked     = !owned && (isOwnerTag || isStaffTag || isExclTag);
+      let cls = 'wd-item';
+      if(owned)   cls += ' owned';
+      if(equipped)cls += ' equipped';
+      if(isLocked)cls += ' locked';
+      if(isOwnerTag) cls += ' owner-item';
+      if(isRainbow)  cls += ' rainbow-item';
+      const ownerTag = getTag('owner'), modTag = getTag('moderator');
+      const badge = equipped
+        ? `<span class="wd-badge eq">ON</span>`
+        : isOwnerTag
+          ? `<span class="wd-badge own" style="background:${ownerTag.color};color:#000;">${ownerTag.icon}</span>`
+          : isStaffTag
+            ? `<span class="wd-badge staff" style="background:${modTag.color};color:#000;">${modTag.icon}</span>`
+            : isExclTag
+              ? `<span class="wd-badge excl">EX</span>`
+              : '';
+      const price = !owned && item.price
+        ? `<div class="wd-price">🪙 ${item.price}</div>`
+        : !owned && isLocked
+          ? `<div class="wd-price" style="color:var(--dim2);font-size:9px">${isOwnerTag?ownerTag.label:isStaffTag?modTag.label:'EXCLUSIVE'}</div>`
+          : '';
       return`<div class="${cls}" onclick="Wardrobe.click('${item.id}','${cat}')">${badge}<span class="wd-icon">${item.icon}</span><div class="wd-name">${item.name}</div>${price}</div>`;
     };
 
-    if(ownerItems.length&&S.role==='owner'){
-      html='<div class="wd-owner-section"><div class="wd-owner-header">👑 OWNER EXCLUSIVES</div><div class="wd-grid">'+ownerItems.map(renderItem).join('')+'</div></div>';
+    if(ownerItems.length && S.role==='owner'){
+      const ownerTag = getTag('owner');
+      html='<div class="wd-owner-section"><div class="wd-owner-header">'+ownerTag.icon+' OWNER EXCLUSIVES</div><div class="wd-grid">'+ownerItems.map(renderItem).join('')+'</div></div>';
     }
     html+='<div class="wd-grid">';
     [...staffItems,...exclItems,...shopItems,...freeItems].forEach(item=>{ html+=renderItem(item); });
@@ -1323,9 +1663,14 @@ const Wardrobe={
     const allItems=[...CATALOG.skins,...CATALOG.trails,...CATALOG.kills];
     const item=allItems.find(i=>i.id===id);
     if(!item)return;
-    if(Cosm.owned.has(id)||item.free){Cosm.equip(id,cat);}
-    else if(item.price&&!item.exclusive&&!item.staff&&!item.ownerOnly){Cosm.buy(item,cat);}
-    else{Toast.show('This item is exclusive — cannot purchase','er');}
+    if(Cosm.owned.has(id)||item.free){
+      Cosm.equip(id,cat);
+    } else if(item.price && !pfItemHasTag(id,'exclusive') && !pfItemHasTag(id,'staff') && !pfItemHasTag(id,'owner')){
+      Cosm.buy(item,cat);
+    } else {
+      const tag = pfItemHasTag(id,'owner') ? getTag('owner') : pfItemHasTag(id,'staff') ? getTag('moderator') : null;
+      Toast.show(tag ? tag.icon+' This item is '+tag.label+'-exclusive' : 'This item is exclusive — cannot purchase','er');
+    }
   },
   drawPreview(){
     const cv=document.getElementById('wdCanvas');
@@ -1366,6 +1711,91 @@ const Wardrobe={
 };
 window.Wardrobe=Wardrobe;
 
+// ─── UPGRADES ───────────────────────────────────────────────
+const Upgrades = {
+  open() {
+    document.getElementById('upgCoinsDisplay').textContent = '🪙 ' + S.vc;
+    this.render();
+    UI.open('upgradesPanel');
+  },
+
+  render() {
+    const list = document.getElementById('upgradesList');
+    if (!list) return;
+    list.innerHTML = '';
+    for (const upg of UPGRADES) {
+      const lvl = getUpgLevel(upg.id);
+      const maxed = lvl >= upg.tiers.length;
+      const nextTier = upg.tiers[lvl];
+      const card = document.createElement('div');
+      card.className = 'upg-card' + (maxed ? ' maxed' : '');
+
+      // tier pip bar
+      const tierPips = upg.tiers.map((t, i) =>
+        `<div class="upg-tier ${i < lvl ? 'filled' : ''}"></div>`
+      ).join('');
+
+      // current bonus summary
+      let bonusTxt = '';
+      if (lvl > 0) {
+        const val = getUpgValue(upg.id);
+        if (upg.id === 'speed') bonusTxt = `+${Math.round(val*100)}% speed`;
+        else if (upg.id === 'boost_regen') bonusTxt = `+${Math.round(val*100)}% regen`;
+        else if (upg.id === 'armor') bonusTxt = `+${val} length`;
+        else if (upg.id === 'magnet') bonusTxt = `+${val}px radius`;
+        else if (upg.id === 'coin_bonus') bonusTxt = `+${val} coins/kill`;
+        else if (upg.id === 'combo_hold') bonusTxt = `+${val} frames`;
+      }
+
+      const infoTxt = maxed
+        ? `<span style="color:var(--g)">✓ MAXED${bonusTxt ? ' — ' + bonusTxt : ''}</span>`
+        : lvl > 0
+          ? `Current: ${bonusTxt} · Next: ${nextTier.desc} — costs 🪙${nextTier.cost}`
+          : `${nextTier.desc} — costs 🪙${nextTier.cost}`;
+
+      const btnLabel = maxed
+        ? 'MAX LEVEL'
+        : `UPGRADE → ${nextTier.label}  🪙${nextTier.cost}`;
+
+      card.innerHTML = `
+        <div class="upg-header">
+          <div class="upg-icon">${upg.icon}</div>
+          <div>
+            <div class="upg-name">${upg.name}</div>
+            <div class="upg-desc">${upg.desc}</div>
+          </div>
+          <div style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--dim2);">${lvl}/${upg.tiers.length}</div>
+        </div>
+        <div class="upg-tiers">${tierPips}</div>
+        <div class="upg-info">${infoTxt}</div>
+        <button class="upg-btn" ${maxed || S.vc < (nextTier?.cost||0) ? 'disabled' : ''}
+          onclick="Upgrades.buy('${upg.id}')">${btnLabel}</button>
+      `;
+      list.appendChild(card);
+    }
+  },
+
+  buy(id) {
+    const upg = UPGRADES.find(u => u.id === id);
+    if (!upg) return;
+    const lvl = getUpgLevel(id);
+    if (lvl >= upg.tiers.length) { UI.msg('upgMsg', 'Already maxed!', 'er'); return; }
+    const tier = upg.tiers[lvl];
+    if (S.vc < tier.cost) { UI.msg('upgMsg', `Not enough coins! Need 🪙${tier.cost}`, 'er'); return; }
+    S.vc -= tier.cost;
+    if (!S.upgrades) S.upgrades = {};
+    S.upgrades[id] = lvl + 1;
+    document.getElementById('pCoins').textContent = '🪙 ' + S.vc;
+    document.getElementById('upgCoinsDisplay').textContent = '🪙 ' + S.vc;
+    // Persist
+    PFApi.setData({ vc: String(S.vc), upgrades: JSON.stringify(S.upgrades) }).catch(() => {});
+    Toast.show(`⚡ ${upg.name} upgraded to ${tier.label}!`, 'ok');
+    UI.msg('upgMsg', `✅ ${upg.name} → ${tier.label}`, 'ok');
+    this.render();
+  }
+};
+window.Upgrades = Upgrades;
+
 
 // UI with animations
 const UI={
@@ -1375,8 +1805,9 @@ const UI={
     el.classList.remove('hidden');
     const box=el.querySelector('.pbox');
     if(box){box.style.animation='none';void box.offsetWidth;box.style.animation='scaleIn .28s cubic-bezier(.34,1.56,.64,1) forwards';}
-    // Wardrobe uses its own open
     if(id==='wardrobePanel')Wardrobe.open();
+    if(id==='upgradesPanel')Upgrades.open();
+    if(id==='staffPanel'&&window.Staff)Staff._updateReportsBadge();
   },
   close(id){
     const el=document.getElementById(id);
@@ -1415,144 +1846,236 @@ function authTab(t){
   document.getElementById('loginForm').classList.toggle('hidden',t!=='login');
   document.getElementById('regForm').classList.toggle('hidden',t!=='register');
   document.querySelectorAll('.tabs .tb').forEach((b,i)=>b.classList.toggle('on',(i===0&&t==='login')||(i===1&&t==='register')));
+  if(t==='register')setTimeout(()=>document.getElementById('rgName').focus(),50);
+  else setTimeout(()=>document.getElementById('liUser').focus(),50);
 }
 window.authTab=authTab;
+
+function checkRegForm(){
+  const name=document.getElementById('rgName').value.trim();
+  const pass=document.getElementById('rgPass').value;
+  const pass2=document.getElementById('rgPass2').value;
+  const btn=document.getElementById('regBtn');
+  const fill=document.getElementById('pwStrengthFill');
+  const lbl=document.getElementById('pwStrengthLbl');
+  // Password strength
+  let strength=0,hint='';
+  if(pass.length>=6)strength++;
+  if(pass.length>=10)strength++;
+  if(/[A-Z]/.test(pass)&&/[0-9]/.test(pass))strength++;
+  if(/[^a-zA-Z0-9]/.test(pass))strength++;
+  const colors=['#ff2244','#ff7700','#e8c832','#39ff8a'];
+  const labels=['Too short','Weak','Good','Strong'];
+  if(pass.length>0){fill.style.width=(strength/4*100)+'%';fill.style.background=colors[strength-1]||'#ff2244';hint=labels[strength-1]||'Too short';}
+  else{fill.style.width='0%';}
+  // Confirm match
+  if(pass2&&pass!==pass2){hint='Passwords don\'t match';fill.style.background='#ff2244';}
+  lbl.textContent=hint;
+  const valid=name.length>=3&&/^[a-zA-Z0-9_]+$/.test(name)&&pass.length>=6&&pass===pass2;
+  btn.disabled=!valid;btn.style.opacity=valid?'1':'0.45';
+}
+window.checkRegForm=checkRegForm;
 
 // AUTH
 async function doLogin(){
   const username=document.getElementById('liUser').value.trim();
   const pass=document.getElementById('liPass').value;
-  if(!username){UI.msg('authMsg','Please enter your username.','er');return;}
-  if(!pass){UI.msg('authMsg','Please enter your password.','er');return;}
-  UI.msg('authMsg','Logging in...','in');
+  const remember=document.getElementById('rememberMe')?.checked!==false;
+  if(!username){UI.msg('authMsg','Enter your username.','er');return;}
+  if(!pass){UI.msg('authMsg','Enter your password.','er');return;}
+
+  // Offline ban check — block before even hitting network
+  const offlineBan=_checkOfflineBan(username);
+  if(offlineBan){UI.msg('authMsg','⛔ You are banned: '+offlineBan.reason,'er');return;}
+
+  UI.msg('authMsg','Logging in…','in');
   try{
     const d=await PFApi.login(username,pass);
-    LS.set('session',{username,pass});
+    if(remember)LS.set('session',{username,pass});
+    else LS.del('session');
     await onLoginSuccess(d);
-  }catch(e){UI.msg('authMsg',e.message||'Login failed.','er');}
+  }catch(e){
+    // Never delete session on network errors — only on explicit logout
+    UI.msg('authMsg',e.message||'Login failed.','er');
+  }
 }
 window.doLogin=doLogin;
 
 async function doRegister(){
   const name=document.getElementById('rgName').value.trim();
   const pass=document.getElementById('rgPass').value;
-  if(!name){UI.msg('authMsg','Please enter a username.','er');return;}
-  if(!pass){UI.msg('authMsg','Please enter a password.','er');return;}
-  if(name.length<2){UI.msg('authMsg','Username: at least 2 chars.','er');return;}
-  if(pass.length<6){UI.msg('authMsg','Password: at least 6 chars.','er');return;}
-  if(!/^[a-zA-Z0-9_]+$/.test(name)){UI.msg('authMsg','Username: letters, numbers, underscores only.','er');return;}
-  UI.msg('authMsg','Creating account...','in');
+  const pass2=document.getElementById('rgPass2').value;
+  if(!name||!pass){UI.msg('authMsg','Fill in all fields.','er');return;}
+  if(name.length<3){UI.msg('authMsg','Username needs at least 3 characters.','er');return;}
+  if(pass.length<6){UI.msg('authMsg','Password needs at least 6 characters.','er');return;}
+  if(pass!==pass2){UI.msg('authMsg','Passwords don\'t match.','er');return;}
+  if(!/^[a-zA-Z0-9_]+$/.test(name)){UI.msg('authMsg','Only letters, numbers and underscores allowed.','er');return;}
+
+  // Offline ban check on username
+  const offlineBan=_checkOfflineBan(name);
+  if(offlineBan){UI.msg('authMsg','⛔ This username is banned: '+offlineBan.reason,'er');return;}
+
+  const btn=document.getElementById('regBtn');
+  btn.disabled=true;btn.textContent='CREATING…';
+  UI.msg('authMsg','Creating your account…','in');
   try{
     await PFApi.register(name,pass);
-    UI.msg('authMsg','Account created! Logging in...','ok');
-    await new Promise(r=>setTimeout(r,600));
+    UI.msg('authMsg','✅ Account created! Entering the pit…','ok');
+    await new Promise(r=>setTimeout(r,700));
     const d=await PFApi.login(name,pass);
-    LS.set('session',{username:name,pass});
+    LS.set('session',{username:name,pass}); // always remember after register
     await onLoginSuccess(d);
-  }catch(e){UI.msg('authMsg',e.message||'Registration failed.','er');}
+  }catch(e){
+    btn.disabled=false;btn.textContent='CREATE SERPENT';
+    UI.msg('authMsg',e.message||'Registration failed.','er');
+  }
 }
 window.doRegister=doRegister;
 
+// Check offline bans by username or pfId
+function _checkOfflineBan(nameOrId){
+  const bans=LS.get('bans',{});
+  const key=nameOrId.trim().toLowerCase();
+  if(bans[key])return bans[key];
+  // Check by stored name field
+  for(const b of Object.values(bans)){
+    if((b.name||'').toLowerCase()===key)return b;
+  }
+  return null;
+}
+
 async function onLoginSuccess(data){
-  S.loggedIn=true;
-  S.pfId=data.PlayFabId;
-  S.displayName=data.InfoResultPayload?.AccountInfo?.TitleInfo?.DisplayName||data.InfoResultPayload?.PlayerProfile?.DisplayName||data.InfoResultPayload?.AccountInfo?.Username||'Player';
-  const vc=data.InfoResultPayload?.UserVirtualCurrency||{};
-  S.vc=vc['VC']||vc['GC']||0;
-  const stats=data.InfoResultPayload?.PlayerStatistics||[];
-  stats.forEach(st=>{if(st.StatisticName)S.stats[st.StatisticName]=st.Value;});
-  const inv=data.InfoResultPayload?.UserInventory||[];
-  S.inventory=inv.map(i=>i.ItemId).filter(Boolean);
-  S.role=S.inventory.includes('owner_panel')?'owner':S.inventory.includes('mod_panel')?'moderator':'player';
+  S.loggedIn = true;
+  S.pfId     = data.PlayFabId;
+  S.displayName =
+    data.InfoResultPayload?.AccountInfo?.TitleInfo?.DisplayName ||
+    data.InfoResultPayload?.PlayerProfile?.DisplayName ||
+    data.InfoResultPayload?.AccountInfo?.Username || 'Player';
 
-  // Step 1: Load PlayFab ban data first so we have the full merged ban list
-  try{
-    const pfData=await PFApi.getData(['ownedCosmetics','equipped','bans']);
-    if(pfData.ownedCosmetics){try{JSON.parse(pfData.ownedCosmetics.Value||'[]').forEach(id=>Cosm.owned.add(id));}catch(e){}}
-    if(pfData.equipped){try{Object.assign(S.equipped,JSON.parse(pfData.equipped.Value||'{}'));}catch(e){}}
-    if(pfData.bans){try{const pfBans=JSON.parse(pfData.bans.Value||'{}');LS.set('bans',{...LS.get('bans',{}),...pfBans});}catch(e){}}
-  }catch(e){console.warn('Could not load PlayFab data:',e);}
+  // ── Virtual currency ──────────────────────────────────────────────────────
+  const vc = data.InfoResultPayload?.UserVirtualCurrency || {};
+  S.vc = vc['VC'] || vc['GC'] || 0;
 
-  // Step 2: Check local/PlayFab ban store
-  const localBan=BAN.check(S.pfId);
-  if(localBan){UI.msg('authMsg','❌ You are banned: '+localBan.reason,'er');LS.del('session');return;}
+  // ── Stats ─────────────────────────────────────────────────────────────────
+  const stats = data.InfoResultPayload?.PlayerStatistics || [];
+  stats.forEach(st => { if(st.StatisticName) S.stats[st.StatisticName] = st.Value; });
 
-  // Step 3: Check Firebase ban (live, authoritative ban source)
+  // ── Inventory (PlayFab is ground truth for roles AND cosmetics) ───────────
+  const inv = data.InfoResultPayload?.UserInventory || [];
+  S.inventory = inv.map(i => i.ItemId).filter(Boolean);
+
+  // Role is derived from PlayFab catalog tags on inventory items
+  // Any item tagged "owner" → owner; any tagged "staff" → moderator
+  S.role = deriveRoleFromInventory(S.inventory);
+
+  // ── Step 1: Load player data (equipped, upgrades, bans) ──────────────────
+  try {
+    const pfData = await PFApi.getData(['equipped','bans','upgrades']);
+    // equipped loadout — will be validated against owned in Cosm.load()
+    if(pfData.equipped){ try{ Object.assign(S.equipped, JSON.parse(pfData.equipped.Value||'{}')); }catch(e){} }
+    // ban list sync
+    if(pfData.bans){ try{ const pfBans=JSON.parse(pfData.bans.Value||'{}'); LS.set('bans',{...LS.get('bans',{}),...pfBans}); }catch(e){} }
+    // upgrades
+    if(pfData.upgrades){ try{ Object.assign(S.upgrades, JSON.parse(pfData.upgrades.Value||'{}')); }catch(e){} }
+  } catch(e){ console.warn('Could not load PlayFab player data:', e); }
+
+  // ── Step 2: Build cosmetic ownership from inventory (no JSON blob needed) ─
+  // Cosm.load() uses inv directly — inventory IS the ownership record
+  Cosm.load(inv);
+
+  // ── Step 3: Local ban check ───────────────────────────────────────────────
+  const localBan = BAN.check(S.pfId) || _checkOfflineBan(S.displayName);
+  if(localBan){ UI.msg('authMsg','⛔ You are banned: '+localBan.reason,'er'); LS.del('session'); return; }
+
+  // ── Step 4: Firebase ban check (authoritative live source) ────────────────
   if(FB_READY){
     try{
-      const banSnap=await window._get(fbRef('bans/'+S.pfId));
-      const fbBan=banSnap.val();
-      if(fbBan&&fbBan.active){
-        // Persist locally and block
-        const bans=LS.get('bans',{});
-        bans[S.pfId.toLowerCase()]={name:S.displayName,reason:fbBan.reason||'Banned by staff.',by:fbBan.by||'Staff',time:fbBan.time||Date.now()};
+      const safeId = S.pfId.replace(/[.#$\[\]]/g,'_');
+      const banSnap = await window._get(fbRef('bans/'+safeId));
+      const fbBan = banSnap.val();
+      if(fbBan && fbBan.active){
+        const bans = LS.get('bans',{});
+        bans[S.pfId.toLowerCase()] = {name:S.displayName,reason:fbBan.reason||'Banned by staff.',by:fbBan.by||'Staff',time:fbBan.time||Date.now()};
         LS.set('bans',bans);
         UI.msg('authMsg','❌ You are banned: '+(fbBan.reason||'Banned by staff.'),'er');
         LS.del('session');
         return;
       }
-    }catch(e){console.warn('Could not check Firebase ban:',e);}
+    }catch(e){ console.warn('Could not check Firebase ban:',e); }
   }
 
-  // Step 4: Redeem any pending grants from Firebase (owner-queued)
-  if(FB_READY&&S.pfId){
-    const safeId=S.pfId.replace(/[.#$\/\[\]]/g,'_');
-    const grantKey='grants/'+safeId;
-    const revokeKey='revoke/'+safeId;
+  // ── Step 5: Redeem any pending grants queued by owner via Firebase ─────────
+  if(FB_READY && S.pfId){
+    const safeId   = S.pfId.replace(/[.#$\/\[\]]/g,'_');
+    const grantKey = 'grants/'+safeId;
+    const revokeKey= 'revoke/'+safeId;
     try{
-      const [gsnap,rsnap]=await Promise.all([
+      const [gsnap,rsnap] = await Promise.all([
         window._get(fbRef(grantKey)).catch(()=>({val:()=>null})),
         window._get(fbRef(revokeKey)).catch(()=>({val:()=>null}))
       ]);
-      const pending=gsnap.val?.()??null;
-      const revoke=rsnap.val?.()??null;
-      let changed=false;
+      const pending = gsnap.val?.() ?? null;
+      const revoke  = rsnap.val?.() ?? null;
+      let changed = false;
       if(pending){
-        if(Array.isArray(pending.items)&&pending.items.length){
-          pending.items.forEach(id=>{Cosm.owned.add(id);changed=true;});
-          if(pending.items.includes('owner_panel'))S.role='owner';
-          else if(pending.items.includes('mod_panel')&&S.role==='player')S.role='moderator';
+        if(Array.isArray(pending.items) && pending.items.length){
+          pending.items.forEach(id=>{ Cosm.owned.add(id); S.inventory.push(id); changed=true; });
+          // Re-derive role from updated inventory using catalog tags
+          S.role = deriveRoleFromInventory(S.inventory);
+          // Re-apply tag-driven cosmetic perks
+          Cosm.load(S.inventory.map(id=>({ItemId:id})));
         }
-        if(pending.coins&&pending.coins>0){S.vc+=pending.coins;changed=true;}
+        if(pending.coins && pending.coins>0){ S.vc+=pending.coins; changed=true; }
         if(changed){
-          PFApi.setData({ownedCosmetics:JSON.stringify([...Cosm.owned]),vc:String(S.vc)}).catch(()=>{});
+          PFApi.setData({vc:String(S.vc)}).catch(()=>{});
           fbRemove(grantKey);
           Toast.show('🎁 Gifts received from '+(pending.by||'Owner')+'!','gold');
         }
       }
-      if(revoke&&revoke.role){
-        S.role=revoke.role;
+      if(revoke && revoke.role){
+        S.role = revoke.role;
+        // Remove role items from inventory
+        S.inventory = S.inventory.filter(id => !pfItemHasTag(id, revoke.role==='player'?'owner':'') && !pfItemHasTag(id, revoke.role==='player'?'staff':''));
+        Cosm.load(S.inventory.map(id=>({ItemId:id})));
         fbRemove(revokeKey);
       }
-    }catch(e){console.warn('Grant check failed:',e);}
+    }catch(e){ console.warn('Grant check failed:',e); }
   }
 
-  Cosm.load(inv);
-  Object.assign(S.settings,LS.get('settings',{}));
+  Object.assign(S.settings, LS.get('settings',{}));
   showProfile();
   UI.msg('authMsg','✅ Welcome, '+S.displayName+'!','ok');
-  // Write to permanent player registry so staff can always find players by name
-  if(FB_READY&&S.pfId){
-    fbSet('registry/'+S.pfId,{
-      name:S.displayName,
-      role:S.role,
-      lastSeen:Date.now(),
-      alive:true,
-      score:S.stats.BestScore||0,
-      kills:S.stats.TotalKills||0,
-      games:S.stats.GamesPlayed||0
-    });
-    // Clear alive flag on disconnect
-    window._onDisconnect(fbRef('registry/'+S.pfId+'/alive')).set(false);
+
+  // ── Register presence in Firebase ─────────────────────────────────────────
+  if(S.pfId){
+    const safeId = S.pfId.replace(/[.#$\[\]]/g,'_');
+    const regEntry = {
+      name:S.displayName, role:S.role, lastSeen:Date.now(), alive:true,
+      score:S.stats.BestScore||0, kills:S.stats.TotalKills||0, games:S.stats.GamesPlayed||0
+    };
+    fbSet('registry/'+safeId, regEntry);
+    const localReg = LS.get('playerRegistry',{});
+    localReg[S.pfId] = regEntry;
+    LS.set('playerRegistry', localReg);
+    if(FB_READY){
+      window._onDisconnect(fbRef('registry/'+safeId+'/alive')).set(false);
+    } else {
+      const _tryDisconnect=()=>{
+        if(FB_READY) window._onDisconnect(fbRef('registry/'+safeId+'/alive')).set(false);
+        else setTimeout(_tryDisconnect,500);
+      };
+      setTimeout(_tryDisconnect,500);
+    }
   }
-  if(FB_READY)MP.subsAll();
+
+  if(FB_READY) MP.subsAll();
+  else { const _waitSubs=()=>{ if(FB_READY) MP.subsAll(); else setTimeout(_waitSubs,300); }; setTimeout(_waitSubs,300); }
 }
 
 function showProfile(){
   document.getElementById('authCard').classList.add('hidden');
   document.getElementById('profileCard').classList.remove('hidden');
   document.getElementById('pName').textContent=S.displayName;
-  document.getElementById('pName').className='pn'+(S.role==='owner'?' ow':S.role==='moderator'?' mo':'');
   document.getElementById('pCoins').textContent='🪙 '+S.vc;
   document.getElementById('sBest').textContent=(S.stats.BestScore||0).toLocaleString();
   document.getElementById('sKills').textContent=(S.stats.TotalKills||0).toLocaleString();
@@ -1560,35 +2083,58 @@ function showProfile(){
   const rank=getRank(S.stats.BestScore||0);
   document.getElementById('pRankLbl').textContent='RANK: '+rank.name;
   document.getElementById('pRankLbl').style.color=rank.color;
-  if(S.role==='owner'){
-    document.getElementById('pRoleLbl').textContent='👑 OWNER';
-    document.getElementById('pRoleLbl').style.color='var(--gold)';
-    document.getElementById('pCrown').classList.remove('hidden');
-    document.getElementById('pAv').style.borderColor='var(--gold)';
-    document.getElementById('ownerBtn').classList.remove('hidden');
-    document.getElementById('staffBtn').classList.remove('hidden');
-    document.getElementById('hudStaffBtn').classList.remove('hidden');
-    document.getElementById('hudOwnerBtn').classList.remove('hidden');
-  }else if(S.role==='moderator'){
-    document.getElementById('pRoleLbl').textContent='🛡 MODERATOR';
-    document.getElementById('pRoleLbl').style.color='var(--mod)';
-    document.getElementById('pModB').classList.remove('hidden');
-    document.getElementById('pAv').style.borderColor='var(--mod)';
-    document.getElementById('staffBtn').classList.remove('hidden');
-    document.getElementById('hudStaffBtn').classList.remove('hidden');
+
+  const tag = getTag(S.role);
+  const roleLbl = document.getElementById('pRoleLbl');
+  const pName   = document.getElementById('pName');
+  const pAv     = document.getElementById('pAv');
+
+  // Reset role styling
+  pName.className = 'pn';
+  roleLbl.textContent = '';
+  roleLbl.style.color = '';
+  pAv.style.borderColor = '';
+  document.getElementById('pCrown').classList.add('hidden');
+  document.getElementById('pModB').classList.add('hidden');
+
+  if(S.role !== 'player'){
+    roleLbl.textContent = tag.icon + ' ' + tag.label;
+    roleLbl.style.color = tag.color;
+    pAv.style.borderColor = tag.color;
+    pName.style.color = tag.color;
+    if(S.role === 'owner'){
+      pName.classList.add('ow');
+      document.getElementById('pCrown').classList.remove('hidden');
+      document.getElementById('ownerBtn').classList.remove('hidden');
+      document.getElementById('staffBtn').classList.remove('hidden');
+      document.getElementById('hudStaffBtn').classList.remove('hidden');
+      document.getElementById('hudOwnerBtn').classList.remove('hidden');
+    } else if(S.role === 'moderator'){
+      pName.classList.add('mo');
+      document.getElementById('pModB').classList.remove('hidden');
+      document.getElementById('staffBtn').classList.remove('hidden');
+      document.getElementById('hudStaffBtn').classList.remove('hidden');
+    }
   }
+
   const skin=CATALOG.skins.find(sk=>sk.id===S.equipped.skin)||CATALOG.skins[0];
   document.getElementById('pAvIco').textContent=skin.icon;
 }
 
 function doLogout(){
-  S.loggedIn=false;LS.del('session');MP.leave();
-  if(FB_READY&&S.pfId)fbUpdate('registry/'+S.pfId,{alive:false,lastSeen:Date.now()});
+  S.loggedIn=false; LS.del('session'); MP.leave();
+  if(FB_READY&&S.pfId){
+    const safeId=S.pfId.replace(/[.#$\[\]]/g,'_');
+    fbUpdate('registry/'+safeId,{alive:false,lastSeen:Date.now()});
+  }
   document.getElementById('profileCard').classList.add('hidden');
   document.getElementById('authCard').classList.remove('hidden');
   ['staffBtn','ownerBtn','hudStaffBtn','hudOwnerBtn'].forEach(id=>document.getElementById(id).classList.add('hidden'));
   document.getElementById('pCrown').classList.add('hidden');
   document.getElementById('pModB').classList.add('hidden');
+  // Reset upgrades/role on logout
+  S.upgrades = {}; S.role = 'player'; S.inventory = [];
+  Cosm.owned = new Set(['skin_default','trail_none','kill_default']);
 }
 window.doLogout=doLogout;
 
@@ -1622,11 +2168,11 @@ const Staff={
   _selectedName:null,
 
   tab(n,btn){
-    ['Live','Lookup','Tools','Idlookup','Logs','Bcast'].forEach(t=>{
+    ['Live','Lookup','Tools','Idlookup','Logs','Bcast','Reports'].forEach(t=>{
       const el=document.getElementById('st'+t);
       if(el)el.classList.add('hidden');
     });
-    const map={live:'Live',lookup:'Lookup',tools:'Tools',idlookup:'Idlookup',logs:'Logs',bcast:'Bcast'};
+    const map={live:'Live',lookup:'Lookup',tools:'Tools',idlookup:'Idlookup',logs:'Logs',bcast:'Bcast',reports:'Reports'};
     const show=document.getElementById('st'+(map[n]||'Live'));
     if(show)show.classList.remove('hidden');
     document.querySelectorAll('#staffPanel .stab').forEach(b=>b.classList.remove('on'));
@@ -1634,6 +2180,7 @@ const Staff={
     if(n==='logs')this.loadLogs();
     if(n==='live')this.loadLive();
     if(n==='idlookup')this.initIdLookup();
+    if(n==='reports')this.loadReports();
   },
 
   /* ---------- LIVE PLAYERS ---------- */
@@ -1642,7 +2189,6 @@ const Staff={
     if(!el)return;
     if(!FB_READY){
       el.innerHTML='<div class="no-results">⚠️ Firebase not connected — host on GitHub Pages for live data</div>';
-      // Still show local data as fallback
       this._renderLiveFallback(el);
       return;
     }
@@ -1666,12 +2212,13 @@ const Staff={
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
               <span class="spc-name" style="color:${roleColor}">${esc(d.name)||'Unknown'}</span>
               <span class="spc-role ${d.role||'player'}">${(d.role||'PLAYER').toUpperCase()}</span>
-              ${warns>0?`<span style="color:var(--gold);font-size:11px;font-weight:700">⚠️ ${warns} warn${warns>1?'s':''}</span>`:''}
+              ${warns>0?`<span style="color:var(--gold);font-size:11px;font-weight:700">⚠️ ${warns}W</span>`:''}
               ${ban?'<span style="color:var(--r);font-size:11px;font-weight:700">⛔ BANNED</span>':''}
             </div>
-            <div class="spc-stats">Score: <b style="color:var(--text)">${(d.score||0).toLocaleString()}</b> · Kills: <b style="color:var(--r)">${d.kills||0}</b>${d.streak>2?` · 🔥Streak: <b style="color:var(--gold)">${d.streak}</b>`:''} · ID: <span style="opacity:.5">${id.substring(0,8)}…</span></div>
+            <div class="spc-stats">Score: <b style="color:var(--text)">${(d.score||0).toLocaleString()}</b> · Kills: <b style="color:var(--r)">${d.kills||0}</b>${d.streak>2?` · 🔥 <b style="color:var(--gold)">${d.streak}</b>`:''} · <span style="opacity:.5">${id.substring(0,8)}…</span></div>
           </div>
-          <div class="spc-actions">
+          <div class="spc-actions" style="flex-direction:column;gap:4px;">
+            <button class="quick-action-btn" style="border-color:rgba(255,34,68,.5);color:var(--r);font-weight:900;letter-spacing:0;" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')">⚑ REPORT</button>
             <button class="quick-action-btn qa-kick" onclick="event.stopPropagation();Staff.quickKick('${esc(id)}','${esc(d.name||'?')}')">KICK</button>
             ${ban
               ? `<button class="quick-action-btn qa-unban" onclick="event.stopPropagation();Staff.quickUnban('${esc(id)}','${esc(d.name||'?')}')">UNBAN</button>`
@@ -1720,85 +2267,142 @@ const Staff={
     Toast.show('Selected: '+name,'in');
   },
 
+  /* ---------- SHARED SEARCH ENGINE ---------- */
+  _buildMerged(){
+    // Source 1: local registry cache (always available offline)
+    const merged={...LS.get('playerRegistry',{})};
+    // Source 2: local ban map
+    Object.entries(BAN.get()||{}).forEach(([id,b])=>{
+      if(!merged[id]) merged[id]={name:b.name||id,score:0,kills:0,role:'player',alive:false};
+    });
+    // Source 3: live MP players in memory
+    Object.entries(MP.onlinePlayers||{}).forEach(([id,d])=>{
+      merged[id]=merged[id]?{...merged[id],...d,alive:true}:{...d,alive:true};
+    });
+    return merged;
+  },
+
+  async _fetchAllSources(){
+    const merged=this._buildMerged();
+    if(!FB_READY) return merged;
+    try{
+      const [regSnap,liveSnap]=await Promise.all([
+        window._get(fbRef('registry')).catch(()=>({val:()=>({})})),
+        window._get(fbRef('players')).catch(()=>({val:()=>({})}))
+      ]);
+      Object.entries(regSnap.val()||{}).forEach(([id,d])=>{
+        merged[id]=merged[id]?{...merged[id],...d}:{...d};
+      });
+      Object.entries(liveSnap.val()||{}).forEach(([id,d])=>{
+        merged[id]=merged[id]?{...merged[id],...d,alive:true}:{...d,alive:true};
+      });
+      // Cache back to local for offline resilience
+      const localReg=LS.get('playerRegistry',{});
+      Object.entries(merged).forEach(([id,d])=>{
+        if(d.name) localReg[id]={name:d.name,role:d.role||'player',score:d.score||0,kills:d.kills||0,games:d.games||0,lastSeen:d.lastSeen};
+      });
+      LS.set('playerRegistry',localReg);
+    }catch(e){}
+    return merged;
+  },
+
+  _renderPlayerCard(id,d){
+    const ban=BAN.check(id);
+    const warns=WARNS.count(id);
+    const isOnline=d.alive===true;
+    const esc=s=>(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');
+    const roleColor=d.role==='owner'?'var(--gold)':d.role==='moderator'?'var(--mod)':'var(--g)';
+    const rank=getRank(d.score||0);
+    const lastSeen=d.lastSeen?_timeAgo(d.lastSeen):'never';
+    const accentColor=isOnline?'var(--g)':ban?'var(--r)':warns>0?'var(--gold)':'var(--border2)';
+
+    const card=document.createElement('div');
+    card.style.cssText=`background:rgba(0,0,0,.4);border:1px solid var(--border2);border-left:3px solid ${accentColor};border-radius:3px;padding:13px;margin-bottom:8px;animation:fadeInUp .3s ease forwards;cursor:pointer;transition:background .12s;`;
+    card.onmouseenter=()=>{card.style.background='rgba(255,255,255,.03)';};
+    card.onmouseleave=()=>{card.style.background='rgba(0,0,0,.4)';};
+    card.innerHTML=`
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:3px;">
+          <div style="width:34px;height:34px;border-radius:2px;background:rgba(0,0,0,.5);border:1px solid ${roleColor}44;display:flex;align-items:center;justify-content:center;font-size:17px;">
+            ${d.role==='owner'?'👑':d.role==='moderator'?'🛡':'🐍'}
+          </div>
+          <div style="font-family:var(--mono);font-size:8px;padding:1px 4px;border:1px solid ${isOnline?'rgba(57,255,138,.35)':'var(--border)'};color:${isOnline?'var(--g)':'var(--dim2)'};">${isOnline?'● LIVE':'○ OFF'}</div>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:6px;">
+            <span style="font-family:var(--mono);font-size:14px;font-weight:700;color:${roleColor}">${esc(d.name)||'Unknown'}</span>
+            <span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:${d.role==='owner'?'rgba(232,200,50,.1)':d.role==='moderator'?'rgba(58,154,238,.1)':'rgba(57,255,138,.07)'};border:1px solid ${roleColor}55;color:${roleColor};">${(d.role||'player').toUpperCase()}</span>
+            ${ban?`<span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:rgba(255,34,68,.1);border:1px solid rgba(255,34,68,.4);color:var(--r);">⛔ BANNED</span>`:''}
+            ${warns>0?`<span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:rgba(232,200,50,.1);border:1px solid rgba(232,200,50,.4);color:var(--gold);">⚠ ${warns}W</span>`:''}
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:7px;">
+            ${[['SCORE',(d.score||0).toLocaleString(),'var(--g)'],['KILLS',d.kills||0,'var(--r)'],['RANK',rank.icon+' '+rank.name,rank.color],['GAMES',d.games||'?','var(--dim2)']].map(([lbl,val,col])=>`
+            <div style="background:rgba(0,0,0,.3);border:1px solid var(--border);padding:4px 5px;text-align:center;border-radius:2px;">
+              <div style="font-family:var(--mono);font-size:11px;font-weight:700;color:${col};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${val}</div>
+              <div style="font-family:var(--mono);font-size:7px;color:var(--dim2);letter-spacing:1px;">${lbl}</div>
+            </div>`).join('')}
+          </div>
+          <div onclick="event.stopPropagation();Staff.copyId('${esc(id)}')" title="Click to copy PlayFab ID"
+               style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.4);border:1px solid var(--border);padding:4px 8px;cursor:pointer;margin-bottom:${ban||!isOnline?'5px':'0'};">
+            <span style="font-family:var(--mono);font-size:8px;color:var(--dim2);">PFID</span>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--mod);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${id}</span>
+            <span style="font-size:10px;opacity:.5;">📋</span>
+          </div>
+          ${ban?`<div style="font-family:var(--mono);font-size:9px;color:var(--r);margin-top:3px;">⛔ ${esc((ban.reason||'no reason').substring(0,45))}</div>`:''}
+          ${!isOnline&&d.lastSeen?`<div style="font-family:var(--mono);font-size:9px;color:var(--dim2);margin-top:3px;">Last seen: ${lastSeen}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;">
+          <button class="quick-action-btn" style="border-color:rgba(58,154,238,.5);color:var(--mod);min-width:54px;font-size:9px;" onclick="event.stopPropagation();Staff.idToTools('${esc(id)}','${esc(d.name||'?')}')">⚙ TOOLS</button>
+          ${isOnline?`<button class="quick-action-btn qa-kick" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickKick('${esc(id)}','${esc(d.name||'?')}')">KICK</button>`:''}
+          ${ban?`<button class="quick-action-btn qa-unban" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickUnban('${esc(id)}','${esc(d.name||'?')}')">UNBAN</button>`
+               :`<button class="quick-action-btn qa-ban" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickBan('${esc(id)}','${esc(d.name||'?')}')">BAN</button>`}
+          ${isOnline?`<button class="quick-action-btn" style="border-color:rgba(255,34,68,.4);color:var(--r);font-size:9px;" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')">⚑ RPT</button>`:''}
+        </div>
+      </div>`;
+    card.onclick=()=>this.idToTools(id,d.name||'?');
+    return card;
+  },
+
+  _renderResults(el,matches,context){
+    if(!matches.length){
+      el.innerHTML=`<div style="text-align:center;padding:28px;font-family:var(--mono);">
+        <div style="font-size:28px;margin-bottom:8px;">🔍</div>
+        <div style="color:var(--text);font-size:12px;">No player found</div>
+        <div style="color:var(--dim2);font-size:10px;margin-top:5px;">Try a partial name or their PlayFab ID</div>
+        <div style="color:var(--dim2);font-size:9px;margin-top:3px;opacity:.6;">${context||''}</div>
+      </div>`;
+      return;
+    }
+    const online=matches.filter(([,d])=>d.alive===true).length;
+    el.innerHTML=`<div style="font-family:var(--mono);font-size:10px;color:var(--dim2);margin-bottom:10px;display:flex;gap:10px;">
+      <span><b style="color:var(--text)">${matches.length}</b> player${matches.length>1?'s':''} found</span>
+      ${online?`<span style="color:var(--g)">● ${online} online now</span>`:''}
+    </div>`;
+    matches.forEach(([id,d],i)=>{
+      const card=this._renderPlayerCard(id,d);
+      card.style.animationDelay=(i*0.05)+'s';
+      el.appendChild(card);
+    });
+  },
+
   /* ---------- SEARCH ---------- */
   lookup(){
     const q=(document.getElementById('lookupQ')?.value||'').trim();
     const el=document.getElementById('lookupRes');
     if(!el)return;
-    if(!q){el.innerHTML='<div class="no-results">Enter a name or PlayFab ID to search</div>';return;}
-    el.innerHTML='<div class="no-results" style="opacity:.6">🔍 Searching…</div>';
-
-    const doSearch=(all)=>{
+    if(!q){el.innerHTML='<div style="font-family:var(--mono);font-size:11px;color:var(--dim2);opacity:.5;padding:8px;">Type a name or PlayFab ID — searches online AND offline players</div>';return;}
+    el.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--dim2);padding:12px;display:flex;align-items:center;gap:8px;"><span style="display:inline-block;animation:spin .7s linear infinite;">⟳</span> Searching all sources…</div>`;
+    this._fetchAllSources().then(all=>{
       const ql=q.toLowerCase();
-      // Merge with local ban/warn cache for offline players too
-      const banMap=BAN.get();
-      Object.entries(banMap).forEach(([id,b])=>{
-        if(!all[id]&&(id.includes(ql)||( b.name||'').toLowerCase().includes(ql)))
-          all[id]={name:b.name||id,score:0,kills:0,role:'player',alive:false,_offlineOnly:true};
-      });
       const matches=Object.entries(all).filter(([id,d])=>
         id.toLowerCase().includes(ql)||(d.name||'').toLowerCase().includes(ql)
-      );
-      if(!matches.length){el.innerHTML='<div class="no-results">No results for "'+q+'" — try a different name or they may never have played.</div>';return;}
-      el.innerHTML=`<div style="font-size:11px;color:var(--dim2);margin-bottom:10px;">${matches.length} result${matches.length>1?'s':''} found</div>`;
-      matches.forEach(([id,d],i)=>{
-        const ban=BAN.check(id);
-        const warns=WARNS.count(id);
-        const esc=s=>(s||'').replace(/'/g,"&#39;").replace(/"/g,'&quot;');
-        const card=document.createElement('div');
-        card.className='staff-player-card';
-        card.style.animationDelay=(i*0.04)+'s';
-        const roleColor=d.role==='owner'?'var(--gold)':d.role==='moderator'?'var(--mod)':'var(--g)';
-        card.innerHTML=`
-          <div class="spc-dot${!d.alive?' offline':''}"></div>
-          <div style="flex:1;min-width:0;">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">
-              <span class="spc-name" style="color:${roleColor}">${esc(d.name)||'Unknown'}</span>
-              <span class="spc-role ${d.role||'player'}">${(d.role||'player').toUpperCase()}</span>
-              ${!d.alive?'<span style="font-size:10px;color:var(--dim2);border:1px solid var(--border);padding:1px 5px;border-radius:4px;">OFFLINE</span>':'<span style="font-size:10px;color:var(--g);border:1px solid rgba(0,255,136,.3);padding:1px 5px;border-radius:4px;">ONLINE</span>'}
-              ${ban?'<span style="color:var(--r);font-size:10px;font-weight:700">⛔ BANNED</span>':''}
-              ${warns>0?`<span style="color:var(--gold);font-size:10px;font-weight:700">⚠️ ${warns}W</span>`:''}
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:5px;padding:5px 8px;margin-bottom:4px;cursor:pointer;" onclick="event.stopPropagation();Staff.copyId('${esc(id)}')" title="Click to copy ID">
-              <span style="font-size:9px;color:var(--dim2);letter-spacing:1px;white-space:nowrap;">PFID</span>
-              <span style="font-family:var(--mono);font-size:11px;color:var(--mod);flex:1;word-break:break-all;">${id}</span>
-              <span style="opacity:.5;font-size:12px;">📋</span>
-            </div>
-            <div class="spc-stats">Score: <b>${(d.score||0).toLocaleString()}</b> · Kills: <b style="color:var(--r)">${d.kills||0}</b>
-              ${ban?` · <span style="color:var(--r)">Ban: ${esc(ban.reason||'').substring(0,30)}</span>`:''}
-            </div>
-          </div>
-          <div class="spc-actions" style="flex-direction:column;gap:4px;">
-            <button class="quick-action-btn" style="border-color:rgba(68,170,255,.5);color:var(--mod);background:rgba(68,170,255,.07);font-size:9px;" onclick="event.stopPropagation();Staff.selectPlayer('${esc(id)}','${esc(d.name||'?')}')">⚙ TOOLS</button>
-            <button class="quick-action-btn qa-kick" onclick="event.stopPropagation();Staff.quickKick('${esc(id)}','${esc(d.name||'?')}')">KICK</button>
-            ${ban
-              ? `<button class="quick-action-btn qa-unban" onclick="event.stopPropagation();Staff.quickUnban('${esc(id)}','${esc(d.name||'?')}')">UNBAN</button>`
-              : `<button class="quick-action-btn qa-ban" onclick="event.stopPropagation();Staff.quickBan('${esc(id)}','${esc(d.name||'?')}')">BAN</button>`
-            }
-          </div>`;
-        card.onclick=()=>this.selectPlayer(id,d.name||'?');
-        el.appendChild(card);
+      ).sort((a,b)=>{
+        const ao=a[1].alive===true,bo=b[1].alive===true;
+        if(ao&&!bo)return -1;if(bo&&!ao)return 1;
+        return (b[1].score||0)-(a[1].score||0);
       });
-    };
-
-    if(FB_READY){
-      // Fetch registry (all-time) + live players node + MP cache
-      Promise.all([
-        window._get(fbRef('registry')).catch(()=>({val:()=>({})})),
-        window._get(fbRef('players')).catch(()=>({val:()=>({})}))
-      ]).then(([regSnap,liveSnap])=>{
-        const merged={...(regSnap.val()||{})};
-        Object.entries(liveSnap.val()||{}).forEach(([id,d])=>{
-          merged[id]=merged[id]?{...merged[id],...d,alive:true}:{...d,alive:true};
-        });
-        Object.entries(MP.onlinePlayers||{}).forEach(([id,d])=>{
-          merged[id]=merged[id]?{...merged[id],...d,alive:true}:{...d,alive:true};
-        });
-        doSearch(merged);
-      }).catch(()=>doSearch({...MP.onlinePlayers}));
-    } else {
-      doSearch({...MP.onlinePlayers});
-    }
+      this._renderResults(el,matches,`Searched: "${q}"`);
+    });
   },
 
   /* ---------- LOGS ---------- */
@@ -1945,76 +2549,29 @@ const Staff={
 
   /* ---------- ID LOOKUP ---------- */
   initIdLookup(){
-    // Populate self info
     document.getElementById('idSelfName').textContent = S.displayName || '—';
     document.getElementById('idSelfId').textContent   = S.pfId        || '—';
     document.getElementById('idSelfRole').textContent = (S.role||'player').toUpperCase();
     document.getElementById('idlookupQ').value = '';
-    document.getElementById('idlookupRes').innerHTML  = '<div class="no-results" style="opacity:.6">Type a name above and hit search.</div>';
+    document.getElementById('idlookupRes').innerHTML  = '<div class="no-results" style="opacity:.6">Type a name or PlayFab ID and hit FIND.</div>';
   },
 
   idLookup(){
     const q=(document.getElementById('idlookupQ')?.value||'').trim();
     const el=document.getElementById('idlookupRes');
-    if(!q){el.innerHTML='<div class="no-results">Enter a display name to search.</div>';return;}
-    el.innerHTML='<div class="no-results" style="opacity:.6">🔍 Searching…</div>';
-    const render=(all)=>{
+    if(!q){el.innerHTML='<div style="font-family:var(--mono);font-size:11px;color:var(--dim2);opacity:.5;padding:8px;">Enter a display name or PlayFab ID — finds online + offline players.</div>';return;}
+    el.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--dim2);padding:12px;display:flex;align-items:center;gap:8px;"><span style="display:inline-block;animation:spin .7s linear infinite;">⟳</span> Searching all records…</div>`;
+    this._fetchAllSources().then(all=>{
       const ql=q.toLowerCase();
       const hits=Object.entries(all).filter(([id,d])=>
-        (d.name||'').toLowerCase().includes(ql)||id.toLowerCase().includes(ql)
-      );
-      if(!hits.length){el.innerHTML='<div class="no-results">No matches for "'+q+'" — they may be offline.</div>';return;}
-      el.innerHTML='';
-      hits.forEach(([id,d],i)=>{
-        const ban=BAN.check(id);
-        const warns=WARNS.count(id);
-        const roleColor=d.role==='owner'?'var(--gold)':d.role==='moderator'?'var(--mod)':'var(--g)';
-        const card=document.createElement('div');
-        card.className='staff-player-card';
-        card.style.animationDelay=(i*0.04)+'s';
-        card.innerHTML=`
-          <div class="spc-dot${d.alive===false?' offline':''}"></div>
-          <div style="flex:1;min-width:0;">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;">
-              <span style="font-family:var(--head);font-size:14px;font-weight:700;color:${roleColor}">${d.name||'Unknown'}</span>
-              <span class="spc-role ${d.role||'player'}">${(d.role||'PLAYER').toUpperCase()}</span>
-              ${ban?'<span style="color:var(--r);font-size:10px;font-weight:700">⛔ BANNED</span>':''}
-              ${warns>0?`<span style="color:var(--gold);font-size:10px;font-weight:700">⚠️ ${warns} warn${warns>1?'s':''}</span>`:''}
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:6px;padding:7px 10px;cursor:pointer;transition:border-color .2s;"
-                 onclick="Staff.copyId('${id}')" title="Click to copy PlayFab ID">
-              <span style="font-size:10px;color:var(--dim2);letter-spacing:2px;white-space:nowrap;">PLAYFAB ID</span>
-              <span style="font-family:var(--mono);font-size:12px;color:var(--mod);flex:1;word-break:break-all;">${id}</span>
-              <span style="font-size:14px;opacity:.6;">📋</span>
-            </div>
-            <div style="font-size:11px;color:var(--dim2);margin-top:4px;font-family:var(--mono);">
-              Score: ${(d.score||0).toLocaleString()} · Kills: ${d.kills||0}
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;">
-            <button class="btn bb bsm" style="margin:0;font-size:10px;" onclick="event.stopPropagation();Staff.idToTools('${id}','${(d.name||'').replace(/'/g,"\\'")}')">USE IN TOOLS</button>
-            <button class="btn bo bsm" style="margin:0;font-size:10px;" onclick="event.stopPropagation();Staff.copyId('${id}')">📋 COPY ID</button>
-          </div>`;
-        el.appendChild(card);
+        id.toLowerCase().includes(ql)||(d.name||'').toLowerCase().includes(ql)
+      ).sort((a,b)=>{
+        const ao=a[1].alive===true,bo=b[1].alive===true;
+        if(ao&&!bo)return -1;if(bo&&!ao)return 1;
+        return (b[1].score||0)-(a[1].score||0);
       });
-    };
-    if(FB_READY){
-      Promise.all([
-        window._get(fbRef('registry')).catch(()=>({val:()=>({})})),
-        window._get(fbRef('players')).catch(()=>({val:()=>({})}))
-      ]).then(([regSnap, liveSnap])=>{
-        const merged = {...(regSnap.val()||{})};
-        Object.entries(liveSnap.val()||{}).forEach(([id,d])=>{
-          merged[id] = merged[id] ? {...merged[id],...d,alive:true} : {...d,alive:true};
-        });
-        Object.entries(MP.onlinePlayers||{}).forEach(([id,d])=>{
-          merged[id] = merged[id] ? {...merged[id],...d,alive:true} : {...d,alive:true};
-        });
-        render(merged);
-      }).catch(()=>render({...MP.onlinePlayers}));
-    } else {
-      render({...MP.onlinePlayers});
-    }
+      this._renderResults(el,hits,`Searched: "${q}"`);
+    });
   },
 
   copyId(id){
@@ -2046,6 +2603,155 @@ const Staff={
       b.classList.toggle('on',b.textContent.includes('MOD TOOLS'));
     });
     Toast.show('Loaded '+name+' into Mod Tools','in');
+  },
+
+  /* ---------- REPORT PLAYER ---------- */
+  reportPlayer(id, name){
+    if(!this._requireRole())return;
+    const reason=prompt(`Report "${name}"\n\nDescribe the reason (cheating, harassment, etc):`);
+    if(reason===null)return; // cancelled
+    // Fetch full live snapshot of this player from Firebase
+    const fetchAndReport=(liveData)=>{
+      const ban=BAN.check(id)||null;
+      const warns=WARNS.count(id);
+      const report={
+        reportedId:   id,
+        reportedName: name,
+        reportedBy:   S.displayName,
+        reportedById: S.pfId,
+        reason:       reason||'No reason given',
+        timestamp:    Date.now(),
+        // Live game data snapshot
+        score:        liveData.score||0,
+        kills:        liveData.kills||0,
+        streak:       liveData.streak||0,
+        length:       liveData.length||0,
+        x:            liveData.x||0,
+        y:            liveData.y||0,
+        role:         liveData.role||'player',
+        skin:         liveData.skin||'default',
+        // Moderation history
+        isBanned:     !!ban,
+        banReason:    ban?ban.reason:'',
+        warnCount:    warns,
+        // Session info
+        reportedAt:   new Date().toLocaleString()
+      };
+      if(FB_READY){
+        const reportKey='report_'+Date.now()+'_'+id.substring(0,6);
+        fbSet('reports/'+reportKey, report).then(()=>{
+          Toast.show('⚑ Report submitted for '+name,'gold');
+          AL.add('REPORT', S.displayName, name, reason);
+          this._updateReportsBadge();
+        }).catch(()=>{
+          // Firebase write failed — store locally
+          const local=JSON.parse(localStorage.getItem('vn5_reports')||'[]');
+          local.unshift(report);
+          localStorage.setItem('vn5_reports',JSON.stringify(local.slice(0,50)));
+          Toast.show('⚑ Report saved locally (offline)','gold');
+        });
+      } else {
+        const local=JSON.parse(localStorage.getItem('vn5_reports')||'[]');
+        local.unshift(report);
+        localStorage.setItem('vn5_reports',JSON.stringify(local.slice(0,50)));
+        Toast.show('⚑ Report saved locally','gold');
+      }
+    };
+    // Try to get fresh live data for the player
+    if(FB_READY){
+      window._get(fbRef('players/'+id)).then(snap=>{
+        fetchAndReport(snap.val()||{});
+      }).catch(()=>fetchAndReport({}));
+    } else {
+      fetchAndReport(MP.onlinePlayers[id]||{});
+    }
+  },
+
+  /* ---------- LOAD REPORTS ---------- */
+  loadReports(){
+    const el=document.getElementById('reportsList');
+    if(!el)return;
+    el.innerHTML='<div class="no-results" style="opacity:.6">🔄 Loading reports…</div>';
+
+    const renderReports=(reports)=>{
+      if(!reports.length){el.innerHTML='<div class="no-results">No reports yet.</div>';return;}
+      el.innerHTML='';
+      reports.forEach((r,i)=>{
+        const div=document.createElement('div');
+        div.style.cssText='background:rgba(0,0,0,.35);border:1px solid var(--border2);border-left:3px solid var(--r);border-radius:2px;padding:12px;margin-bottom:8px;animation:fadeInUp .3s ease forwards;';
+        div.style.animationDelay=(i*0.04)+'s';
+        const t=r.timestamp?new Date(r.timestamp).toLocaleString():r.reportedAt||'Unknown';
+        div.innerHTML=`
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+            <div>
+              <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--r);">⚑ ${r.reportedName||'Unknown'}</span>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--dim2);margin-left:8px;">${r.role||'player'}</span>
+            </div>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--dim2);white-space:nowrap;">${t}</span>
+          </div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--gold);margin-bottom:8px;">Reason: <b style="color:var(--text)">${r.reason||'—'}</b></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-family:var(--mono);font-size:10px;color:var(--dim2);margin-bottom:8px;">
+            <span>Score: <b style="color:var(--text)">${(r.score||0).toLocaleString()}</b></span>
+            <span>Kills: <b style="color:var(--r)">${r.kills||0}</b></span>
+            <span>Streak: <b style="color:var(--gold)">${r.streak||0}</b></span>
+            <span>Len: <b style="color:var(--text)">${r.length||0}</b></span>
+            <span>Warns: <b style="color:var(--gold)">${r.warnCount||0}</b></span>
+            <span>Banned: <b style="color:${r.isBanned?'var(--r)':'var(--dim2)'}">${r.isBanned?'YES':'NO'}</b></span>
+          </div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--dim2);background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:2px;padding:6px;cursor:pointer;word-break:break-all;" onclick="Staff.copyId('${r.reportedId||''}')">
+            PFID: <span style="color:var(--mod);">${r.reportedId||'—'}</span> 📋
+          </div>
+          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+            <button class="quick-action-btn qa-ban" onclick="Staff.quickBan('${r.reportedId||''}','${(r.reportedName||'').replace(/'/g,"\\'")}')">BAN</button>
+            <button class="quick-action-btn qa-kick" onclick="Staff.quickKick('${r.reportedId||''}','${(r.reportedName||'').replace(/'/g,"\\'")}')">KICK</button>
+            <button class="quick-action-btn" style="border-color:rgba(58,154,238,.4);color:var(--mod);" onclick="Staff.idToTools('${r.reportedId||''}','${(r.reportedName||'').replace(/'/g,"\\'")}')">⚙ TOOLS</button>
+            <span style="font-family:var(--mono);font-size:10px;color:var(--dim2);align-self:center;margin-left:auto;">Reported by: ${r.reportedBy||'?'}</span>
+          </div>`;
+        el.appendChild(div);
+      });
+    };
+
+    if(FB_READY){
+      window._get(fbRef('reports')).then(snap=>{
+        const data=snap.val()||{};
+        const list=Object.values(data).sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
+        // Merge with local reports
+        const local=JSON.parse(localStorage.getItem('vn5_reports')||'[]');
+        const merged=[...list,...local].sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
+        renderReports(merged);
+      }).catch(()=>{
+        const local=JSON.parse(localStorage.getItem('vn5_reports')||'[]');
+        renderReports(local);
+      });
+    } else {
+      const local=JSON.parse(localStorage.getItem('vn5_reports')||'[]');
+      renderReports(local);
+    }
+  },
+
+  /* ---------- CLEAR REPORTS ---------- */
+  clearReports(){
+    if(!confirm('Clear ALL reports? This cannot be undone.'))return;
+    localStorage.removeItem('vn5_reports');
+    if(FB_READY){
+      fbRemove('reports').catch(()=>{});
+    }
+    document.getElementById('reportsList').innerHTML='<div class="no-results">No reports yet.</div>';
+    const badge=document.getElementById('reportsBadge');
+    if(badge){badge.style.display='none';badge.textContent='0';}
+    Toast.show('Reports cleared','ok');
+  },
+
+  /* ---------- REPORTS BADGE ---------- */
+  _updateReportsBadge(){
+    if(!FB_READY)return;
+    window._get(fbRef('reports')).then(snap=>{
+      const count=Object.keys(snap.val()||{}).length;
+      const badge=document.getElementById('reportsBadge');
+      if(!badge)return;
+      if(count>0){badge.style.display='inline';badge.textContent=count;}
+      else badge.style.display='none';
+    }).catch(()=>{});
   }
 };
 window.Staff=Staff;
@@ -2229,16 +2935,15 @@ function startFireworks(){
 
 // CHAT
 function sendChat(msg){
-  if(GS.muted){showAnn('🔇 You are muted.',2000);return;}
+  if(GS.muted){showAnn('You are muted.',2000);return;}
   if(!FB_READY||!msg.trim())return;
   window._push(fbRef('chat'),{name:S.displayName,role:S.role,msg:msg.trim().substring(0,80),t:Date.now()});
 }
 function renderChat(){
   const el=document.getElementById('chatMsgs');
   el.innerHTML=MP.chatMessages.slice(-8).map(m=>{
-    const c=m.role==='owner'?'var(--gold)':m.role==='moderator'?'var(--mod)':'var(--g)';
-    const badge=m.role==='owner'?'👑 ':m.role==='moderator'?'🛡 ':'';
-    return`<div class="chatmsg"><span style="color:${c}">${badge}${m.name||'?'}: </span><span style="color:var(--text)">${m.msg}</span></div>`;
+    const tag=getTag(m.role);
+    return`<div class="chatmsg"><span style="color:${tag.color}">${tag.chatBadge}${m.name||'?'}: </span><span style="color:var(--text)">${m.msg}</span></div>`;
   }).join('');
   el.scrollTop=el.scrollHeight;
 }
@@ -2275,16 +2980,30 @@ function addKillFeed(killer,victim,isPlayer=false){
 function onKillStreak(streak){
   if(streak<2)return;
   const el=document.getElementById('streakDisplay');
-  const msgs={2:'DOUBLE KILL! 🔥',3:'TRIPLE KILL! 🔥🔥',5:'RAMPAGE! 💥',7:'UNSTOPPABLE! ⚡',10:'GODLIKE! 👑'};
-  const msg=msgs[streak]||(streak>=10?`${streak}x KILL STREAK!`:'');
+  const msgs={
+    2:'DOUBLE KILL! 🔥',
+    3:'TRIPLE KILL! 🔥🔥',
+    4:'QUAD KILL! 💀💀',
+    5:'RAMPAGE! 💥',
+    6:'MURDER SPREE! ☠',
+    7:'UNSTOPPABLE! ⚡',
+    8:'DOMINATING! 👿',
+    9:'MEGA KILL! 🌟',
+    10:'GODLIKE! 👑',
+    15:'BEYOND GODLIKE! 💎',
+  };
+  const msg=msgs[streak]||(streak>=10?streak+'× KILL STREAK! 👑':'');
   if(!msg)return;
   el.textContent=msg;
   el.style.display='block';
+  el.style.color=streak>=10?'#ffd700':streak>=5?'#ff8800':'#ff2244';
   el.style.animation='none';
   void el.offsetWidth;
   el.style.animation='popIn .3s cubic-bezier(.34,1.56,.64,1)';
   clearTimeout(el._t);
   el._t=setTimeout(()=>{el.style.display='none';},2500);
+  // Bonus coins for streaks
+  if(streak%5===0){S.vc+=streak;document.getElementById('pCoins').textContent='🪙 '+S.vc;Toast.show('🔥 '+streak+'× streak! +'+streak+' coins','gold');}
 }
 
 // GAME ENGINE
@@ -2305,6 +3024,9 @@ const GS={
   flash:{a:0,c:'#fff'},
   boss:null,
   boostStamina:100, shielded:false, shieldTimer:0, speedOrbTimer:0,
+  // new fun mechanics
+  combo:1, comboTimer:0, foodEaten:0, magnetTimer:0, bombImmune:0,
+  lastMilestone:0,
   _fpsFrames:0, _fpsLast:0, fps:0
 };
 
@@ -2318,12 +3040,14 @@ const Game={
     GS.ghostMode=false;GS.miniMode=false;GS.zeroGravity=false;
     GS.boss=null;GS.flash.a=0;GS.boosting=false;
     GS.boostStamina=100;GS.shielded=false;GS.shieldTimer=0;GS.speedOrbTimer=0;
+    GS.combo=1;GS.comboTimer=0;GS.foodEaten=0;GS.magnetTimer=0;GS.bombImmune=0;GS.lastMilestone=0;
     document.getElementById('ghostOverlay').style.display='none';
     document.getElementById('miniOverlay').style.display='none';
     canvas.width=window.innerWidth;canvas.height=window.innerHeight;
     const sx=WORLD/2+(Math.random()-.5)*400,sy=WORLD/2+(Math.random()-.5)*400;
     const skin=CATALOG.skins.find(sk=>sk.id===S.equipped.skin)||CATALOG.skins[0];
     GS.player=new Snake(sx,sy,skin,S.displayName,true);
+    GS.player.length += Math.floor(getUpgValue('armor'));
     GS.camX=sx;GS.camY=sy;
     spawnBots();
     for(let i=0;i<FOOD_MAX;i++)spawnFood();
@@ -2341,9 +3065,13 @@ const Game={
     GS.startTime=Date.now();
     this._last=performance.now();
     clearInterval(syncInterval);
-    syncInterval=setInterval(()=>MP.pushState(GS.player),50);
+    syncInterval=setInterval(()=>{
+      if(document.hidden) return; // don't push when tab is not visible
+      MP.pushState(GS.player);
+    },100);
     if(FB_READY&&S.pfId){
-      const pRef=fbRef('players/'+S.pfId);
+      const safeId=S.pfId.replace(/[.#$\[\]]/g,'_');
+      const pRef=fbRef('players/'+safeId);
       window._onDisconnect(pRef).remove();
     }
     this._raf=requestAnimationFrame(t=>this.loop(t));
@@ -2362,7 +3090,7 @@ const Game={
 
   pause(){
     this.stop();
-    if(S.pfId)fbUpdate('players/'+S.pfId,{alive:false});
+    if(S.pfId){const safeId=S.pfId.replace(/[.#$\[\]]/g,'_');fbUpdate('players/'+safeId,{alive:false});}
     canvas.style.display='none';
     document.getElementById('hud').classList.add('hidden');
     document.getElementById('ghostOverlay').style.display='none';
@@ -2378,24 +3106,69 @@ const Game={
     document.getElementById('ghostOverlay').style.display='none';
     document.getElementById('miniOverlay').style.display='none';
     const t=Math.floor((Date.now()-GS.startTime)/1000);
-    const coins=Math.floor(GS.score*.01)+GS.kills*10;
+    const coins=Math.floor(GS.score*.01)+GS.kills*10+(GS.bestStreak>=5?50:0);
     S.vc+=coins;
-    document.getElementById('goScore').textContent=GS.score;
+
+    // Fun title based on how you died / performance
+    const goTitleEl=document.getElementById('goTitleTxt');
+    if(GS.kills>=5)goTitleEl.textContent='SERPENT FALLEN';
+    else if(t<5)goTitleEl.textContent='INSTANT DEATH';
+    else if(GS.score>10000)goTitleEl.textContent='LEGENDARY RUN';
+    else goTitleEl.textContent='DEAD';
+
+    document.getElementById('goScore').textContent=GS.score.toLocaleString();
     document.getElementById('goKills').textContent=GS.kills;
-    document.getElementById('goTime').textContent=t+'s';
-    document.getElementById('goKiller').textContent=killer?'Eliminated by '+killer:'Died';
+    const mins=Math.floor(t/60),secs=t%60;
+    document.getElementById('goTime').textContent=mins>0?`${mins}m ${secs}s`:t+'s';
+    document.getElementById('goKiller').textContent=killer?'☠ Eliminated by '+killer:'☠ Died';
     document.getElementById('goCoins').textContent='+'+coins+' 🪙';
+
+    // New best
     const isNew=GS.score>(S.stats.BestScore||0);
     const goNewEl=document.getElementById('goNew');
     if(goNewEl)goNewEl.classList.toggle('hidden',!isNew);
+
+    // Streak display
     const streakEl=document.getElementById('goStreak');
-    if(GS.bestStreak>=2){streakEl.textContent='Best streak: '+GS.bestStreak+'x 🔥';streakEl.style.display='block';}
+    if(GS.bestStreak>=2){streakEl.textContent='Best streak: '+GS.bestStreak+'× 🔥';streakEl.style.display='block';}
     else streakEl.style.display='none';
+
+    // Extra stat pills
+    const extras=document.getElementById('goExtras');
+    if(extras){
+      const pills=[];
+      if(GS.foodEaten>0)pills.push(['🍖',GS.foodEaten,'eaten']);
+      if(GS.bestStreak>=3)pills.push(['🔥',GS.bestStreak+'×','streak']);
+      if(GS.score>0){const kd=GS.kills>0?(t/GS.kills).toFixed(0)+'s/kill':'—';pills.push(['⏱',kd,'pace']);}
+      extras.innerHTML=pills.map(([ic,v,lbl])=>`
+        <div style="background:rgba(0,0,0,.4);border:1px solid var(--border2);padding:7px 12px;text-align:center;min-width:64px;">
+          <div style="font-family:var(--mono);font-size:16px;">${ic}</div>
+          <div style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text)">${v}</div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--dim2);letter-spacing:1px;">${lbl.toUpperCase()}</div>
+        </div>`).join('');
+    }
+
+    // Funny verdict
+    const verdicts=[
+      [v=>v>50000,'You are literally a god serpent. 🐍👑'],
+      [v=>v>25000,'The pit trembled in your presence.'],
+      [v=>v>10000,'A legendary performance. Few survive this long.'],
+      [v=>v>5000,'Solid run. The snakes fear you.'],
+      [v=>v>1000,'Not bad. The pit respects the effort.'],
+      [v=>v>500,'Getting warmer. Touch grass then come back.'],
+      [()=>GS.kills>=3,'At least you took some down with you. 🔥'],
+      [()=>t<5,'Wow. Just... wow. Try again. 😬'],
+      [()=>true,'The pit always wins. Eventually. 🐍'],
+    ];
+    const verdict=verdicts.find(([fn])=>fn(GS.score));
+    const goVerdictEl=document.getElementById('goVerdict');
+    if(goVerdictEl&&verdict)goVerdictEl.textContent='"'+verdict[1]+'"';
+
     document.getElementById('gameOver').classList.remove('hidden');
     S.stats.GamesPlayed=(S.stats.GamesPlayed||0)+1;
     S.stats.TotalKills=(S.stats.TotalKills||0)+GS.kills;
     if(GS.score>=(S.stats.BestScore||0))S.stats.BestScore=GS.score;
-    document.getElementById('sBest').textContent=S.stats.BestScore;
+    document.getElementById('sBest').textContent=(S.stats.BestScore||0).toLocaleString();
     document.getElementById('sKills').textContent=S.stats.TotalKills;
     document.getElementById('sGames').textContent=S.stats.GamesPlayed;
     document.getElementById('pCoins').textContent='🪙 '+S.vc;
@@ -2427,7 +3200,8 @@ class Snake{
 
   update(dt){
     if(!this.alive)return;
-    const spd=(this.boosting?BOOST_SPD:BASE_SPD)*GS.speedMult*(this.isBoss?1.3:1);
+    const speedMult = this.isPlayer ? (1 + getUpgValue('speed')) : 1;
+    const spd=(this.boosting?BOOST_SPD:BASE_SPD)*GS.speedMult*(this.isBoss?1.3:1)*speedMult;
     if(GS.zeroGravity&&this.isPlayer){
       this.angle+=(Math.random()-.5)*.04;
     }
@@ -2484,22 +3258,20 @@ class Snake{
       ctx.strokeStyle=`rgba(255,140,0,${0.5+Math.sin(Date.now()*.008)*0.3})`;ctx.lineWidth=2;
       ctx.setLineDash([5,7]);ctx.stroke();ctx.setLineDash([]);ctx.restore();
     }
-    // Owner aura pulse
-    if(isOwner&&this.segments.length>0){
-      const hx=this.segments[0].x-camX+W/2,hy=this.segments[0].y-camY+H/2;
-      const ap=0.18+Math.sin(Date.now()*.003)*0.10;
-      ctx.beginPath();ctx.arc(hx,hy,this.radius*2.2,0,Math.PI*2);
-      const grd=ctx.createRadialGradient(hx,hy,0,hx,hy,this.radius*2.2);
-      grd.addColorStop(0,`rgba(255,215,0,${ap})`);grd.addColorStop(1,'rgba(255,215,0,0)');
-      ctx.fillStyle=grd;ctx.fill();
-    }
-    if(isMod&&this.segments.length>0){
-      const hx=this.segments[0].x-camX+W/2,hy=this.segments[0].y-camY+H/2;
-      const ap=0.12+Math.sin(Date.now()*.004)*0.07;
-      ctx.beginPath();ctx.arc(hx,hy,this.radius*1.8,0,Math.PI*2);
-      const grd=ctx.createRadialGradient(hx,hy,0,hx,hy,this.radius*1.8);
-      grd.addColorStop(0,`rgba(68,170,255,${ap})`);grd.addColorStop(1,'rgba(68,170,255,0)');
-      ctx.fillStyle=grd;ctx.fill();
+    // Role aura pulse
+    if(this.isPlayer&&S.role!=='player'&&this.segments.length>0){
+      const tag=getTag(S.role);
+      if(tag.aura){
+        const hx=this.segments[0].x-camX+W/2,hy=this.segments[0].y-camY+H/2;
+        const ap=0.18+Math.sin(Date.now()*.003)*0.10;
+        const auraColor=tag.aura.replace('{a}',ap);
+        const auraColor0=tag.aura.replace('{a}','0');
+        const auraR=S.role==='owner'?this.radius*2.2:this.radius*1.8;
+        ctx.beginPath();ctx.arc(hx,hy,auraR,0,Math.PI*2);
+        const grd=ctx.createRadialGradient(hx,hy,0,hx,hy,auraR);
+        grd.addColorStop(0,auraColor);grd.addColorStop(1,auraColor0);
+        ctx.fillStyle=grd;ctx.fill();
+      }
     }
     for(let i=this.segments.length-1;i>=0;i--){
       const seg=this.segments[i];
@@ -2524,10 +3296,11 @@ class Snake{
     if(S.settings.names&&!this.isPlayer){ctx.font='bold 11px "Exo 2",sans-serif';ctx.textAlign='center';ctx.fillStyle='rgba(255,255,255,.65)';ctx.fillText(this.name,hx,hy-this.radius-7);}
     if(this.isPlayer){
       ctx.font='bold 12px "Exo 2",sans-serif';ctx.textAlign='center';
-      const nc=S.role==='owner'?'#ffd700':GS.ghostMode?'#c678f5':S.role==='moderator'?'#44aaff':'#00ff88';
-      const badge=S.role==='owner'?'👑 ':S.role==='moderator'?'🛡 ':GS.ghostMode?'👻 ':'';
+      const tag=getTag(S.role);
+      const nc=GS.ghostMode?'#c678f5':tag.color;
+      const badge=GS.ghostMode?'👻 ':(tag.icon ? tag.icon+' ' : '');
       ctx.fillStyle=nc;
-      if(isOwner){ctx.shadowColor='#ffd700';ctx.shadowBlur=8;}
+      if(S.role==='owner'||S.role==='moderator'){ctx.shadowColor=tag.shadowColor;ctx.shadowBlur=8;}
       ctx.fillText(badge+S.displayName,W/2,H/2-this.radius-8);
       ctx.shadowBlur=0;
       if(GS.killStreak>=3){ctx.font='bold 10px "Exo 2",sans-serif';ctx.fillStyle='#ffd700';ctx.fillText('🔥×'+GS.killStreak,W/2,H/2-this.radius-22);}
@@ -2556,9 +3329,10 @@ function drawRemotePlayers(camX,camY){
     const hx=rp.segments[0].x-camX+W/2,hy=rp.segments[0].y-camY+H/2;
     for(const off of[-.45,.45]){const ea=rp.angle+off,er=3,ex=hx+Math.cos(ea)*5,ey=hy+Math.sin(ea)*5;ctx.beginPath();ctx.arc(ex,ey,er,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.beginPath();ctx.arc(ex+Math.cos(rp.angle)*er*.4,ey+Math.sin(rp.angle)*er*.4,er*.55,0,Math.PI*2);ctx.fillStyle='#000';ctx.fill();}
     if(S.settings.names){
-      const c=rp.role==='owner'?'#ffd700':rp.role==='moderator'?'#44aaff':'rgba(255,255,255,.75)';
-      const badge=rp.role==='owner'?'👑 ':rp.role==='moderator'?'🛡 ':'';
-      ctx.font='bold 11px "Exo 2",sans-serif';ctx.textAlign='center';ctx.fillStyle=c;ctx.fillText(badge+rp.name,hx,hy-12);
+      const tag=getTag(rp.role);
+      const badge=tag.icon ? tag.icon+' ' : '';
+      ctx.font='bold 11px "Exo 2",sans-serif';ctx.textAlign='center';ctx.fillStyle=tag.color;
+      ctx.fillText(badge+rp.name,hx,hy-12);
     }
     if(rp.boosting&&S.settings.particles!=='off'&&Math.random()<.4){
       const trail=CATALOG.trails.find(t=>t.id===rp.trailId)||CATALOG.trails[0];
@@ -2568,10 +3342,60 @@ function drawRemotePlayers(camX,camY){
 }
 
 // FOOD + PARTICLES
-class Food{constructor(x,y,val=1,special=false,isCoin=false,isShield=false,isSpeedOrb=false){this.x=x;this.y=y;this.val=val;this.special=special;this.isCoin=isCoin;this.isShield=isShield;this.isSpeedOrb=isSpeedOrb;this.r=5+(special?3:0)+(val>1?2:0)+(isShield||isSpeedOrb?4:0);this.hue=Math.random()*360;this.ph=Math.random()*Math.PI*2;this.alive=true;}draw(cx,cy){const sx=this.x-cx+canvas.width/2,sy=this.y-cy+canvas.height/2;if(sx<-15||sx>canvas.width+15||sy<-15||sy>canvas.height+15)return;const p=Math.sin(Date.now()*.003+this.ph)*1.5;if(this.isShield){const pr=this.r+p+2;ctx.font=`${pr*2+6}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='#44aaff';ctx.shadowBlur=14+p*3;ctx.fillText('🛡',sx,sy);ctx.shadowBlur=0;ctx.textBaseline='alphabetic';return;}if(this.isSpeedOrb){const pr=this.r+p+2;ctx.font=`${pr*2+4}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='#ff8800';ctx.shadowBlur=14+p*3;ctx.fillText('⚡',sx,sy);ctx.shadowBlur=0;ctx.textBaseline='alphabetic';return;}if(this.isCoin){ctx.font=`${(this.r+p)*2+5}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🪙',sx,sy);ctx.textBaseline='alphabetic';return;}ctx.beginPath();ctx.arc(sx,sy,this.r+p,0,Math.PI*2);if(this.special){ctx.fillStyle=`hsl(${(this.hue+Date.now()*.06)%360},100%,65%)`;ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=7;}else ctx.fillStyle=`hsl(${this.hue},75%,60%)`;ctx.fill();ctx.shadowBlur=0;}}
-// ── PARTICLE POOL (performance) ─────────────────────────────
+class Food{
+  constructor(x,y,val=1,special=false,isCoin=false,isShield=false,isSpeedOrb=false,isMagnet=false,isBomb=false,isMystery=false){
+    this.x=x;this.y=y;this.val=val;this.special=special;
+    this.isCoin=isCoin;this.isShield=isShield;this.isSpeedOrb=isSpeedOrb;
+    this.isMagnet=isMagnet;this.isBomb=isBomb;this.isMystery=isMystery;
+    this.r=5+(special?3:0)+(val>1?2:0)+((isShield||isSpeedOrb||isMagnet||isBomb||isMystery)?4:0);
+    this.hue=Math.random()*360;this.ph=Math.random()*Math.PI*2;this.alive=true;
+  }
+  draw(cx,cy){
+    const sx=this.x-cx+canvas.width/2,sy=this.y-cy+canvas.height/2;
+    if(sx<-15||sx>canvas.width+15||sy<-15||sy>canvas.height+15)return;
+    const p=Math.sin(Date.now()*.003+this.ph)*1.5;
+    const drawEmoji=(em,glow,glowC)=>{
+      const pr=this.r+p+2;
+      ctx.font=`${pr*2+6}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+      if(glow){ctx.shadowColor=glowC;ctx.shadowBlur=14+p*3;}
+      ctx.fillText(em,sx,sy);ctx.shadowBlur=0;ctx.textBaseline='alphabetic';
+    };
+    if(this.isShield){drawEmoji('🛡',true,'#44aaff');return;}
+    if(this.isSpeedOrb){drawEmoji('⚡',true,'#ff8800');return;}
+    if(this.isMagnet){drawEmoji('🧲',true,'#ff44cc');return;}
+    if(this.isBomb){
+      // Pulsing red bomb
+      const pr=this.r+Math.abs(p)+2;
+      ctx.font=`${pr*2+6}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.shadowColor='#ff2244';ctx.shadowBlur=8+Math.abs(p)*4;
+      ctx.fillText('💣',sx,sy);ctx.shadowBlur=0;ctx.textBaseline='alphabetic';
+      return;
+    }
+    if(this.isMystery){drawEmoji('❓',true,'#c678f5');return;}
+    if(this.isCoin){
+      ctx.font=`${(this.r+p)*2+5}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('🪙',sx,sy);ctx.textBaseline='alphabetic';return;
+    }
+    ctx.beginPath();ctx.arc(sx,sy,this.r+p,0,Math.PI*2);
+    if(this.special){ctx.fillStyle=`hsl(${(this.hue+Date.now()*.06)%360},100%,65%)`;ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=7;}
+    else ctx.fillStyle=`hsl(${this.hue},75%,60%)`;
+    ctx.fill();ctx.shadowBlur=0;
+  }
+}
+
+function spawnFood(){
+  const r=Math.random();
+  const x=Math.random()*WORLD,y=Math.random()*WORLD;
+  if(r<.006)GS.food.push(new Food(x,y,1,false,false,true));        // shield
+  else if(r<.013)GS.food.push(new Food(x,y,1,false,false,false,true)); // speedOrb
+  else if(r<.019)GS.food.push(new Food(x,y,1,false,false,false,false,true)); // magnet
+  else if(r<.024)GS.food.push(new Food(x,y,1,false,false,false,false,false,true)); // bomb
+  else if(r<.028)GS.food.push(new Food(x,y,1,false,false,false,false,false,false,true)); // mystery
+  else GS.food.push(new Food(x,y,1,Math.random()<.05));
+}
 const PTCL_POOL=[];
 function getParticle(){
+  if(GS.particles.length>=PTCL_MAX)return{init(){return this;},alive:false,update(){},draw(){}}; // drop particle if at cap
   if(PTCL_POOL.length){const p=PTCL_POOL.pop();p.alive=true;return p;}
   return new Particle();
 }
@@ -2591,10 +3415,10 @@ const BOTNAMES=['COBRA_X','VIPERZ','DEADL_Y','SERP99','MAMBA_K','KRAIT_Z','HYDRA
 const BOTCOLS=['#ff3355','#44aaff','#ff8800','#9b59b6','#1abc9c','#e74c3c'];
 
 function spawnBots(){for(let i=0;i<BOT_COUNT;i++){const x=Math.random()*WORLD,y=Math.random()*WORLD;GS.bots.push(new Snake(x,y,BOTCOLS[i%BOTCOLS.length],BOTNAMES[i]));}}
-function spawnFood(){const r=Math.random();if(r<.008)GS.food.push(new Food(Math.random()*WORLD,Math.random()*WORLD,1,false,false,true,false));else if(r<.018)GS.food.push(new Food(Math.random()*WORLD,Math.random()*WORLD,1,false,false,false,true));else GS.food.push(new Food(Math.random()*WORLD,Math.random()*WORLD,1,Math.random()<.05));}
 function spawnFoodAt(x,y){GS.food.push(new Food(x+(Math.random()-.5)*22,y+(Math.random()-.5)*22));}
 function spawnCoin(){GS.food.push(new Food(Math.random()*WORLD,Math.random()*WORLD,3,false,true));}
 
+// ── PARTICLE POOL (performance) ─────────────────────────────
 function spawnBoss(){
   const x=WORLD/2+(Math.random()-.5)*100,y=WORLD/2+(Math.random()-.5)*100;
   const b=new Snake(x,y,'#ffd700','👑 BOSS');b.isBoss=true;b.length=220;b.color='#ffd700';
@@ -2653,7 +3477,7 @@ function updatePlayer(dt){
   if(GS.speedOrbTimer>0){GS.speedOrbTimer--;GS.speedMult=GS.speedOrbTimer>0?1.7:1;}
   // Boost stamina drain/regen
   if(GS.boosting&&p.length>8){GS.boostStamina=Math.max(0,GS.boostStamina-1.8);if(GS.boostStamina===0)GS.boosting=false;}
-  else{GS.boostStamina=Math.min(100,GS.boostStamina+0.6);}
+  else{const regenBonus=1+getUpgValue('boost_regen');GS.boostStamina=Math.min(100,GS.boostStamina+0.6*regenBonus);}
   p.angle=lA(p.angle,ta,.16);p.boosting=GS.boosting;p.update(dt);
   if(p.boosting&&S.settings.particles!=='off')spawnTrailAt(p.headX,p.headY,CATALOG.trails.find(t=>t.id===S.equipped.trail)?.fx,null);
   else if(S.settings.particles==='on'&&Math.random()<.28)spawnTrailAt(p.headX,p.headY,CATALOG.trails.find(t=>t.id===S.equipped.trail)?.fx,null);
@@ -2661,22 +3485,88 @@ function updatePlayer(dt){
 }
 
 function updateBots(dt){
-  for(const b of GS.bots){if(!b.alive)continue;b.updateBot();b.update(dt);if(b.boosting&&Math.random()<.2){const _bp=getParticle();_bp.init(b.headX+(Math.random()-.5)*8,b.headY+(Math.random()-.5)*8,(Math.random()-.5)*1,(Math.random()-.5)*1,b.color,15,3);GS.particles.push(_bp);}}
+  const camX=GS.camX,camY=GS.camY,W=canvas.width,H=canvas.height;
+  for(const b of GS.bots){
+    if(!b.alive)continue;
+    const screenDX=Math.abs(b.headX-camX),screenDY=Math.abs(b.headY-camY);
+    // Only run full AI for bots within ~1.5 screen widths; distant bots just wander cheaply
+    if(screenDX>W||screenDY>H){b.angle+=(Math.random()-.5)*.3;b.update(dt);continue;}
+    b.updateBot();b.update(dt);
+    if(b.boosting&&Math.random()<.2){const _bp=getParticle();_bp.init(b.headX+(Math.random()-.5)*8,b.headY+(Math.random()-.5)*8,(Math.random()-.5)*1,(Math.random()-.5)*1,b.color,15,3);GS.particles.push(_bp);}
+  }
 }
 
 function checkCollisions(){
   const p=GS.player;if(!p||!p.alive)return;
-  // Food
-  for(let i=GS.food.length-1;i>=0;i--){const f=GS.food[i];if(D(p.headX,p.headY,f.x,f.y)<p.radius+f.r){GS.food.splice(i,1);const v=f.val*(GS.doubleXP?2:1);p.length+=v*2;GS.score+=v*10;if(f.isCoin){S.vc++;document.getElementById('pCoins').textContent='🪙 '+S.vc;}if(f.isShield){GS.shielded=true;GS.shieldTimer=180;showAnn('🛡 SHIELD ACTIVE — 3s invincibility!',2500);}if(f.isSpeedOrb){GS.speedOrbTimer=180;showAnn('⚡ SPEED ORB — 3s speed boost!',2500);}}}
+
+  // Magnet effect — pull nearby food toward player
+  if(GS.magnetTimer>0){
+    GS.magnetTimer--;
+    const magRad = 200 + getUpgValue('magnet');
+    for(const f of GS.food){if(!f.isBomb){const dx=p.headX-f.x,dy=p.headY-f.y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<magRad&&dist>2){f.x+=dx/dist*4;f.y+=dy/dist*4;}}}
+  }
+
+  // Combo decay
+  if(GS.comboTimer>0){GS.comboTimer--;}
+  else if(GS.combo>1){GS.combo=1;updateComboHUD();}
+
+  // Food collisions
+  for(let i=GS.food.length-1;i>=0;i--){
+    const f=GS.food[i];
+    if(D(p.headX,p.headY,f.x,f.y)<p.radius+f.r){
+      GS.food.splice(i,1);
+
+      if(f.isBomb&&GS.bombImmune<=0&&!GS.shielded){
+        // Bomb — shrink snake and reset combo
+        const lostLen=Math.min(40,p.length-8);
+        p.length=Math.max(8,p.length-lostLen);
+        for(let j=0;j<12;j++){const a=Math.random()*Math.PI*2,sp=2+Math.random()*3;const _bp=getParticle();_bp.init(p.headX,p.headY,Math.cos(a)*sp,Math.sin(a)*sp,'#ff2244',30,4);GS.particles.push(_bp);}
+        flashScreen('#ff2244',.6);GS.combo=1;GS.comboTimer=0;updateComboHUD();
+        showAnn('💣 BOMB! −'+lostLen+' length',2000);
+        GS.bombImmune=120;
+        spawnScoreFloat(p.headX,p.headY,'💣 OUCH!','#ff2244');
+        continue;
+      }
+      if(f.isBomb){continue;} // immune, just eat it safely
+
+      const mult=f.special?3:1;
+      const v=f.val*mult*(GS.doubleXP?2:1)*GS.combo;
+      p.length+=f.val*2;
+      GS.score+=v*10;
+      GS.foodEaten++;
+
+      if(f.isCoin){S.vc++;document.getElementById('pCoins').textContent='🪙 '+S.vc;spawnScoreFloat(p.headX,p.headY,'+1🪙','#e8c832');}
+      else if(f.isShield){GS.shielded=true;GS.shieldTimer=180;showAnn('🛡 SHIELD ACTIVE — 3s invincibility!',2500);spawnScoreFloat(p.headX,p.headY,'🛡 SHIELD!','#44aaff');}
+      else if(f.isSpeedOrb){GS.speedOrbTimer=180;showAnn('⚡ SPEED ORB — 3s speed boost!',2500);spawnScoreFloat(p.headX,p.headY,'⚡ SPEED!','#ff8800');}
+      else if(f.isMagnet){GS.magnetTimer=300;showAnn('🧲 MAGNET — 5s food pull!',2500);spawnScoreFloat(p.headX,p.headY,'🧲 MAGNET!','#ff44cc');}
+      else if(f.isMystery){_triggerMystery(p);}
+      else{
+        // Normal/special food — build combo
+        GS.combo=Math.min(GS.combo+1,10);
+        GS.comboTimer=90+Math.floor(getUpgValue('combo_hold')); // ~1.5s base + upgrade
+        updateComboHUD();
+        if(GS.combo>=3){spawnScoreFloat(p.headX,p.headY,'+'+v*10+(GS.combo>=5?' 🔥':''),'#e8c832');}
+      }
+
+      // Score milestones
+      _checkMilestone();
+    }
+  }
+
+  // Bots eat food
   for(const b of GS.bots){if(!b.alive)continue;for(let i=GS.food.length-1;i>=0;i--){if(D(b.headX,b.headY,GS.food[i].x,GS.food[i].y)<b.radius+GS.food[i].r){GS.food.splice(i,1);b.length++;}}}
-  // Player hits bot body (player dies) — skip if ghost mode
+
+  // Player hits bot body — skip if ghost/shielded
   if(!GS.ghostMode&&!GS.shielded){
     for(const b of GS.bots){if(!b.alive)continue;for(let i=5;i<b.segments.length;i+=2){if(D(p.headX,p.headY,b.segments[i].x,b.segments[i].y)<p.radius+b.radius*.8){spawnKillFX(p.headX,p.headY,S.equipped.kill);p.alive=false;for(let j=0;j<p.segments.length;j+=3)spawnFoodAt(p.segments[j].x,p.segments[j].y);GS.killStreak=0;setTimeout(()=>Game.end(b.name),600);return;}}}
   }
-  // Bot hits player body (bot dies)
+
+  // Bot hits player body
   for(const b of GS.bots){if(!b.alive)continue;for(let i=6;i<p.segments.length;i+=2){if(D(b.headX,b.headY,p.segments[i].x,p.segments[i].y)<b.radius+p.radius*.8){killBot(b,true);break;}}}
+
   // Bot vs bot
   for(let a=0;a<GS.bots.length;a++){const ba=GS.bots[a];if(!ba.alive)continue;for(let b=a+1;b<GS.bots.length;b++){const bb=GS.bots[b];if(!bb.alive)continue;if(D(ba.headX,ba.headY,bb.headX,bb.headY)<ba.radius+bb.radius){ba.length<=bb.length?killBot(ba,false):killBot(bb,false);}}}
+
   // Remote player collisions
   if(!GS.ghostMode&&!GS.shielded){
     for(const rp of Object.values(MP.remotePlayers)){
@@ -2690,6 +3580,63 @@ function checkCollisions(){
       }
     }
   }
+
+  // Tick bomb immunity
+  if(GS.bombImmune>0)GS.bombImmune--;
+}
+
+function _triggerMystery(p){
+  const effects=['double_score','grow_big','shrink','coin_burst','speed_burst','shield'];
+  const e=effects[Math.floor(Math.random()*effects.length)];
+  if(e==='double_score'){GS.score+=500;spawnScoreFloat(p.headX,p.headY,'❓ +500!','#c678f5');showAnn('❓ MYSTERY: +500 SCORE!',2500);}
+  else if(e==='grow_big'){p.length+=50;spawnScoreFloat(p.headX,p.headY,'❓ GROW!','#c678f5');showAnn('❓ MYSTERY: INSTANT GROWTH!',2500);}
+  else if(e==='shrink'){p.length=Math.max(8,p.length-30);spawnScoreFloat(p.headX,p.headY,'❓ SHRINK','#ff2244');showAnn('❓ MYSTERY: SHRUNK!',2500);}
+  else if(e==='coin_burst'){for(let i=0;i<8;i++)GS.food.push(new Food(p.headX+(Math.random()-.5)*80,p.headY+(Math.random()-.5)*80,3,false,true));spawnScoreFloat(p.headX,p.headY,'❓ COINS!','#e8c832');showAnn('❓ MYSTERY: COIN BURST!',2500);}
+  else if(e==='speed_burst'){GS.speedOrbTimer=120;spawnScoreFloat(p.headX,p.headY,'❓ ZOOM!','#ff8800');showAnn('❓ MYSTERY: SPEED BURST!',2500);}
+  else if(e==='shield'){GS.shielded=true;GS.shieldTimer=120;spawnScoreFloat(p.headX,p.headY,'❓ SHIELD!','#44aaff');showAnn('❓ MYSTERY: SHIELD!',2500);}
+}
+
+function _checkMilestone(){
+  const milestones=[500,1000,2500,5000,10000,25000,50000,100000];
+  for(const m of milestones){
+    if(GS.score>=m&&GS.lastMilestone<m){
+      GS.lastMilestone=m;
+      const labels={500:'WARMING UP 🔥',1000:'GETTING GOOD! 💪',2500:'ON FIRE! 🔥🔥',5000:'SERPENT RISING 🐍',10000:'APEX PREDATOR 👑',25000:'LEGENDARY 🌟',50000:'GODLIKE ⚡',100000:'UNTOUCHABLE 💎'};
+      showMilestone(labels[m]||m.toLocaleString()+' PTS!');
+      flashScreen('#39ff8a',.35);
+      return;
+    }
+  }
+}
+
+function showMilestone(txt){
+  const el=document.getElementById('milestoneFlash');
+  el.textContent=txt;
+  el.style.opacity='1';
+  el.style.animation='milestoneIn .5s cubic-bezier(.34,1.56,.64,1) forwards';
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>{el.style.opacity='0';el.style.animation='';},2200);
+}
+
+function spawnScoreFloat(wx,wy,txt,color){
+  const hud=document.getElementById('hud');
+  const el=document.createElement('div');
+  el.className='score-float';
+  el.textContent=txt;
+  el.style.cssText=`color:${color};font-size:14px;left:${canvas.width/2+(wx-GS.camX)-20}px;top:${canvas.height/2+(wy-GS.camY)-30}px;`;
+  hud.appendChild(el);
+  setTimeout(()=>el.remove(),950);
+}
+
+function updateComboHUD(){
+  const el=document.getElementById('comboDisplay');
+  const big=document.getElementById('comboBig');
+  if(GS.combo>=2){
+    el.classList.add('active');
+    big.textContent='×'+GS.combo;
+    big.style.color=GS.combo>=8?'#ff2244':GS.combo>=5?'#ff8800':'var(--gold)';
+    big.style.animation='none';void big.offsetWidth;big.style.animation='scorePopIn .25s ease';
+  }else{el.classList.remove('active');}
 }
 
 function killBot(bot,byPlayer=false){
@@ -2702,6 +3649,8 @@ function killBot(bot,byPlayer=false){
     if(GS.killStreak>GS.bestStreak)GS.bestStreak=GS.killStreak;
     addKillFeed(S.displayName,bot.name,true);
     onKillStreak(GS.killStreak);
+    const killCoins = Math.floor(getUpgValue('coin_bonus'));
+    if(killCoins>0){S.vc+=killCoins;document.getElementById('pCoins').textContent='🪙 '+S.vc;}
     if(bot.isBoss){GS.score+=2000;S.vc+=50;document.getElementById('pCoins').textContent='🪙 '+S.vc;showAnn('💀 BOSS DEFEATED! +2000 score +50 coins!',4000);}
   }
   setTimeout(()=>{if(!Game.running)return;const idx=GS.bots.indexOf(bot);if(idx>=0){const x=Math.random()*WORLD,y=Math.random()*WORLD;const nb=new Snake(x,y,BOTCOLS[Math.floor(Math.random()*BOTCOLS.length)],BOTNAMES[Math.floor(Math.random()*BOTNAMES.length)]);GS.bots[idx]=nb;}},4000+Math.random()*2000);
@@ -2763,10 +3712,25 @@ function updateHUD(){
   else document.getElementById('hudStreak').style.opacity='0';
   const rank=getRank(GS.score);
   document.getElementById('hudRank').textContent=rank.name;document.getElementById('hudRank').style.color=rank.color;
-  document.getElementById('hudLen').textContent='LEN: '+Math.floor(p.length)+(GS.shielded?'  🛡':(GS.speedOrbTimer>0?'  ⚡':''));
+  // Status indicators
+  let statusIcons='';
+  if(GS.shielded)statusIcons+=' 🛡';
+  if(GS.speedOrbTimer>0)statusIcons+=' ⚡';
+  if(GS.magnetTimer>0)statusIcons+=' 🧲';
+  if(GS.combo>=3)statusIcons+=' ×'+GS.combo;
+  document.getElementById('hudLen').textContent='LEN: '+Math.floor(p.length)+statusIcons;
   // Boost bar
   document.getElementById('boostFill').style.width=GS.boostStamina+'%';
   document.getElementById('boostFill').style.opacity=GS.boosting?'1':'0.55';
+  // XP bar — progress to next rank
+  const xpEl=document.getElementById('xpBarFill');
+  if(xpEl){
+    const ranks=RANKS;
+    const curIdx=ranks.findIndex(r=>r.name===rank.name);
+    const nextRank=ranks[curIdx+1];
+    if(nextRank){const pct=((GS.score-rank.min)/(nextRank.min-rank.min))*100;xpEl.style.width=Math.min(100,pct)+'%';}
+    else xpEl.style.width='100%';
+  }
   // Coords
   document.getElementById('hudCoords').textContent='X:'+Math.floor(p.headX)+' Y:'+Math.floor(p.headY);
   // FPS counter
@@ -2857,6 +3821,12 @@ window.addEventListener('resize',()=>{
     canvas.height=window.innerHeight;
   }
 });
+// Pause game loop when tab is hidden to save CPU and avoid stale syncs
+document.addEventListener('visibilitychange',()=>{
+  if(!Game.running)return;
+  if(document.hidden){cancelAnimationFrame(Game._raf);}
+  else{Game._last=performance.now();Game._raf=requestAnimationFrame(t=>Game.loop(t));}
+});
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 
 // INIT
@@ -2864,7 +3834,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   const bar=document.getElementById('ldBar'),txt=document.getElementById('ldTxt');
   const tick=async(p,m)=>{bar.style.width=p+'%';txt.textContent=m;await new Promise(r=>setTimeout(r,220));};
 
-  await tick(8,'> BOOTING VENOM v8...');
+  await tick(8,'> BOOTING VENOM v10...');
   await tick(20,'> LOADING PLAYFAB SDK...');
 
   let pfOk=false;
