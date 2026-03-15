@@ -50,11 +50,29 @@
   border-radius: var(--panel-radius) var(--panel-radius) 0 0;
 }
 .sd-dots { display:flex; gap:6px; padding:14px 16px; align-items:center; flex-shrink:0; }
-.sd-dot { width:11px; height:11px; border-radius:50%; cursor:pointer; transition:filter .15s; }
+.sd-dot { width:12px; height:12px; border-radius:50%; cursor:pointer; transition:all .15s; flex-shrink:0; }
 .sd-dot.red    { background:#ff5f57; }
 .sd-dot.yellow { background:#ffbd2e; }
 .sd-dot.green  { background:#28c840; }
-.sd-dot:hover  { filter:brightness(1.25) drop-shadow(0 0 3px currentColor); }
+.sd-dot:hover  { filter:brightness(1.2) drop-shadow(0 0 5px currentColor); transform:scale(1.15); }
+/* ── DASHBOARD CLOSE BUTTON ── */
+.sd-close-btn {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.4);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.sd-close-btn:hover {
+  background: rgba(255,59,52,.12);
+  border-color: rgba(255,59,52,.4);
+  color: #ff3b34;
+}
+.sd-close-btn:active { transform: scale(.93); }
 .sd-title-area {
   flex:1; display:flex; align-items:center; gap:10px;
   padding:12px 16px;
@@ -73,7 +91,7 @@
 .sd-badge .bd { width:5px; height:5px; border-radius:50%; }
 .sd-badge.mod-badge .bd { background:var(--dash-accent); animation:pdot 1.8s ease-in-out infinite; }
 .sd-badge.own-badge .bd { background:var(--dash-gold);   animation:pdot 1.8s ease-in-out infinite; }
-.sd-meta { padding:10px 16px; display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.sd-meta { padding:10px 16px; display:flex; align-items:center; gap:8px; flex-shrink:0; margin-left:auto; }
 
 /* ── DASHBOARD TABS ── */
 .sd-tabs {
@@ -1218,6 +1236,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
             <option value="light">Lighter</option>
             <option value="green">Green</option>
           </select>
+          <button class="sd-close-btn" onclick="UI.close('staffPanel')" title="Close (Esc)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
       </div>
     </div>
@@ -1383,6 +1404,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
         <div class="sd-title-area">
           <div class="sd-title">Owner Panel</div>
           <div class="sd-badge own-badge"><div class="bd"></div>Root Access</div>
+        </div>
+        <div class="sd-meta">
+          <button class="sd-close-btn" onclick="UI.close('ownerPanel')" title="Close (Esc)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
       </div>
     </div>
