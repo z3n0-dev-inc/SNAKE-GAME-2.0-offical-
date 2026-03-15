@@ -1012,6 +1012,54 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 .ic svg{display:block;stroke-width:1.8;}
 .btn .ic,.hibtn .ic,.wd-cat .ic,.tb .ic,.stab .ic{pointer-events:none;}
 .ic-spin svg{animation:spin .8s linear infinite;}
+
+/* ══ MOD PANEL ══ */
+#modPanel{position:fixed;top:0;right:0;bottom:0;z-index:600;width:330px;background:rgba(6,8,14,.97);backdrop-filter:blur(36px) saturate(1.5);-webkit-backdrop-filter:blur(36px) saturate(1.5);border-left:1px solid rgba(255,255,255,.08);box-shadow:-8px 0 40px rgba(0,0,0,.75);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .26s cubic-bezier(.25,.46,.45,.94);}
+#modPanel.open{transform:translateX(0);}
+.mp-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;background:rgba(58,154,238,.07);}
+.mp-hdr-title{font-family:var(--body);font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;gap:7px;}
+.mp-close{width:28px;height:28px;border-radius:7px;background:transparent;border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .14s;}
+.mp-close:hover{border-color:var(--r);color:var(--r);}
+.mp-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;}
+.mp-tab{flex:1;padding:9px 5px;background:transparent;border:none;color:rgba(255,255,255,.32);font-family:var(--body);font-size:11px;font-weight:600;cursor:pointer;transition:all .14s;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.mp-tab:hover:not(.on){color:rgba(255,255,255,.65);}
+.mp-tab.on{color:#fff;border-bottom-color:var(--mod);}
+.mp-body{flex:1;overflow-y:auto;padding:14px;}
+.mp-sec-lbl{font-family:var(--mono);font-size:8px;color:rgba(255,255,255,.3);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.mp-sec-lbl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06);}
+.mp-slider-row{display:flex;align-items:center;gap:9px;margin-bottom:11px;}
+.mp-slider-lbl{font-family:var(--body);font-size:12px;color:var(--text);flex-shrink:0;min-width:52px;}
+.mp-slider{flex:1;-webkit-appearance:none;appearance:none;height:3px;background:rgba(255,255,255,.1);border-radius:2px;outline:none;cursor:pointer;}
+.mp-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--mod);cursor:pointer;box-shadow:0 0 6px rgba(58,154,238,.5);}
+.mp-slider-val{font-family:var(--mono);font-size:10px;color:var(--mod);min-width:30px;text-align:right;}
+.mp-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.mp-toggle-lbl{font-family:var(--body);font-size:12px;color:var(--text);}
+.mp-tog{position:relative;width:38px;height:20px;cursor:pointer;flex-shrink:0;}
+.mp-tog input{opacity:0;width:0;height:0;position:absolute;}
+.mp-tog-bar{position:absolute;inset:0;background:rgba(255,255,255,.1);border-radius:20px;transition:.2s;}
+.mp-tog-bar::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;}
+.mp-tog input:checked+.mp-tog-bar{background:var(--mod);}
+.mp-tog input:checked+.mp-tog-bar::before{transform:translateX(18px);}
+.mp-player{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:10px 12px;margin-bottom:7px;cursor:pointer;transition:all .14s;overflow:hidden;}
+.mp-player:hover{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.12);}
+.mp-player.expanded{border-color:rgba(58,154,238,.3);background:rgba(58,154,238,.04);}
+.mp-prow{display:flex;align-items:center;gap:8px;}
+.mp-pdot{width:6px;height:6px;border-radius:50%;background:var(--g);flex-shrink:0;animation:pdot 1.5s ease-in-out infinite;}
+.mp-pname{font-family:var(--body);font-size:13px;font-weight:700;color:#fff;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mp-pstats{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.3);margin-top:3px;}
+.mp-prole{font-family:var(--body);font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;text-transform:uppercase;flex-shrink:0;}
+.mp-prole.owner{background:rgba(232,200,50,.14);color:var(--gold);border:1px solid rgba(232,200,50,.28);}
+.mp-prole.moderator{background:rgba(58,154,238,.1);color:var(--mod);border:1px solid rgba(58,154,238,.22);}
+.mp-prole.player{background:rgba(57,255,138,.06);color:var(--g);border:1px solid rgba(57,255,138,.18);}
+.mp-actions{display:none;flex-wrap:wrap;gap:5px;padding-top:9px;margin-top:8px;border-top:1px solid rgba(255,255,255,.07);}
+.mp-player.expanded .mp-actions{display:flex;}
+.mp-act{padding:5px 11px;border-radius:6px;border:1px solid;font-family:var(--body);font-size:10px;font-weight:600;cursor:pointer;transition:all .12s;background:transparent;}
+.mp-act.blue{border-color:rgba(58,154,238,.3);color:var(--mod);}.mp-act.blue:hover{background:rgba(58,154,238,.12);}
+.mp-act.red{border-color:rgba(255,34,68,.28);color:var(--r);}.mp-act.red:hover{background:rgba(255,34,68,.1);}
+.mp-act.gold{border-color:rgba(232,200,50,.28);color:var(--gold);}.mp-act.gold:hover{background:rgba(232,200,50,.1);}
+.mp-act.green{border-color:rgba(57,255,138,.22);color:var(--g);}.mp-act.green:hover{background:rgba(57,255,138,.08);}
+.mp-act:disabled{opacity:.35;cursor:not-allowed;}
+.mp-empty{text-align:center;color:rgba(255,255,255,.22);padding:28px 12px;font-family:var(--body);font-size:12px;}
 </style>
 </head>
 <body>
@@ -1100,6 +1148,12 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
           <div class="st"><span id="sKills">0</span><label>KILLS</label></div>
           <div class="st"><span id="sGames">0</span><label>GAMES</label></div>
         </div>
+        <div id="pPfIdRow" style="display:flex;align-items:center;gap:8px;padding:8px 2px 10px;border-bottom:1px solid var(--border);margin-bottom:6px;">
+          <span style="font-family:var(--mono);font-size:9.5px;color:var(--dim2);flex-shrink:0;">PLAYFAB ID</span>
+          <span id="pPfIdVal" style="font-family:var(--mono);font-size:10.5px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;" onclick="navigator.clipboard.writeText(this.textContent).then(()=>{this.style.color='var(--g)';setTimeout(()=>this.style.color='',1200)})">—</span>
+          <button onclick="navigator.clipboard.writeText(document.getElementById('pPfIdVal').textContent).then(()=>Toast.show('PlayFab ID copied!','ok'))" style="flex-shrink:0;background:rgba(57,255,138,.08);border:1px solid rgba(57,255,138,.2);border-radius:6px;color:var(--g);font-family:var(--mono);font-size:8.5px;padding:3px 9px;cursor:pointer;" onmouseenter="this.style.background='rgba(57,255,138,.18)'" onmouseleave="this.style.background='rgba(57,255,138,.08)'">COPY</button>
+        </div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--dim2);margin-bottom:10px;line-height:1.6;">Link your account on Discord with <b style="color:var(--g)">/link</b> using your ID or username.</div>
         <div class="mbtns">
           <button class="btn bg" onclick="Game.start()" style="font-size:18px;padding:14px;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" fill="none"/></svg> PLAY</button>
           <div class="g2btn">
@@ -1534,6 +1588,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
     <button class="hibtn" onclick="Game.pause()" title="Menu [ESC]"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M4 5h16" fill="none"/><path d="M4 12h16" fill="none"/><path d="M4 19h16" fill="none"/></svg></button>
     <button class="hibtn" onclick="UI.open('settPanel')" title="Settings"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" fill="none"/><circle cx="12" cy="12" r="3"/></svg></button>
     <button class="hibtn" onclick="toggleScoreboard()" title="Scoreboard [TAB]"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M5 21v-6" fill="none"/><path d="M12 21V3" fill="none"/><path d="M19 21V9" fill="none"/></svg></button>
+    <button class="hibtn hidden" id="hudModBtn" onclick="ModPanel.toggle()" title="Mod Panel [F3]" style="border-color:rgba(58,154,238,.35);color:var(--mod);"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></button>
     <button class="hibtn hidden" id="hudStaffBtn" onclick="UI.open('staffPanel')" title="Staff Dashboard [F1]"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" fill="none"/><path d="m9 12 2 2 4-4" fill="none"/></svg></button>
     <button class="hibtn hidden" id="hudOwnerBtn" onclick="UI.open('ownerPanel')" title="Owner Panel [F2]" style="border-color:rgba(255,215,0,.35);color:var(--gold);"><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" fill="none"/><path d="M5 21h14" fill="none"/></svg></button>
   </div>
@@ -1972,7 +2027,7 @@ const MP = {
           existing.role = data.role||'player'; existing.skin = skin; existing._skinId = skinId;
         } else {
           MP.remotePlayers[id] = {
-            id, name:data.name||'?', segments:segs, angle:data.angle||0,
+            id, name:data.name||'?', pfId:data.pfId||id, segments:segs, angle:data.angle||0,
             skin, _skinId:skinId, trailId:data.trailId||'trail_none', killId:data.killId||'kill_default',
             role:data.role||'player', score:data.score||0, kills:data.kills||0,
             alive:true, hue:data.hue||0, boosting:!!data.boosting,
@@ -2097,6 +2152,7 @@ const MP = {
       trailId:  S.equipped.trail,
       killId:   S.equipped.kill,
       role:     S.role,
+      pfId:     S.pfId||'',
       score:    GS.score,
       kills:    GS.kills,
       streak:   GS.killStreak,
@@ -2849,6 +2905,7 @@ async function onLoginSuccess(data){
 
   Object.assign(S.settings, LS.get('settings',{}));
   showProfile();
+  setTimeout(_listenModCmds, 300);
   UI.msg('authMsg','Welcome, '+S.displayName+'!','ok');
 
   // ── Register presence in Firebase ─────────────────────────────────────────
@@ -2882,6 +2939,7 @@ function showProfile(){
   document.getElementById('profileCard').classList.remove('hidden');
   document.getElementById('pName').textContent=S.displayName;
   document.getElementById('pCoinsVal').textContent=S.vc;
+  const _pfEl=document.getElementById('pPfIdVal'); if(_pfEl)_pfEl.textContent=S.pfId||'—';
   document.getElementById('sBest').textContent=(S.stats.BestScore||0).toLocaleString();
   document.getElementById('sKills').textContent=(S.stats.TotalKills||0).toLocaleString();
   document.getElementById('sGames').textContent=(S.stats.GamesPlayed||0).toLocaleString();
@@ -2921,11 +2979,13 @@ function showProfile(){
       document.getElementById('staffBtn').classList.remove('hidden');
       document.getElementById('hudStaffBtn').classList.remove('hidden');
       document.getElementById('hudOwnerBtn').classList.remove('hidden');
+      document.getElementById('hudModBtn').classList.remove('hidden');
     } else if(S.role === 'moderator'){
       pName.classList.add('mo');
       document.getElementById('pModB').classList.remove('hidden');
       document.getElementById('staffBtn').classList.remove('hidden');
       document.getElementById('hudStaffBtn').classList.remove('hidden');
+      document.getElementById('hudModBtn').classList.remove('hidden');
     }
   }
 
@@ -2943,7 +3003,7 @@ function doLogout(){
   }
   document.getElementById('profileCard').classList.add('hidden');
   document.getElementById('authCard').classList.remove('hidden');
-  ['staffBtn','ownerBtn','hudStaffBtn','hudOwnerBtn'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  ['staffBtn','ownerBtn','hudStaffBtn','hudOwnerBtn','hudModBtn'].forEach(id=>document.getElementById(id).classList.add('hidden'));
   document.getElementById('pCrown').classList.add('hidden');
   document.getElementById('pModB').classList.add('hidden');
   // Reset upgrades/role on logout
@@ -3845,6 +3905,7 @@ const GS={
   camX:0, camY:0,
   doubleXP:false, invertCtrl:false, speedMult:1,
   ghostMode:false, miniMode:false, zeroGravity:false, muted:false,
+  modSpeedMult:1, modScaleMult:1, modInvisible:false,
   mouseX:0, mouseY:0, boosting:false,
   wasd:{w:0,a:0,s:0,d:0}, arrows:{u:0,d:0,l:0,r:0},
   joyAngle:0, joyActive:false,
@@ -3865,6 +3926,7 @@ const Game={
     GS.score=0;GS.kills=0;GS.killStreak=0;GS.bestStreak=0;
     GS.doubleXP=false;GS.invertCtrl=false;GS.speedMult=1;
     GS.ghostMode=false;GS.miniMode=false;GS.zeroGravity=false;
+    GS.modSpeedMult=1;GS.modScaleMult=1;GS.modInvisible=false;
     GS.boss=null;GS.flash.a=0;GS.boosting=false;
     GS.boostStamina=100;GS.shielded=false;GS.shieldTimer=0;GS.speedOrbTimer=0;
     GS.combo=1;GS.comboTimer=0;GS.foodEaten=0;GS.magnetTimer=0;GS.bombImmune=0;GS.lastMilestone=0;
@@ -4044,7 +4106,8 @@ class Snake{
   update(dt){
     if(!this.alive)return;
     const speedMult = this.isPlayer ? (1 + getUpgCached('speed')) : 1;
-    const spd=(this.boosting?BOOST_SPD:BASE_SPD)*GS.speedMult*(this.isBoss?1.3:1)*speedMult;
+    const _msp=this.isPlayer?(GS.modSpeedMult||1):1;
+    const spd=(this.boosting?BOOST_SPD:BASE_SPD)*GS.speedMult*(this.isBoss?1.3:1)*speedMult*_msp;
     if(GS.zeroGravity&&this.isPlayer){
       this.angle+=(Math.random()-.5)*.04;
     }
@@ -4096,6 +4159,8 @@ class Snake{
   draw(camX,camY,now){
     if(!this.alive)return;
     const W=canvas.width,H=canvas.height;
+    if(this.isPlayer && GS.modInvisible){ ctx.globalAlpha=1; return; }
+    const _msc=this.isPlayer?(GS.modScaleMult||1):1;
     const ghostAlpha=GS.ghostMode&&this.isPlayer?0.55:1;
     if(ghostAlpha<1)ctx.globalAlpha=ghostAlpha;
     const isOwner=this.isPlayer&&S.role==='owner';
@@ -4928,6 +4993,7 @@ document.addEventListener('keydown',e=>{
   // Staff/Owner panel hotkeys work in-game and on menu
   if(e.key==='F1'&&(S.role==='moderator'||S.role==='owner')){e.preventDefault();UI.open('staffPanel');}
   if(e.key==='F2'&&S.role==='owner'){e.preventDefault();UI.open('ownerPanel');}
+  if(e.key==='F3'&&(S.role==='moderator'||S.role==='owner')){e.preventDefault();ModPanel.toggle();}
   // ESC closes top overlay
   if(k==='escape'){
     const overlays=['wardrobePanel','staffPanel','ownerPanel','settPanel','lbPanel'];
@@ -5006,7 +5072,353 @@ window.addEventListener('DOMContentLoaded',async()=>{
   },520);
 });
 
+
+// ═══════════════════════════════════════════════════════════════
+//  IN-GAME MODERATOR PANEL  + Firebase command listener
+// ═══════════════════════════════════════════════════════════════
+const REPORT_WEBHOOK = 'https://discord.com/api/webhooks/1482833627242041544/tnaz3LpZtr5ypFEfOU1UoaJpx1vo7T27G5_nLgs2H7T-jVy7_EXeXsBGqbIIDo_W-H6Q';
+
+const ModPanel = {
+  _open: false,
+  _tab: 'move',
+
+  toggle(){ this._open ? this.close() : this.open(); },
+
+  open(){
+    if(S.role !== 'moderator' && S.role !== 'owner') return;
+    this._open = true;
+    document.getElementById('modPanel').classList.add('open');
+    if(this._tab === 'players') this.refreshPlayers();
+  },
+
+  close(){
+    this._open = false;
+    document.getElementById('modPanel').classList.remove('open');
+  },
+
+  tab(name, btn){
+    this._tab = name;
+    const panes = {move:'mpMove', local:'mpLocal', players:'mpPlayers'};
+    Object.values(panes).forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.classList.toggle('hidden', panes[name] !== id);
+    });
+    document.querySelectorAll('.mp-tab').forEach(b => b.classList.remove('on'));
+    if(btn) btn.classList.add('on');
+    if(name === 'players') this.refreshPlayers();
+  },
+
+  // MOVEMENT
+  setSpeed(v){
+    GS.modSpeedMult = v;
+    const el = document.getElementById('mpSpeedVal');
+    if(el) el.textContent = v.toFixed(1) + 'x';
+  },
+  setScale(v){
+    GS.modScaleMult = v;
+    const el = document.getElementById('mpScaleVal');
+    if(el) el.textContent = v.toFixed(1) + 'x';
+  },
+  resetMovement(){
+    GS.modSpeedMult = 1; GS.modScaleMult = 1;
+    const ss = document.getElementById('mpSpeedSlider');
+    const sc = document.getElementById('mpScaleSlider');
+    const sv = document.getElementById('mpSpeedVal');
+    const cv = document.getElementById('mpScaleVal');
+    if(ss) ss.value = 1; if(sc) sc.value = 1;
+    if(sv) sv.textContent = '1.0x'; if(cv) cv.textContent = '1.0x';
+    Toast.show('Movement reset', 'ok');
+  },
+
+  // LOCAL
+  setInvisible(enabled){
+    GS.modInvisible = enabled;
+    Toast.show(enabled ? 'Invisible ON' : 'Invisible OFF', 'ok');
+  },
+
+  // PLAYERS LIST
+  refreshPlayers(){
+    const list = document.getElementById('mpPlayerList');
+    if(!list) return;
+
+    const players = [];
+    // Remote players from MP sync
+    Object.entries(MP.remotePlayers || {}).forEach(([id, rp]) => {
+      if(rp.alive !== false){
+        players.push({
+          id,
+          pfId: rp.pfId || id,
+          name: rp.name || '?',
+          role: rp.role || 'player',
+          score: rp.score || 0,
+          kills: rp.kills || 0,
+          boosting: !!rp.boosting,
+          skinId: rp._skinId || rp.skinId || 'unknown',
+          segments: rp.segments || []
+        });
+      }
+    });
+    // Fill gaps from online registry
+    Object.entries(MP.onlinePlayers || {}).forEach(([id, op]) => {
+      if(!players.find(p => p.id === id)){
+        players.push({ id, pfId: id, name: op.name || '?', role: op.role || 'player', score: op.score || 0, kills: op.kills || 0, boosting: false, skinId: 'unknown', segments: [] });
+      }
+    });
+
+    if(!players.length){
+      list.innerHTML = '<div class="mp-empty">No other players in the lobby</div>';
+      return;
+    }
+
+    list.innerHTML = '';
+    players.forEach(pl => {
+      const isProtected = (pl.role === 'owner' && S.role !== 'owner');
+      const card = document.createElement('div');
+      card.className = 'mp-player';
+      // Store data on the element — avoids all inline-string escaping nightmares
+      card.dataset.pid   = pl.id;
+      card.dataset.pfid  = pl.pfId || pl.id;
+      card.dataset.pname = pl.name || '?';
+      card.dataset.prole = pl.role || 'player';
+      card.dataset.score = pl.score || 0;
+      card.dataset.kills = pl.kills || 0;
+
+      const nameEsc = _esc(pl.name || '?');
+      const pfShort = (pl.pfId || pl.id || '').substring(0,10);
+
+      const row  = document.createElement('div'); row.className = 'mp-prow';
+      const dot  = document.createElement('div'); dot.className = 'mp-pdot';
+      const nm   = document.createElement('div'); nm.className  = 'mp-pname'; nm.textContent = pl.name || '?';
+      const rl   = document.createElement('span'); rl.className = 'mp-prole ' + (pl.role||'player'); rl.textContent = (pl.role||'player').toUpperCase();
+      row.appendChild(dot); row.appendChild(nm); row.appendChild(rl);
+
+      const st = document.createElement('div'); st.className = 'mp-pstats';
+      st.textContent = 'Score: ' + (pl.score||0).toLocaleString() + '  ·  Kills: ' + (pl.kills||0) + '  ·  ID: ' + pfShort + '...';
+
+      const acts = document.createElement('div'); acts.className = 'mp-actions';
+
+      const mkBtn = (cls, label, disabled) => {
+        const b = document.createElement('button');
+        b.className = 'mp-act ' + cls;
+        b.textContent = label;
+        if(disabled) b.disabled = true;
+        b.addEventListener('click', e => { e.stopPropagation(); });
+        return b;
+      };
+
+      const btnTp   = mkBtn('blue',  'Teleport', false);
+      const btnBh   = mkBtn('gold',  'Bring Here', false);
+      const btnKick = mkBtn('red',   'Kick',      isProtected);
+      const btnRpt  = mkBtn('green', 'Report',    false);
+
+      btnTp.addEventListener('click',   () => ModPanel.teleportTo(card.dataset.pid, card.dataset.pname));
+      btnBh.addEventListener('click',   () => ModPanel.bringHere(card.dataset.pid,  card.dataset.pname));
+      btnKick.addEventListener('click', () => ModPanel.kick(card.dataset.pid,       card.dataset.pname));
+      btnRpt.addEventListener('click',  () => ModPanel.report(
+        card.dataset.pid, card.dataset.pname, card.dataset.prole,
+        parseInt(card.dataset.score)||0, parseInt(card.dataset.kills)||0
+      ));
+
+      acts.appendChild(btnTp); acts.appendChild(btnBh);
+      acts.appendChild(btnKick); acts.appendChild(btnRpt);
+
+      card.appendChild(row); card.appendChild(st); card.appendChild(acts);
+
+      card.addEventListener('click', e => {
+        if(e.target.closest('.mp-act')) return;
+        list.querySelectorAll('.mp-player.expanded').forEach(el => { if(el !== card) el.classList.remove('expanded'); });
+        card.classList.toggle('expanded');
+      });
+      list.appendChild(card);
+    });
+  },
+
+  // TELEPORT TO PLAYER
+  teleportTo(targetId, targetName){
+    if(!Game.running || !GS.player || !GS.player.alive){ Toast.show('Not in game', 'er'); return; }
+    const rp = MP.remotePlayers[targetId];
+    if(!rp || !rp.segments || !rp.segments.length){ Toast.show('Player not on map', 'er'); return; }
+    const tx = rp.segments[0].x, ty = rp.segments[0].y;
+    const ox = (Math.random()-.5)*80, oy = (Math.random()-.5)*80;
+    const dx = (tx+ox) - (GS.player.segments[0].x || 0);
+    const dy = (ty+oy) - (GS.player.segments[0].y || 0);
+    GS.player.segments = GS.player.segments.map(s => ({x: s.x+dx, y: s.y+dy}));
+    GS.player.headX = GS.player.segments[0].x;
+    GS.player.headY = GS.player.segments[0].y;
+    GS.camX = GS.player.segments[0].x;
+    GS.camY = GS.player.segments[0].y;
+    Toast.show('Teleported to ' + targetName, 'ok');
+  },
+
+  // BRING PLAYER HERE
+  bringHere(targetId, targetName){
+    if(!Game.running || !GS.player || !GS.player.alive){ Toast.show('Not in game', 'er'); return; }
+    if(!FB_READY){ Toast.show('Firebase offline', 'er'); return; }
+    const myX = (GS.player.segments[0] && GS.player.segments[0].x) || 0;
+    const myY = (GS.player.segments[0] && GS.player.segments[0].y) || 0;
+    const safeTarget = targetId.replace(/[.#$\[\]]/g, '_');
+    fbUpdate('modCmds/' + safeTarget, {
+      cmd: 'teleport',
+      x: myX + (Math.random()-.5)*100,
+      y: myY + (Math.random()-.5)*100,
+      by: S.displayName,
+      t: Date.now()
+    });
+    Toast.show('Bringing ' + targetName + ' here...', 'in');
+    this._log('BRING_HERE', targetName, targetId, 'Brought to mod position by ' + S.displayName);
+    this._webhook({embeds:[{title:'🫳  Bring Here', color:0xe8c832,
+      fields:[{name:'Target',value:targetName,inline:true},{name:'By',value:S.displayName,inline:true}],
+      timestamp: new Date().toISOString()}]});
+  },
+
+  // KICK PLAYER
+  kick(targetId, targetName){
+    if(!confirm('Kick ' + targetName + ' from the game?')) return;
+    if(!FB_READY){ Toast.show('Firebase offline', 'er'); return; }
+    const safeTarget = targetId.replace(/[.#$\[\]]/g, '_');
+    fbUpdate('modCmds/' + safeTarget, { cmd:'kick', reason:'Kicked by moderator', by: S.displayName, t: Date.now() });
+    Toast.show('Kick sent to ' + targetName, 'ok');
+    this._log('KICK', targetName, targetId, 'Kicked by ' + S.displayName);
+    this._webhook({embeds:[{title:'👢  Player Kicked', color:0xff8800,
+      fields:[
+        {name:'Player', value:targetName, inline:true},
+        {name:'Kicked by', value:S.displayName+' ('+S.role+')', inline:true},
+        {name:'PlayFab ID', value:'`'+targetId+'`', inline:false}
+      ], timestamp: new Date().toISOString()}]});
+  },
+
+  // REPORT PLAYER
+  report(targetId, targetName, targetRole, targetScore, targetKills){
+    const reason = prompt('Reason for report (required):');
+    if(!reason || !reason.trim()){ Toast.show('Report cancelled', 'er'); return; }
+
+    const rp = MP.remotePlayers[targetId] || {};
+    const headX = (rp.segments && rp.segments[0] && rp.segments[0].x != null) ? rp.segments[0].x.toFixed(0) : 'unknown';
+    const headY = (rp.segments && rp.segments[0] && rp.segments[0].y != null) ? rp.segments[0].y.toFixed(0) : 'unknown';
+    const secInGame = (Game.running && GS.startTime) ? Math.floor((Date.now()-GS.startTime)/1000) : 0;
+    const timeStr = Math.floor(secInGame/60) + 'm ' + (secInGame%60) + 's';
+
+    this._webhook({
+      embeds:[{
+        title: '\u26A0\uFE0F  Player Report',
+        color: 0xff2244,
+        fields:[
+          {name:'\uD83C\uDFAF Reported Player', value:'**'+targetName+'**', inline:true},
+          {name:'\uD83C\uDFAD Role',            value: targetRole,          inline:true},
+          {name:'\uD83D\uDD11 PlayFab ID',      value:'`'+targetId+'`',    inline:false},
+          {name:'\uD83C\uDFC6 Score',           value: (parseInt(targetScore)||0).toLocaleString(), inline:true},
+          {name:'\uD83D\uDC80 Kills',           value: String(targetKills||0),                      inline:true},
+          {name:'\u26A1 Boosting',               value: rp.boosting ? 'Yes' : 'No',                 inline:true},
+          {name:'\uD83D\uDCCD Position',        value: 'X: '+headX+'  Y: '+headY,                  inline:true},
+          {name:'\uD83C\uDFA8 Skin',            value: rp._skinId || rp.skinId || 'unknown',        inline:true},
+          {name:'\u23F1\uFE0F Time in session', value: timeStr,                                     inline:true},
+          {name:'\uD83D\uDCDD Reason',          value: reason.substring(0,500),                     inline:false},
+          {name:'\uD83D\uDC6E Reported by',     value:'**'+S.displayName+'** ('+S.role+') — `'+(S.pfId||'N/A')+'`', inline:false},
+        ],
+        footer:{text:'VENOM Snake Report System'},
+        timestamp: new Date().toISOString()
+      }]
+    });
+
+    if(FB_READY){
+      window._push(window._ref(window._db,'reports'),{
+        reportedId: targetId, reportedName: targetName,
+        reason: reason, reportedBy: S.displayName,
+        reporterPfId: S.pfId||'', reporterRole: S.role,
+        score: parseInt(targetScore)||0, kills: parseInt(targetKills)||0,
+        warnCount:0, isBanned:false, timestamp: Date.now()
+      });
+    }
+    Toast.show('Report sent to staff!', 'ok');
+    this.close();
+  },
+
+  _log(action, targetName, targetId, details){
+    if(!FB_READY) return;
+    window._push(window._ref(window._db,'actionLog'),{action, targetName, targetId, details, by:S.displayName, role:S.role, t:Date.now()});
+  },
+
+  _webhook(body){
+    fetch(REPORT_WEBHOOK, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)}).catch(()=>{});
+  }
+};
+
+// ── Receive mod commands sent to this player via Firebase ─────────────
+function _listenModCmds(){
+  if(!FB_READY || !S.pfId) return;
+  const safeId = S.pfId.replace(/[.#$\[\]]/g,'_');
+  const cmdRef = window._ref(window._db, 'modCmds/'+safeId);
+  window._onValue(cmdRef, snap => {
+    const data = snap.val();
+    if(!data || !data.cmd || !data.t) return;
+    if(Date.now() - data.t > 12000) return;
+    window._remove(cmdRef);
+    if(data.cmd === 'kick'){
+      if(Game.running) Game.end('You were kicked by staff.');
+      Toast.show('Kicked by ' + (data.by||'moderator'), 'er');
+    }
+    if(data.cmd === 'teleport' && data.x != null && data.y != null && Game.running && GS.player && GS.player.alive){
+      const dx = data.x - ((GS.player.segments[0] && GS.player.segments[0].x) || 0);
+      const dy = data.y - ((GS.player.segments[0] && GS.player.segments[0].y) || 0);
+      GS.player.segments = GS.player.segments.map(s => ({x:s.x+dx, y:s.y+dy}));
+      GS.player.headX = GS.player.segments[0].x;
+      GS.player.headY = GS.player.segments[0].y;
+      GS.camX = data.x; GS.camY = data.y;
+      Toast.show('Moved by moderator', 'in');
+    }
+  });
+}
+
 window.addEventListener('beforeunload',()=>MP.leave());
 </script>
+
+<!-- ══ IN-GAME MOD PANEL ══ -->
+<div id="modPanel">
+  <div class="mp-hdr">
+    <div class="mp-hdr-title">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+      Mod Panel
+    </div>
+    <button class="mp-close" onclick="ModPanel.close()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="mp-tabs">
+    <button class="mp-tab on" id="mpTabMove"    onclick="ModPanel.tab('move',this)">Movement</button>
+    <button class="mp-tab"   id="mpTabLocal"   onclick="ModPanel.tab('local',this)">Local</button>
+    <button class="mp-tab"   id="mpTabPlayers" onclick="ModPanel.tab('players',this)">Players</button>
+  </div>
+  <div class="mp-body">
+    <div id="mpMove">
+      <div class="mp-sec-lbl">Movement</div>
+      <div class="mp-slider-row">
+        <span class="mp-slider-lbl">Speed</span>
+        <input type="range" class="mp-slider" id="mpSpeedSlider" min="0.3" max="6" step="0.1" value="1" oninput="ModPanel.setSpeed(parseFloat(this.value))">
+        <span class="mp-slider-val" id="mpSpeedVal">1.0x</span>
+      </div>
+      <div class="mp-slider-row">
+        <span class="mp-slider-lbl">Scale</span>
+        <input type="range" class="mp-slider" id="mpScaleSlider" min="0.2" max="4" step="0.1" value="1" oninput="ModPanel.setScale(parseFloat(this.value))">
+        <span class="mp-slider-val" id="mpScaleVal">1.0x</span>
+      </div>
+      <button onclick="ModPanel.resetMovement()" style="margin-top:4px;width:100%;padding:7px;border-radius:7px;background:transparent;border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.32);font-family:var(--body);font-size:11px;cursor:pointer;transition:all .14s;" onmouseenter="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='var(--text)'" onmouseleave="this.style.borderColor='rgba(255,255,255,.09)';this.style.color='rgba(255,255,255,.32)'">Reset to Default</button>
+    </div>
+    <div id="mpLocal" class="hidden">
+      <div class="mp-sec-lbl">Local</div>
+      <div class="mp-toggle-row">
+        <span class="mp-toggle-lbl">Invisible mode</span>
+        <label class="mp-tog"><input type="checkbox" id="mpInvisible" onchange="ModPanel.setInvisible(this.checked)"><span class="mp-tog-bar"></span></label>
+      </div>
+      <div style="font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.25);margin-top:8px;line-height:1.6;">Hides your snake from your own view. Others still see you on the server.</div>
+    </div>
+    <div id="mpPlayers" class="hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="mp-sec-lbl" style="margin:0;flex:1;">Online Players</div>
+        <button onclick="ModPanel.refreshPlayers()" style="padding:4px 11px;border-radius:6px;background:transparent;border:1px solid rgba(58,154,238,.28);color:var(--mod);font-family:var(--body);font-size:10px;cursor:pointer;transition:all .14s;" onmouseenter="this.style.background='rgba(58,154,238,.1)'" onmouseleave="this.style.background='transparent'">Refresh</button>
+      </div>
+      <div id="mpPlayerList"><div class="mp-empty">Click Refresh to load players</div></div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
