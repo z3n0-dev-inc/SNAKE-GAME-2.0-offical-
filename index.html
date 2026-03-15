@@ -16,38 +16,272 @@
   --text:#b8ccd8;--dim:#2e4455;--dim2:#4a6478;
   --head:'Orbitron',sans-serif;--body:'Exo 2',sans-serif;--mono:'JetBrains Mono',monospace;
 }
-/* ── PANEL THEME CUSTOMIZATION ── */
+/* ── STAFF / OWNER PANEL VARS ── */
 :root {
-  --panel-bg: rgba(10,14,20,0.75);
-  --panel-border: rgba(255,255,255,0.08);
-  --panel-radius: 18px;
-  --panel-blur: 30px;
+  --panel-bg: rgba(8,11,18,0.96);
+  --panel-border: rgba(255,255,255,0.07);
+  --panel-radius: 20px;
+  --panel-blur: 40px;
+  --dash-accent: #3a9aee;
+  --dash-gold: #e8c832;
+  --dash-green: #39ff8a;
+  --dash-red: #ff2244;
+  --dash-purple: #b87af0;
 }
-/* Glassmorphism panel override using custom props */
+
+/* ── PANEL SHELL ── */
 #staffPanel .pbox, #ownerPanel .pbox {
   background: var(--panel-bg) !important;
   border: 1px solid var(--panel-border) !important;
   border-radius: var(--panel-radius) !important;
-  backdrop-filter: blur(var(--panel-blur)) saturate(1.4) !important;
-  -webkit-backdrop-filter: blur(var(--panel-blur)) saturate(1.4) !important;
+  backdrop-filter: blur(var(--panel-blur)) saturate(1.6) !important;
+  -webkit-backdrop-filter: blur(var(--panel-blur)) saturate(1.6) !important;
+  box-shadow: 0 24px 80px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.03), inset 0 1px 0 rgba(255,255,255,.06) !important;
 }
 
-/* Theme variants (toggle via JS: document.documentElement.setAttribute('data-panel-theme','dark')) */
-[data-panel-theme="dark"] {
-  --panel-bg: rgba(5,7,10,0.92);
-  --panel-border: rgba(255,255,255,0.05);
-  --panel-blur: 20px;
+/* ── STAFF DASHBOARD HEADER ── */
+.sd-header {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  background: rgba(255,255,255,.025);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--panel-radius) var(--panel-radius) 0 0;
 }
-[data-panel-theme="light"] {
-  --panel-bg: rgba(20,30,45,0.88);
-  --panel-border: rgba(255,255,255,0.14);
-  --panel-blur: 40px;
+.sd-dots { display:flex; gap:6px; padding:14px 16px; align-items:center; flex-shrink:0; }
+.sd-dot { width:11px; height:11px; border-radius:50%; cursor:pointer; transition:filter .15s; }
+.sd-dot.red    { background:#ff5f57; }
+.sd-dot.yellow { background:#ffbd2e; }
+.sd-dot.green  { background:#28c840; }
+.sd-dot:hover  { filter:brightness(1.25) drop-shadow(0 0 3px currentColor); }
+.sd-title-area {
+  flex:1; display:flex; align-items:center; gap:10px;
+  padding:12px 16px;
+  border-left: 1px solid rgba(255,255,255,.06);
 }
-[data-panel-theme="green"] {
-  --panel-bg: rgba(5,18,10,0.85);
-  --panel-border: rgba(57,255,138,0.12);
-  --panel-blur: 28px;
+.sd-title {
+  font-family:var(--body); font-size:14px; font-weight:700; color:#fff; letter-spacing:.3px;
 }
+.sd-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:3px 9px; border-radius:20px;
+  font-family:var(--body); font-size:10px; font-weight:600; letter-spacing:.2px;
+}
+.sd-badge.mod-badge  { background:rgba(58,154,238,.15); border:1px solid rgba(58,154,238,.3); color:var(--dash-accent); }
+.sd-badge.own-badge  { background:rgba(232,200,50,.15);  border:1px solid rgba(232,200,50,.3);  color:var(--dash-gold); }
+.sd-badge .bd { width:5px; height:5px; border-radius:50%; }
+.sd-badge.mod-badge .bd { background:var(--dash-accent); animation:pdot 1.8s ease-in-out infinite; }
+.sd-badge.own-badge .bd { background:var(--dash-gold);   animation:pdot 1.8s ease-in-out infinite; }
+.sd-meta { padding:10px 16px; display:flex; align-items:center; gap:8px; flex-shrink:0; }
+
+/* ── DASHBOARD TABS ── */
+.sd-tabs {
+  display:flex; gap:2px; padding:10px 14px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  overflow-x:auto; flex-shrink:0; scrollbar-width:none;
+}
+.sd-tabs::-webkit-scrollbar{ display:none; }
+.sd-tab {
+  padding:8px 15px;
+  background:transparent; border:none; border-radius:8px 8px 0 0;
+  color:rgba(255,255,255,.35);
+  font-family:var(--body); font-size:11.5px; font-weight:600; letter-spacing:.2px;
+  cursor:pointer; transition:all .15s; white-space:nowrap;
+  display:flex; align-items:center; gap:6px;
+  position:relative;
+}
+.sd-tab:hover:not(.on) { color:rgba(255,255,255,.7); background:rgba(255,255,255,.04); }
+.sd-tab.on {
+  color:#fff;
+  background:rgba(255,255,255,.06);
+  box-shadow: 0 2px 0 var(--dash-accent);
+  margin-bottom:-1px; padding-bottom:9px;
+}
+.sd-tab.on-gold { box-shadow: 0 2px 0 var(--dash-gold) !important; color: var(--dash-gold) !important; }
+.sd-tab-badge {
+  background:var(--dash-red); color:#fff; font-size:8px; font-weight:700;
+  padding:1px 5px; border-radius:20px; margin-left:2px; display:none;
+}
+
+/* ── TAB BODY ── */
+.sd-body { padding:18px 20px; }
+
+/* ── SECTION HEADING ── */
+.sd-section-head {
+  font-family:var(--body); font-size:11px; font-weight:700; color:rgba(255,255,255,.4);
+  letter-spacing:.8px; text-transform:uppercase;
+  display:flex; align-items:center; gap:8px; margin-bottom:12px;
+}
+.sd-section-head::after { content:''; flex:1; height:1px; background:rgba(255,255,255,.06); }
+
+/* ── INPUTS ── */
+.sd-input {
+  width:100%; padding:9px 13px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:9px; color:var(--text);
+  font-family:var(--body); font-size:13px;
+  outline:none; transition:all .15s;
+  caret-color:var(--g); margin-bottom:9px;
+}
+.sd-input:focus { border-color:rgba(58,154,238,.45); background:rgba(58,154,238,.04); box-shadow:0 0 0 3px rgba(58,154,238,.08); }
+.sd-input::placeholder { color:rgba(255,255,255,.2); }
+.sd-input option { background:var(--bg2); color:#fff; }
+
+/* ── BUTTONS ── */
+.sd-btn {
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  width:100%; padding:10px 16px; border-radius:9px;
+  font-family:var(--body); font-size:12.5px; font-weight:600; letter-spacing:.2px;
+  cursor:pointer; transition:all .15s; margin-bottom:7px;
+  border:1px solid; background:transparent;
+}
+.sd-btn:active { transform:scale(.98); }
+.sd-btn.green  { border-color:rgba(57,255,138,.3);  color:var(--dash-green); }
+.sd-btn.green:hover  { background:rgba(57,255,138,.08); border-color:var(--dash-green); }
+.sd-btn.red    { border-color:rgba(255,34,68,.3);   color:var(--dash-red); }
+.sd-btn.red:hover    { background:rgba(255,34,68,.08);  border-color:var(--dash-red); }
+.sd-btn.blue   { border-color:rgba(58,154,238,.3);  color:var(--dash-accent); }
+.sd-btn.blue:hover   { background:rgba(58,154,238,.08); border-color:var(--dash-accent); }
+.sd-btn.gold   { border-color:rgba(232,200,50,.3);  color:var(--dash-gold); }
+.sd-btn.gold:hover   { background:rgba(232,200,50,.08); border-color:var(--dash-gold); }
+.sd-btn.purple { border-color:rgba(184,122,240,.3); color:var(--dash-purple); }
+.sd-btn.purple:hover { background:rgba(184,122,240,.08); border-color:var(--dash-purple); }
+.sd-btn.sm { font-size:11px; padding:7px 13px; width:auto; margin:0; }
+
+/* ── CHIP BUTTONS ── */
+.sd-chip {
+  padding:5px 12px; border-radius:8px;
+  font-family:var(--body); font-size:11px; font-weight:600;
+  cursor:pointer; border:1px solid; transition:all .12s; background:transparent;
+}
+.sd-chip.blue   { border-color:rgba(58,154,238,.28); color:var(--dash-accent); }
+.sd-chip.blue:hover { background:rgba(58,154,238,.1); border-color:var(--dash-accent); }
+.sd-chip.red    { border-color:rgba(255,34,68,.28);  color:var(--dash-red); }
+.sd-chip.red:hover  { background:rgba(255,34,68,.1);  border-color:var(--dash-red); }
+.sd-chip.gold   { border-color:rgba(232,200,50,.28); color:var(--dash-gold); }
+.sd-chip.gold:hover { background:rgba(232,200,50,.1); border-color:var(--dash-gold); }
+.sd-chip.green  { border-color:rgba(57,255,138,.24); color:var(--dash-green); }
+.sd-chip.green:hover { background:rgba(57,255,138,.08); border-color:var(--dash-green); }
+
+/* ── PLAYER CARD ── */
+.sd-player-card {
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:11px;
+  padding:12px 14px; margin-bottom:7px;
+  cursor:pointer; transition:all .15s;
+  animation:fadeInUp .22s ease forwards;
+}
+.sd-player-card:hover { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.13); transform:translateY(-1px); box-shadow:0 4px 18px rgba(0,0,0,.3); }
+.sd-player-card.selected { border-color:rgba(58,154,238,.4); background:rgba(58,154,238,.05); }
+.sd-pc-row { display:flex; align-items:center; gap:10px; }
+.sd-pc-avatar {
+  width:34px; height:34px; border-radius:9px;
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
+  display:flex; align-items:center; justify-content:center;
+  font-size:15px; flex-shrink:0;
+}
+.sd-pc-name { font-family:var(--body); font-size:13.5px; font-weight:700; color:#fff; }
+.sd-pc-status { font-size:9px; font-family:var(--body); font-weight:600; text-transform:uppercase; letter-spacing:.5px; margin-top:1px; }
+.sd-pc-role {
+  font-family:var(--body); font-size:10px; font-weight:700; letter-spacing:.3px;
+  padding:3px 9px; border-radius:20px; text-transform:uppercase; flex-shrink:0;
+}
+.sd-pc-role.owner     { background:rgba(232,200,50,.15); color:var(--dash-gold);   border:1.5px solid rgba(232,200,50,.4); font-size:11px; padding:4px 12px; }
+.sd-pc-role.moderator { background:rgba(58,154,238,.12); color:var(--dash-accent); border:1.5px solid rgba(58,154,238,.3); }
+.sd-pc-role.player    { background:rgba(57,255,138,.07); color:var(--dash-green);  border:1px  solid rgba(57,255,138,.2); }
+.sd-pc-stats {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:3px; margin:8px 0 6px;
+}
+.sd-pc-stat {
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06);
+  border-radius:6px; padding:4px 6px; text-align:center;
+}
+.sd-pc-stat .val { font-family:var(--body); font-size:11px; font-weight:700; }
+.sd-pc-stat .lbl { font-family:var(--body); font-size:8px; color:rgba(255,255,255,.35); margin-top:1px; text-transform:uppercase; letter-spacing:.3px; }
+.sd-pc-id {
+  display:flex; align-items:center; gap:6px;
+  background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06);
+  border-radius:6px; padding:4px 9px; cursor:pointer; margin-top:4px;
+  transition:background .12s;
+}
+.sd-pc-id:hover { background:rgba(255,255,255,.07); }
+.sd-pc-id-label { font-family:var(--body); font-size:9px; color:rgba(255,255,255,.3); }
+.sd-pc-id-val { font-family:var(--mono); font-size:9px; color:rgba(255,255,255,.5); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sd-pc-id-ico { color:rgba(255,255,255,.3); font-size:11px; }
+.sd-pc-actions { display:flex; gap:5px; flex-wrap:wrap; margin-top:8px; }
+
+/* ── SELECTED TARGET CARD ── */
+.sd-target-card {
+  background:rgba(58,154,238,.05);
+  border:1px solid rgba(58,154,238,.18);
+  border-radius:11px;
+  padding:13px 16px; margin-bottom:16px;
+}
+.sd-target-label { font-size:9px; color:rgba(58,154,238,.6); letter-spacing:.8px; text-transform:uppercase; font-weight:700; margin-bottom:4px; }
+.sd-target-name  { font-size:15px; color:var(--dash-accent); font-weight:700; font-family:var(--body); }
+
+/* ── STATUS MESSAGE ── */
+.sd-msg { padding:9px 13px; font-family:var(--body); font-size:12px; margin-top:9px; border-radius:9px; border:1px solid; }
+.sd-msg.ok     { border-color:rgba(57,255,138,.25);  color:var(--dash-green);  background:rgba(57,255,138,.06); }
+.sd-msg.er     { border-color:rgba(255,34,68,.25);   color:var(--dash-red);    background:rgba(255,34,68,.06); }
+.sd-msg.in     { border-color:rgba(58,154,238,.25);  color:var(--dash-accent); background:rgba(58,154,238,.06); }
+
+/* ── LOG ENTRY ── */
+.sd-log {
+  display:flex; align-items:flex-start; gap:9px;
+  padding:8px 12px; background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06); border-radius:8px;
+  margin-bottom:5px; font-family:var(--body); font-size:11.5px;
+  animation:fadeIn .15s ease;
+}
+.sd-log-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+.sd-log-time { color:rgba(255,255,255,.3); white-space:nowrap; flex-shrink:0; font-size:10px; }
+.sd-log-action { font-weight:700; font-size:11px; margin:0 5px; }
+
+/* ── SEARCH ROW ── */
+.sd-search { display:flex; gap:7px; margin-bottom:12px; }
+.sd-search-input {
+  flex:1; padding:9px 13px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.09); border-radius:9px;
+  color:var(--text); font-family:var(--body); font-size:13px;
+  outline:none; transition:all .15s; caret-color:var(--g);
+}
+.sd-search-input:focus { border-color:rgba(58,154,238,.4); background:rgba(58,154,238,.04); }
+.sd-search-input::placeholder { color:rgba(255,255,255,.2); }
+
+/* ── NO RESULTS ── */
+.sd-empty { text-align:center; color:rgba(255,255,255,.25); padding:30px 16px; font-family:var(--body); font-size:13px; }
+
+/* ── OWNER COMMAND BUTTONS ── */
+.sd-cmd {
+  padding:13px 10px; background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.08); border-radius:11px;
+  color:var(--dash-gold); font-family:var(--body); font-size:11px; font-weight:600;
+  cursor:pointer; transition:all .15s; text-align:center;
+}
+.sd-cmd:hover { border-color:rgba(232,200,50,.35); background:rgba(232,200,50,.07); transform:translateY(-1px); box-shadow:0 4px 14px rgba(0,0,0,.3); }
+.sd-cmd:active { transform:scale(.97); }
+.sd-cmd.active { border-color:var(--dash-green); color:var(--dash-green); background:rgba(57,255,138,.07); }
+.sd-cmd-ico { font-size:18px; display:block; margin-bottom:5px; }
+.sd-cmd.staff-c { border-color:rgba(58,154,238,.18);  color:var(--dash-accent); }
+.sd-cmd.staff-c:hover { border-color:rgba(58,154,238,.4); background:rgba(58,154,238,.07); }
+.sd-cmd.danger-c { border-color:rgba(255,34,68,.18); color:var(--dash-red); }
+.sd-cmd.danger-c:hover { border-color:rgba(255,34,68,.4); background:rgba(255,34,68,.07); }
+/* ── DASHBOARD BODY PADDING ── */
+.sd-body { padding: 18px 20px; }
+
+
+/* THEME TOGGLE */
+.sd-theme-select {
+  padding:5px 10px; background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.09); border-radius:8px;
+  color:var(--text); font-size:11px; outline:none; cursor:pointer;
+}
+
 
 
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -549,7 +783,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 .sm.in{background:transparent;border:1px solid rgba(58,154,238,.25);border-left:2px solid var(--mod);color:var(--mod);}
 
 /* ── OVERLAYS ── */
-.overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.82);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;touch-action:pan-y;}
+.overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.78);backdrop-filter:blur(6px) saturate(1.4);-webkit-backdrop-filter:blur(6px) saturate(1.4);display:flex;align-items:center;justify-content:center;padding:16px;touch-action:pan-y;}
 .pbox{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;position:relative;}
 .pbox::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
 .pbox.pg::before{background:var(--g);}
@@ -561,7 +795,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 .pt.g{color:var(--g);}.pt.b{color:var(--mod);}.pt.o{color:var(--gold);}.pt.r{color:var(--r);}
 .cbtn{width:28px;height:28px;border:1px solid var(--border);border-radius:2px;background:transparent;color:var(--dim2);font-size:14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
 .cbtn:hover{border-color:var(--r);color:var(--r);}
-.pbody{flex:1;overflow-y:auto;padding:18px;touch-action:pan-y;-webkit-overflow-scrolling:touch;border-radius:0 0 14px 14px;}
+.pbody{flex:1;overflow-y:auto;padding:0;touch-action:pan-y;-webkit-overflow-scrolling:touch;border-radius:0 0 var(--panel-radius) var(--panel-radius);}
 
 /* ── SECTION ── */
 .slbl{font-family:var(--mono);font-size:9px;letter-spacing:4px;color:var(--dim2);margin-bottom:10px;display:flex;align-items:center;gap:9px;}
@@ -965,145 +1199,172 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 
 <!-- ── STAFF DASHBOARD ── -->
 <div class="overlay hidden" id="staffPanel">
-  <div class="pbox pb" style="max-width:820px;">
+  <div class="pbox pb" style="max-width:840px;">
     <div class="phd" style="padding:0;">
-      <div class="term-header">
-        <div class="term-dots">
-          <div class="term-dot red"    onclick="UI.close('staffPanel')" title="Close"></div>
-          <div class="term-dot yellow" title="Minimize"></div>
-          <div class="term-dot green"  title="Fullscreen"></div>
+      <div class="sd-header">
+        <div class="sd-dots">
+          <div class="sd-dot red"    onclick="UI.close('staffPanel')"></div>
+          <div class="sd-dot yellow"></div>
+          <div class="sd-dot green"></div>
         </div>
-        <div class="term-title-bar">
-          <span class="term-label">Staff Dashboard</span>
+        <div class="sd-title-area">
+          <div class="sd-title">Staff Dashboard</div>
+          <div class="sd-badge mod-badge" id="sdBadge"><div class="bd"></div>Moderator</div>
         </div>
-        <div style="padding:10px 16px;display:flex;align-items:center;gap:8px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--g);display:inline-block;animation:pdot 1.5s ease-in-out infinite;"></span><span style="font-family:var(--body);font-size:11px;color:var(--dim2);">Moderator</span></div>
+        <div class="sd-meta">
+          <select class="sd-theme-select" onchange="document.documentElement.setAttribute('data-panel-theme',this.value)">
+            <option value="">Default</option>
+            <option value="dark">Dark</option>
+            <option value="light">Lighter</option>
+            <option value="green">Green</option>
+          </select>
+        </div>
       </div>
     </div>
-    <div class="pbody">
-      <div class="stabs" style="padding:0 4px;">
-        <button class="stab on" onclick="Staff.tab('live',this)">Live</button>
-        <button class="stab" onclick="Staff.tab('lookup',this)">Search</button>
-        <button class="stab" onclick="Staff.tab('tools',this)">Mod Tools</button>
-        <button class="stab" onclick="Staff.tab('idlookup',this)">ID Lookup</button>
-        <button class="stab" onclick="Staff.tab('logs',this)">Logs</button>
-        <button class="stab" onclick="Staff.tab('bcast',this)">Broadcast</button>
-        <button class="stab" onclick="Staff.tab('reports',this)" id="stReportsTab">Reports<span id="reportsBadge" class="ttab-badge">0</span></button>
+    <div class="pbody" style="padding:0;">
+      <div class="sd-tabs">
+        <button class="sd-tab on" onclick="Staff.tab('live',this)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="10" stroke-dasharray="4 2"/></svg>
+          Live
+        </button>
+        <button class="sd-tab" onclick="Staff.tab('lookup',this)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Search
+        </button>
+        <button class="sd-tab" onclick="Staff.tab('tools',this)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+          Mod Tools
+        </button>
+        <button class="sd-tab" onclick="Staff.tab('idlookup',this)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="7" y1="8" x2="7.01" y2="8"/><line x1="11" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="7.01" y2="12"/><line x1="11" y1="12" x2="17" y2="12"/></svg>
+          ID Lookup
+        </button>
+        <button class="sd-tab" onclick="Staff.tab('logs',this)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Logs
+        </button>
+        <button class="sd-tab" onclick="Staff.tab('bcast',this)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Broadcast
+        </button>
+        <button class="sd-tab" onclick="Staff.tab('reports',this)" id="stReportsTab">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Reports<span id="reportsBadge" class="sd-tab-badge">0</span>
+        </button>
       </div>
 
       <!-- LIVE PLAYERS -->
-      <div id="stLive" style="padding:16px 18px;">
+      <div id="stLive" class="sd-body">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div style="font-size:13px;font-weight:700;color:#fff;">Players Online Now</div>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <select onchange="document.documentElement.setAttribute('data-panel-theme',this.value)" style="padding:5px 10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:var(--text);font-size:11px;outline:none;cursor:pointer;">
-              <option value="">Default</option>
-              <option value="dark">Dark</option>
-              <option value="light">Lighter</option>
-              <option value="green">Green Tint</option>
-            </select>
-            <button class="quick-action-btn tchip-b" style="padding:6px 14px;" onclick="Staff.loadLive()">↻ Refresh</button>
-          </div>
+          <div class="sd-section-head" style="margin:0;flex:1;">Players Online</div>
+          <button class="sd-chip blue" onclick="Staff.loadLive()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:4px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+            Refresh
+          </button>
         </div>
-        <div id="liveList"><div class="tno-results">Click Refresh to load live players</div></div>
+        <div id="liveList"><div class="sd-empty">Click Refresh to load live players</div></div>
       </div>
 
-      <!-- SEARCH/LOOKUP -->
-      <div id="stLookup" class="hidden" style="padding:16px 18px;">
-        <div style="font-family:var(--body);font-size:12px;color:var(--dim2);margin-bottom:10px;font-weight:600;">Search by display name or PlayFab ID</div>
-        <div class="tsearch">
-          <input class="tsearch-input" id="lookupQ" placeholder="Search by name or ID..." onkeydown="if(event.key==='Enter')Staff.lookup()">
-          <button class="quick-action-btn tchip-b" style="padding:9px 14px;font-size:10px;white-space:nowrap;" onclick="Staff.lookup()">EXEC</button>
+      <!-- SEARCH -->
+      <div id="stLookup" class="hidden sd-body">
+        <div class="sd-section-head">Search Players</div>
+        <div class="sd-search">
+          <input class="sd-search-input" id="lookupQ" placeholder="Name or PlayFab ID…" onkeydown="if(event.key==='Enter')Staff.lookup()">
+          <button class="sd-chip blue" style="white-space:nowrap;" onclick="Staff.lookup()">Search</button>
         </div>
-        <div id="lookupRes"><div class="tno-results">Awaiting query...</div></div>
+        <div id="lookupRes"><div class="sd-empty">Enter a name or ID above</div></div>
       </div>
 
       <!-- ID LOOKUP -->
-      <div id="stIdlookup" class="hidden" style="padding:16px 18px;">
-        <div style="font-family:var(--body);font-size:12px;color:var(--dim2);margin-bottom:10px;font-weight:600;">Resolve PlayFab ID from display name</div>
-        <div class="tsearch" style="margin-bottom:10px;">
-          <input class="tsearch-input" id="idlookupQ" placeholder="Enter display name..." onkeydown="if(event.key==='Enter')Staff.idLookup()">
-          <button class="quick-action-btn tchip-b" style="padding:9px 14px;font-size:10px;" onclick="Staff.idLookup()">FIND</button>
+      <div id="stIdlookup" class="hidden sd-body">
+        <div class="sd-section-head">Resolve PlayFab ID</div>
+        <div class="sd-search" style="margin-bottom:10px;">
+          <input class="sd-search-input" id="idlookupQ" placeholder="Display name…" onkeydown="if(event.key==='Enter')Staff.idLookup()">
+          <button class="sd-chip blue" onclick="Staff.idLookup()">Find</button>
         </div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--dim2);margin-bottom:14px;line-height:1.8;border-left:2px solid #0d2618;padding-left:10px;">
-          Searches all online players + session cache.<br>Click any result to auto-fill Mod Tools.
-        </div>
-        <div id="idlookupRes"><div class="tno-results">Awaiting query...</div></div>
-        <div style="font-family:var(--body);font-size:11px;color:var(--dim2);font-weight:700;margin:16px 0 10px;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:10px;">Your Session<span style="flex:1;height:1px;background:rgba(255,255,255,.07);display:block;"></span></div>
-        <div style="background:rgba(57,255,138,.05);border:1px solid rgba(57,255,138,.15);border-radius:12px;border-left:3px solid var(--g);padding:14px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+        <div id="idlookupRes"><div class="sd-empty">Enter a display name above</div></div>
+        <div class="sd-section-head" style="margin-top:20px;">Your Session</div>
+        <div style="background:rgba(57,255,138,.04);border:1px solid rgba(57,255,138,.14);border-left:3px solid var(--g);border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
           <div style="flex:1;min-width:0;">
             <div style="font-family:var(--body);font-size:14px;color:var(--g);font-weight:700;" id="idSelfName">—</div>
-            <div style="font-family:var(--mono);font-size:10px;color:var(--dim2);margin-top:3px;" id="idSelfId">—</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--dim2);margin-top:2px;" id="idSelfId">—</div>
             <div style="font-size:11px;color:var(--dim2);margin-top:2px;font-family:var(--body);" id="idSelfRole">—</div>
           </div>
-          <button class="quick-action-btn tchip-b" onclick="Staff.copyId(document.getElementById('idSelfId').textContent)">⎘ COPY ID</button>
+          <button class="sd-chip blue" onclick="Staff.copyId(document.getElementById('idSelfId').textContent)">Copy ID</button>
         </div>
       </div>
 
       <!-- MOD TOOLS -->
-      <div id="stTools" class="hidden" style="padding:16px 18px;">
-        <div class="tsel-card" id="stSelectedPlayer">
-          <div class="tsel-label">// SELECTED TARGET</div>
-          <div class="tsel-name" id="stSelectedName">none — select from Live or Search tab</div>
+      <div id="stTools" class="hidden sd-body">
+        <div class="sd-target-card" id="stSelectedPlayer">
+          <div class="sd-target-label">Selected Target</div>
+          <div class="sd-target-name" id="stSelectedName">None — select from Live or Search</div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
           <div>
-            <div style="font-family:var(--body);font-size:11px;color:var(--dim2);font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Target</div>
-            <input class="term-input" id="modTgt" placeholder="Display name or PlayFab ID">
-            <input class="term-input" id="modReason" placeholder="Reason (required for ban/warn)">
-            <div style="font-family:var(--body);font-size:11px;color:var(--dim2);font-weight:700;margin-bottom:8px;margin-top:4px;text-transform:uppercase;letter-spacing:.5px;">Ban Duration</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:8px;">
-              <button class="quick-action-btn tchip-r" style="text-align:center;display:block;padding:6px 4px;" onclick="Staff.setDur(0)">PERM</button>
-              <button class="quick-action-btn tchip-y" style="text-align:center;display:block;padding:6px 4px;" onclick="Staff.setDur(24)">24H</button>
-              <button class="quick-action-btn tchip-y" style="text-align:center;display:block;padding:6px 4px;" onclick="Staff.setDur(168)">7D</button>
+            <div class="sd-section-head">Target Info</div>
+            <input class="sd-input" id="modTgt" placeholder="Display name or PlayFab ID">
+            <input class="sd-input" id="modReason" placeholder="Reason (required for ban/warn)">
+            <div class="sd-section-head">Ban Duration</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+              <button class="sd-chip red"  style="text-align:center;" onclick="Staff.setDur(0)">Perm</button>
+              <button class="sd-chip gold" style="text-align:center;" onclick="Staff.setDur(24)">24h</button>
+              <button class="sd-chip gold" style="text-align:center;" onclick="Staff.setDur(168)">7d</button>
             </div>
-            <input class="term-input" id="modDurHrs" type="number" placeholder="custom hours (0=perm)" min="0" style="margin-bottom:0;">
+            <input class="sd-input" id="modDurHrs" type="number" placeholder="Custom hours (0 = perm)" min="0" style="margin-bottom:0;">
           </div>
           <div>
-            <div style="font-family:var(--body);font-size:11px;color:var(--dim2);font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">Actions</div>
-            <button class="term-btn tbr" onclick="Staff.ban()">BAN PLAYER</button>
-            <button class="term-btn tbg" onclick="Staff.unban()">UNBAN</button>
-            <button class="term-btn tbgold" onclick="Staff.warn()">WARN</button>
-            <button class="term-btn tbb" onclick="Staff.kick()">KICK</button>
-            <button class="term-btn tbpur" onclick="Staff.mute()">MUTE 1H</button>
+            <div class="sd-section-head">Actions</div>
+            <button class="sd-btn red"    onclick="Staff.ban()">Ban Player</button>
+            <button class="sd-btn green"  onclick="Staff.unban()">Unban</button>
+            <button class="sd-btn gold"   onclick="Staff.warn()">Warn</button>
+            <button class="sd-btn blue"   onclick="Staff.kick()">Kick</button>
+            <button class="sd-btn purple" onclick="Staff.mute()">Mute 1h</button>
           </div>
         </div>
-        <div class="tmsg hidden" id="staffMsg"></div>
+        <div class="sd-msg hidden" id="staffMsg"></div>
       </div>
 
-      <!-- ACTION LOG -->
-      <div id="stLogs" class="hidden" style="padding:16px 18px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div style="font-family:var(--body);font-size:12px;font-weight:700;color:#fff;">Audit Log</div>
-          <button class="quick-action-btn tchip-b" style="font-size:9px;padding:5px 11px;" onclick="Staff.loadLogs()">⟳ REFRESH</button>
+      <!-- LOGS -->
+      <div id="stLogs" class="hidden sd-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div class="sd-section-head" style="margin:0;flex:1;">Audit Log</div>
+          <button class="sd-chip blue" onclick="Staff.loadLogs()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:4px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+            Refresh
+          </button>
         </div>
-        <div id="logList"><div class="tno-results">No actions recorded yet</div></div>
+        <div id="logList"><div class="sd-empty">No actions recorded yet</div></div>
       </div>
 
       <!-- BROADCAST -->
-      <div id="stBcast" class="hidden" style="padding:16px 18px;">
-        <div style="font-family:var(--body);font-size:12px;color:var(--dim2);margin-bottom:12px;font-weight:600;">Broadcast a message to all players</div>
-        <input class="term-input" id="staffBcastMsg" placeholder="Your message to all players...">
-        <select class="term-input" id="staffBcastType" style="margin-bottom:12px;">
-          <option value="info">-- type: INFO</option>
-          <option value="warning">-- type: WARNING</option>
-          <option value="event">-- type: EVENT</option>
+      <div id="stBcast" class="hidden sd-body">
+        <div class="sd-section-head">Broadcast to All Players</div>
+        <input class="sd-input" id="staffBcastMsg" placeholder="Your message…">
+        <select class="sd-input" id="staffBcastType" style="margin-bottom:14px;">
+          <option value="info">Info</option>
+          <option value="warning">Warning</option>
+          <option value="event">Event</option>
         </select>
-        <button class="term-btn tbb" onclick="Staff.broadcast()">⊛ BROADCAST TO ALL</button>
+        <button class="sd-btn blue" onclick="Staff.broadcast()">Send Broadcast</button>
       </div>
 
       <!-- REPORTS -->
-      <div id="stReports" class="hidden" style="padding:16px 18px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <div style="font-family:var(--body);font-size:12px;font-weight:700;color:#fff;">Player Reports</div>
+      <div id="stReports" class="hidden sd-body">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div class="sd-section-head" style="margin:0;flex:1;">Player Reports</div>
           <div style="display:flex;gap:6px;">
-            <button class="quick-action-btn tchip-b" style="font-size:9px;padding:5px 11px;" onclick="Staff.loadReports()">⟳ REFRESH</button>
-            <button class="quick-action-btn tchip-r" style="font-size:9px;padding:5px 11px;" onclick="Staff.clearReports()">✕ CLEAR ALL</button>
+            <button class="sd-chip blue" onclick="Staff.loadReports()">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:4px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+              Refresh
+            </button>
+            <button class="sd-chip red" onclick="Staff.clearReports()">Clear All</button>
           </div>
         </div>
-        <div style="font-family:var(--body);font-size:12px;color:var(--dim2);margin-bottom:12px;line-height:1.7;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:8px;">
+        <div style="font-size:12px;color:var(--dim2);margin-bottom:12px;padding:10px 13px;background:rgba(255,255,255,.03);border-radius:8px;font-family:var(--body);line-height:1.6;">
           Reports capture a full real-time player snapshot at time of submission.
         </div>
-        <div id="reportsList"><div class="tno-results">No reports yet</div></div>
+        <div id="reportsList"><div class="sd-empty">No reports yet</div></div>
       </div>
     </div>
   </div>
@@ -1111,58 +1372,70 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
 
 <!-- OWNER PANEL -->
 <div class="overlay hidden" id="ownerPanel">
-  <div class="pbox po" style="max-width:740px;">
+  <div class="pbox po" style="max-width:760px;">
     <div class="phd" style="padding:0;">
-      <div class="term-header">
-        <div class="term-dots">
-          <div class="term-dot red"    onclick="UI.close('ownerPanel')" title="Close"></div>
-          <div class="term-dot yellow" title="Minimize"></div>
-          <div class="term-dot green"  title="Fullscreen"></div>
+      <div class="sd-header" style="border-radius:var(--panel-radius) var(--panel-radius) 0 0;">
+        <div class="sd-dots">
+          <div class="sd-dot red"    onclick="UI.close('ownerPanel')"></div>
+          <div class="sd-dot yellow"></div>
+          <div class="sd-dot green"></div>
         </div>
-        <div class="term-title-bar">
-          <span class="term-label" style="color:var(--gold);">Owner Panel</span>
+        <div class="sd-title-area">
+          <div class="sd-title">Owner Panel</div>
+          <div class="sd-badge own-badge"><div class="bd"></div>Root Access</div>
         </div>
-        <div style="padding:10px 16px;display:flex;align-items:center;gap:8px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--gold);display:inline-block;animation:pdot 1.5s ease-in-out infinite;"></span><span style="font-family:var(--body);font-size:11px;color:var(--dim2);">Full Access</span></div>
       </div>
     </div>
-    <div class="pbody">
-      <div class="stabs" style="padding:0 4px;">
-        <button class="stab on" style="color:var(--gold);" onclick="Own.tab('cmds',this)">Commands</button>
-        <button class="stab" onclick="Own.tab('grant',this)">Grant</button>
-        <button class="stab" onclick="Own.tab('bcast',this)">Broadcast</button>
-        <button class="stab" onclick="Own.tab('prom',this)">Promote</button>
+    <div class="pbody" style="padding:0;">
+      <div class="sd-tabs">
+        <button class="sd-tab on sd-tab-gold on-gold" onclick="Own.tab('cmds',this)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Commands
+        </button>
+        <button class="sd-tab" onclick="Own.tab('grant',this)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M12 14v8m-4-4h8"/></svg>
+          Grant
+        </button>
+        <button class="sd-tab" onclick="Own.tab('bcast',this)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Broadcast
+        </button>
+        <button class="sd-tab" onclick="Own.tab('prom',this)">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+          Promote
+        </button>
       </div>
 
-      <div id="owCmds" style="padding:16px 18px;">
-        <div style="font-family:var(--body);font-size:11px;color:var(--dim2);margin-bottom:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;">Server Events — Keys [1–8]</div>
+      <div id="owCmds" class="sd-body">
+        <div class="sd-section-head">Server Events — Keys [1–8]</div>
         <div class="cgd" style="margin-top:8px;margin-bottom:14px;">
-          <button class="ocb" id="ocbDoubleXP" onclick="Own.cmd('doubleXP')"><span class="oci">⚡</span>2× XP EVENT</button>
-          <button class="ocb" id="ocbCoinRain" onclick="Own.cmd('coinRain')"><span class="oci">🪙</span>COIN RAIN</button>
-          <button class="ocb" id="ocbSpawnBoss" onclick="Own.cmd('spawnBoss')"><span class="oci">👑</span>SPAWN BOSS</button>
-          <button class="ocb" id="ocbNukeMap" onclick="Own.cmd('nukeMap')"><span class="oci">💥</span>NUKE MAP</button>
-          <button class="ocb" id="ocbGrowAll" onclick="Own.cmd('growAll')"><span class="oci">↑</span>GROW ALL</button>
-          <button class="ocb" id="ocbSpeedFrenzy" onclick="Own.cmd('speedFrenzy')"><span class="oci">⚡</span>SPEED FRENZY</button>
-          <button class="ocb" id="ocbFoodFrenzy" onclick="Own.cmd('foodFrenzy')"><span class="oci">🌿</span>FOOD FRENZY</button>
-          <button class="ocb" id="ocbInvertCtrl" onclick="Own.cmd('invertCtrl')"><span class="oci">⇄</span>INVERT CTRL</button>
+          <button class="sd-cmd" id="ocbDoubleXP" onclick="Own.cmd('doubleXP')"><span class="sd-cmd-ico">⚡</span>2× XP EVENT</button>
+          <button class="sd-cmd" id="ocbCoinRain" onclick="Own.cmd('coinRain')"><span class="sd-cmd-ico">🪙</span>COIN RAIN</button>
+          <button class="sd-cmd" id="ocbSpawnBoss" onclick="Own.cmd('spawnBoss')"><span class="sd-cmd-ico">👑</span>SPAWN BOSS</button>
+          <button class="sd-cmd" id="ocbNukeMap" onclick="Own.cmd('nukeMap')"><span class="sd-cmd-ico">💥</span>NUKE MAP</button>
+          <button class="sd-cmd" id="ocbGrowAll" onclick="Own.cmd('growAll')"><span class="sd-cmd-ico">↑</span>GROW ALL</button>
+          <button class="sd-cmd" id="ocbSpeedFrenzy" onclick="Own.cmd('speedFrenzy')"><span class="sd-cmd-ico">⚡</span>SPEED FRENZY</button>
+          <button class="sd-cmd" id="ocbFoodFrenzy" onclick="Own.cmd('foodFrenzy')"><span class="sd-cmd-ico">🌿</span>FOOD FRENZY</button>
+          <button class="sd-cmd" id="ocbInvertCtrl" onclick="Own.cmd('invertCtrl')"><span class="sd-cmd-ico">⇄</span>INVERT CTRL</button>
         </div>
-        <div style="font-family:var(--body);font-size:11px;color:var(--dim2);margin-bottom:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;">Player Modes — Keys [9–0]</div>
+        <div class="sd-section-head">Player Modes — Keys [9–0]</div>
         <div class="cgd3" style="margin-top:8px;margin-bottom:14px;">
-          <button class="ocb staff-cmd" id="ocbGhostMode" onclick="Own.cmd('ghostMode')"><span class="oci">👻</span>GHOST MODE</button>
-          <button class="ocb staff-cmd" id="ocbMiniSnake" onclick="Own.cmd('miniSnake')"><span class="oci">◌</span>MINI SNAKE</button>
-          <button class="ocb staff-cmd" id="ocbFireworks" onclick="Own.cmd('fireworks')"><span class="oci">✨</span>FIREWORKS</button>
+          <button class="sd-cmd staff-c" id="ocbGhostMode" onclick="Own.cmd('ghostMode')"><span class="sd-cmd-ico">👻</span>GHOST MODE</button>
+          <button class="sd-cmd staff-c" id="ocbMiniSnake" onclick="Own.cmd('miniSnake')"><span class="sd-cmd-ico">◌</span>MINI SNAKE</button>
+          <button class="sd-cmd staff-c" id="ocbFireworks" onclick="Own.cmd('fireworks')"><span class="sd-cmd-ico">✨</span>FIREWORKS</button>
         </div>
-        <div style="font-family:var(--body);font-size:11px;color:var(--r);margin-bottom:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;">⚠ Admin Commands — Use with Care</div>
+        <div class="sd-section-head" style="color:rgba(255,34,68,.6);">Admin Commands — Use with Care</div>
         <div class="cgd3" style="margin-top:8px;">
-          <button class="ocb danger-cmd" onclick="Own.cmd('killAllBots')"><span class="oci">⊗</span>KILL BOTS</button>
-          <button class="ocb danger-cmd" onclick="Own.cmd('maxFoodFrenzy')"><span class="oci">■</span>MAX FOOD</button>
-          <button class="ocb danger-cmd" onclick="Own.cmd('zeroGravity')"><span class="oci">○</span>ZERO GRAV</button>
+          <button class="sd-cmd danger-c" onclick="Own.cmd('killAllBots')"><span class="sd-cmd-ico">⊗</span>KILL BOTS</button>
+          <button class="sd-cmd danger-c" onclick="Own.cmd('maxFoodFrenzy')"><span class="sd-cmd-ico">■</span>MAX FOOD</button>
+          <button class="sd-cmd danger-c" onclick="Own.cmd('zeroGravity')"><span class="sd-cmd-ico">○</span>ZERO GRAV</button>
         </div>
       </div>
 
-      <div id="owGrant" class="hidden" style="padding:16px 18px;">
-        <div style="font-family:var(--body);font-size:11px;color:var(--dim2);margin-bottom:10px;font-weight:600;text-transform:uppercase;">Grant Cosmetic Item</div>
-        <input class="term-input" id="grantTgt" placeholder="player display name or playfab id">
-        <select class="term-input" id="grantItm" style="margin-bottom:10px;">
+      <div id="owGrant" class="hidden sd-body">
+        <div class="sd-section-head">Grant Cosmetic Item</div>
+        <input class="sd-input" id="grantTgt" placeholder="player display name or playfab id">
+        <select class="sd-input" id="grantItm" style="margin-bottom:10px;">
           <option value="">-- select item to grant --</option>
           <optgroup label="OWNER SKINS"><option value="skin_owner">Owner Gold</option><option value="skin_owner2">Owner Obsidian</option><option value="skin_owner3">Blood Crown</option></optgroup>
           <optgroup label="OWNER TRAILS"><option value="trail_owner">Golden Aura</option><option value="trail_owner2">Void Rift</option></optgroup>
@@ -1173,39 +1446,39 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
           <optgroup label="STAFF"><option value="skin_mod">Staff Blue Skin</option><option value="trail_mod">Blue Pulse Trail</option><option value="kill_thunder">Thunder Kill FX</option></optgroup>
           <optgroup label="ACCESS TOKENS"><option value="mod_panel">Mod Panel Access</option><option value="owner_panel">Owner Panel Access</option></optgroup>
         </select>
-        <button class="term-btn tbgold" onclick="Own.grantItem()">⊕ GRANT ITEM</button>
-        <div style="font-family:var(--body);font-size:11px;color:var(--dim2);margin:14px 0 10px;font-weight:600;text-transform:uppercase;">Grant Coins</div>
-        <input class="term-input" id="coinTgt" placeholder="player display name or playfab id">
-        <input class="term-input" type="number" id="coinAmt" placeholder="coin amount" min="1">
-        <button class="term-btn tbgold" onclick="Own.grantCoins()">⊕ GRANT COINS</button>
+        <button class="sd-btn gold" onclick="Own.grantItem()">Grant Item</button>
+        <div class="sd-section-head" style="margin-top:16px;">Grant Coins</div>
+        <input class="sd-input" id="coinTgt" placeholder="player display name or playfab id">
+        <input class="sd-input" type="number" id="coinAmt" placeholder="coin amount" min="1">
+        <button class="sd-btn gold" onclick="Own.grantCoins()">Grant Coins</button>
       </div>
 
-      <div id="owBcast" class="hidden" style="padding:16px 18px;">
-        <div style="font-family:var(--body);font-size:11px;color:var(--dim2);margin-bottom:10px;font-weight:600;text-transform:uppercase;">Broadcast to All Players</div>
-        <input class="term-input" id="bcastMsg" placeholder="Your message to all players...">
-        <select class="term-input" id="bcastType" style="margin-bottom:10px;">
+      <div id="owBcast" class="hidden sd-body">
+        <div class="sd-section-head">Broadcast to All Players</div>
+        <input class="sd-input" id="bcastMsg" placeholder="Your message to all players...">
+        <select class="sd-input" id="bcastType" style="margin-bottom:10px;">
           <option value="info">-- type: INFO</option>
           <option value="warning">-- type: WARNING</option>
           <option value="event">-- type: EVENT</option>
         </select>
-        <button class="term-btn tbb" onclick="Own.broadcast()">⊛ BROADCAST TO ALL</button>
+        <button class="sd-btn blue" onclick="Own.broadcast()">Send Broadcast</button>
       </div>
 
-      <div id="owProm" class="hidden" style="padding:16px 18px;">
-        <div style="font-family:var(--body);font-size:11px;color:var(--dim2);margin-bottom:10px;font-weight:600;text-transform:uppercase;">Promote / Demote Player</div>
-        <input class="term-input" id="promTgt" placeholder="player display name or playfab id">
-        <select class="term-input" id="promRole" style="margin-bottom:10px;">
+      <div id="owProm" class="hidden sd-body">
+        <div class="sd-section-head">Promote / Demote Player</div>
+        <input class="sd-input" id="promTgt" placeholder="player display name or playfab id">
+        <select class="sd-input" id="promRole" style="margin-bottom:10px;">
           <option value="moderator">-- role: MODERATOR</option>
           <option value="owner">-- role: OWNER</option>
           <option value="player">-- role: PLAYER (demote)</option>
         </select>
-        <button class="term-btn tbgold" onclick="Own.promote()">⇑ CONFIRM ROLE CHANGE</button>
-        <div style="font-size:12px;color:var(--dim2);margin-top:10px;line-height:1.7;font-family:var(--body);border-left:2px solid rgba(255,255,255,.08);padding-left:10px;">
-          Grants or removes <b style="color:var(--gold);">mod_panel</b> / <b style="color:var(--gold);">owner_panel</b> catalog items.<br>Takes effect on next login.
+        <button class="sd-btn gold" onclick="Own.promote()">Confirm Role Change</button>
+        <div style="font-size:12px;color:var(--dim2);margin-top:10px;line-height:1.7;font-family:var(--body);padding:9px 13px;background:rgba(255,255,255,.03);border-radius:8px;">
+          Grants or removes <b style="color:var(--gold);">mod_panel</b> / <b style="color:var(--gold);">owner_panel</b> catalog items. Takes effect on next login.
         </div>
       </div>
 
-      <div class="tmsg hidden" id="ownMsg" style="margin:0 16px 14px;"></div>
+      <div class="sd-msg hidden" id="ownMsg" style="margin:0 20px 16px;"></div>
     </div>
   </div>
 </div>
@@ -2328,8 +2601,8 @@ const UI={
     if(!el)return;
     el.textContent=txt;
     // Support both old .sm and new terminal .tmsg elements
-    const isTerm=el.classList.contains('tmsg')||id==='staffMsg'||id==='ownMsg';
-    el.className=isTerm?`tmsg ${type}`:`sm ${type}`;
+    const isDash=id==='staffMsg'||id==='ownMsg';
+    el.className=isDash?`sd-msg ${type}`:`sm ${type}`;
     el.style.display='block';
     el.style.animation='none';void el.offsetWidth;el.style.animation='fadeIn .2s ease';
     clearTimeout(el._t);el._t=setTimeout(()=>{el.style.display='none';},4000);
@@ -2690,7 +2963,7 @@ const Staff={
     const map={live:'Live',lookup:'Lookup',tools:'Tools',idlookup:'Idlookup',logs:'Logs',bcast:'Bcast',reports:'Reports'};
     const show=document.getElementById('st'+(map[n]||'Live'));
     if(show)show.classList.remove('hidden');
-    document.querySelectorAll('#staffPanel .stab').forEach(b=>b.classList.remove('on'));
+    document.querySelectorAll('#staffPanel .sd-tab').forEach(b=>b.classList.remove('on'));
     if(btn)btn.classList.add('on');
     if(n==='logs')this.loadLogs();
     if(n==='live')this.loadLive();
@@ -2703,15 +2976,15 @@ const Staff={
     const el=document.getElementById('liveList');
     if(!el)return;
     if(!FB_READY){
-      el.innerHTML='<div class="tno-results">// firebase offline — showing local cache</div>';
+      el.innerHTML='<div class="sd-empty">// firebase offline — showing local cache</div>';
       this._renderLiveFallback(el);
       return;
     }
-    el.innerHTML='<div class="tno-results" style="opacity:.7">$ fetching live players...</div>';
+    el.innerHTML='<div class="sd-empty" style="opacity:.7">$ fetching live players...</div>';
     window._get(fbRef('players')).then(snap=>{
       const all=snap.val()||{};
       const entries=Object.entries(all);
-      if(!entries.length){el.innerHTML='<div class="tno-results">// no players online right now</div>';return;}
+      if(!entries.length){el.innerHTML='<div class="sd-empty">// no players online right now</div>';return;}
       el.innerHTML='';
       entries.forEach(([id,d],i)=>{
         const warns=WARNS.count(id);
@@ -2726,9 +2999,7 @@ const Staff={
           <div style="flex:1;min-width:0;">
             <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
               <span class="spc-name">${esc(d.name)||'unknown'}</span>
-              <span class="spc-role ${rCls}" style="${d.role==='owner'?'font-size:12px;padding:5px 14px;':''}">
-              ${d.role==='owner'?'👑 ':''}${(d.role||'player').toUpperCase()}
-            </span>
+              <span class="sd-pc-role ${rCls}">${(d.role||'player').toUpperCase()}</span>
               ${warns>0?`<span style="font-family:var(--mono);font-size:9px;color:#e8c832;border:1px solid rgba(232,200,50,.3);padding:1px 5px;">${warns} WARN${warns>1?'S':''}</span>`:''}
               ${ban?'<span style="font-family:var(--mono);font-size:9px;color:#ff2244;border:1px solid rgba(255,34,68,.3);padding:1px 5px;">BANNED</span>':''}
             </div>
@@ -2739,18 +3010,18 @@ const Staff={
             </div>
           </div>
           <div class="spc-actions" style="flex-direction:column;gap:4px;">
-            <button class="quick-action-btn tchip-r" style="font-size:9px;" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')">⚑ RPT</button>
-            <button class="quick-action-btn tchip-y" onclick="event.stopPropagation();Staff.quickKick('${esc(id)}','${esc(d.name||'?')}')">KICK</button>
+            <button class="sd-chip red" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')">⚑ RPT</button>
+            <button class="sd-chip gold" onclick="event.stopPropagation();Staff.quickKick('${esc(id)}','${esc(d.name||'?')}')">Kick</button>
             ${ban
-              ? `<button class="quick-action-btn tchip-g" onclick="event.stopPropagation();Staff.quickUnban('${esc(id)}','${esc(d.name||'?')}')">UNBAN</button>`
-              : `<button class="quick-action-btn tchip-r" onclick="event.stopPropagation();Staff.quickBan('${esc(id)}','${esc(d.name||'?')}')">BAN</button>`
+              ? `<button class="sd-chip green" onclick="event.stopPropagation();Staff.quickUnban('${esc(id)}','${esc(d.name||'?')}')">Unban</button>`
+              : `<button class="sd-chip red" onclick="event.stopPropagation();Staff.quickBan('${esc(id)}','${esc(d.name||'?')}')">Ban</button>`
             }
           </div>`;
         card.onclick=()=>this.selectPlayer(id,d.name||'?');
         el.appendChild(card);
       });
     }).catch(e=>{
-      el.innerHTML=`<div class="tno-results">// error: ${e.message||'unknown'}</div>`;
+      el.innerHTML=`<div class="sd-empty">// error: ${e.message||'unknown'}</div>`;
     });
   },
 
@@ -2779,7 +3050,7 @@ const Staff={
     const sel=document.getElementById('stSelectedName');
     if(sel)sel.textContent=name+' ('+id.substring(0,10)+'…)';
     // Switch to tools
-    document.querySelectorAll('#staffPanel .stab').forEach((b,i)=>b.classList.toggle('on',i===2));
+    document.querySelectorAll('#staffPanel .sd-tab').forEach((b,i)=>b.classList.toggle('on',i===2));
     ['Live','Lookup','Tools','Logs','Bcast'].forEach((t,i)=>{
       const el=document.getElementById('st'+t);
       if(el)el.classList.toggle('hidden',i!==2);
@@ -2837,9 +3108,9 @@ const Staff={
     const accentCol=isOnline?'#00ff64':ban?'#ff2244':warns>0?'#e8c832':'#0d2618';
 
     const card=document.createElement('div');
-    card.style.cssText=`background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-left:3px solid ${accentCol};border-radius:12px;padding:12px 14px;margin-bottom:7px;cursor:pointer;transition:all .15s;animation:fadeInUp .25s ease forwards;`;
-    card.onmouseenter=()=>{card.style.background='rgba(255,255,255,.06)';card.style.borderColor='rgba(255,255,255,.16)';card.style.transform='translateY(-1px)';};
-    card.onmouseleave=()=>{card.style.background='rgba(255,255,255,.03)';card.style.borderColor='rgba(255,255,255,.08)';card.style.transform='';};
+    card.className='sd-player-card';
+    // hover via sd-player-card CSS
+
     card.innerHTML=`
       <div style="display:flex;align-items:flex-start;gap:10px;">
         <div style="flex-shrink:0;">
@@ -2851,18 +3122,13 @@ const Staff={
         <div style="flex:1;min-width:0;">
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:5px;">
             <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:${d.role==='owner'?'#e8c832':d.role==='moderator'?'#00c8ff':'#4aff88'}">${esc(d.name)||'unknown'}</span>
-            <span class="spc-role ${rCls}" style="${d.role==='owner'?'font-size:12px;padding:5px 14px;':''}">
-              ${d.role==='owner'?'👑 ':''}${(d.role||'player').toUpperCase()}
-            </span>
+            <span class="sd-pc-role ${rCls}">${(d.role||'player').toUpperCase()}</span>
             ${ban?`<span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:rgba(255,34,68,.08);border:1px solid rgba(255,34,68,.3);color:#ff2244;">BANNED</span>`:''}
             ${warns>0?`<span style="font-family:var(--mono);font-size:8px;padding:1px 5px;background:rgba(232,200,50,.06);border:1px solid rgba(232,200,50,.25);color:#e8c832;">${warns}W</span>`:''}
           </div>
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-bottom:6px;">
             ${[['SCORE',(d.score||0).toLocaleString(),'#2a6040'],['KILLS',d.kills||0,'#ff2244'],['RANK',rank.name,rank.color],['SEEN',isOnline?'NOW':lastSeen,'#1a4028']].map(([lbl,val,col])=>`
-            <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:4px 6px;text-align:center;">
-              <div style="font-family:var(--body);font-size:11px;font-weight:700;color:${col};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${val}</div>
-              <div style="font-family:var(--body);font-size:9px;color:var(--dim2);">${lbl}</div>
-            </div>`).join('')}
+            <div class="sd-pc-stat"><div class="val" style="color:${col}">${val}</div><div class="lbl">${lbl}</div></div>`).join('')}
           </div>
           <div onclick="event.stopPropagation();Staff.copyId('${esc(id)}')" title="Copy PlayFab ID"
                style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:5px 9px;cursor:pointer;margin-top:6px;">
@@ -2870,15 +3136,15 @@ const Staff={
             <span style="font-family:var(--mono);font-size:10px;color:var(--dim2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${id}</span>
             <span style="color:var(--dim2);font-size:11px;">⎘</span>
           </div>
-          ${ban?`<div style="font-family:var(--body);font-size:10px;color:var(--r);margin-top:5px;padding:3px 8px;background:rgba(255,34,68,.07);border-radius:5px;">Banned: ${esc((ban.reason||'no reason').substring(0,45))}</div>`:''}
+          ${ban?`<div style="font-size:10px;color:var(--dash-red);margin-top:5px;padding:4px 9px;background:rgba(255,34,68,.07);border:1px solid rgba(255,34,68,.15);border-radius:6px;font-family:var(--body);">Banned: ${esc((ban.reason||'no reason').substring(0,45))}</div>`:''}
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
-          <button class="quick-action-btn tchip-b" style="font-size:9px;min-width:52px;" onclick="event.stopPropagation();Staff.idToTools('${esc(id)}','${esc(d.name||'?')}')">TOOLS</button>
-          ${isOnline?`<button class="quick-action-btn tchip-y" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickKick('${esc(id)}','${esc(d.name||'?')}')">KICK</button>`:''}
+          <button class="sd-chip blue" onclick="event.stopPropagation();Staff.idToTools('${esc(id)}','${esc(d.name||'?')}')">TOOLS</button>
+          ${isOnline?`<button class="sd-chip gold" onclick="event.stopPropagation();Staff.quickKick('${esc(id)}','${esc(d.name||'?')}')">Kick</button>`:''}
           ${ban
-            ?`<button class="quick-action-btn tchip-g" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickUnban('${esc(id)}','${esc(d.name||'?')}')">UNBAN</button>`
-            :`<button class="quick-action-btn tchip-r" style="font-size:9px;" onclick="event.stopPropagation();Staff.quickBan('${esc(id)}','${esc(d.name||'?')}')">BAN</button>`}
-          ${isOnline?`<button class="quick-action-btn tchip-r" style="font-size:9px;" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')">⚑ RPT</button>`:''}
+            ?`<button class="sd-chip green" onclick="event.stopPropagation();Staff.quickUnban('${esc(id)}','${esc(d.name||'?')}')">Unban</button>`
+            :`<button class="sd-chip red" onclick="event.stopPropagation();Staff.quickBan('${esc(id)}','${esc(d.name||'?')}')">Ban</button>`}
+          ${isOnline?`<button class="sd-chip red" onclick="event.stopPropagation();Staff.reportPlayer('${esc(id)}','${esc(d.name||'?')}')">⚑ RPT</button>`:''}
         </div>
       </div>`;
     card.onclick=()=>this.idToTools(id,d.name||'?');
@@ -2887,7 +3153,7 @@ const Staff={
 
   _renderResults(el,matches,context){
     if(!matches.length){
-      el.innerHTML=`<div class="tno-results">// no results for: ${_esc(context||'')}</div>`;
+      el.innerHTML=`<div class="sd-empty">// no results for: ${_esc(context||'')}</div>`;
       return;
     }
     const online=matches.filter(([,d])=>d.alive===true).length;
@@ -2907,8 +3173,8 @@ const Staff={
     const q=(document.getElementById('lookupQ')?.value||'').trim();
     const el=document.getElementById('lookupRes');
     if(!el)return;
-    if(!q){el.innerHTML='<div class="tno-results">// enter search query...</div>';return;}
-    el.innerHTML='<div class="tno-results">$ searching all sources...</div>';
+    if(!q){el.innerHTML='<div class="sd-empty">// enter search query...</div>';return;}
+    el.innerHTML='<div class="sd-empty">$ searching all sources...</div>';
     this._fetchAllSources().then(all=>{
       const ql=q.toLowerCase();
       const matches=Object.entries(all).filter(([id,d])=>
@@ -2927,7 +3193,7 @@ const Staff={
     const el=document.getElementById('logList');
     if(!el)return;
     const logs=AL.get();
-    if(!logs.length){el.innerHTML='<div class="tno-results">// no actions recorded yet</div>';return;}
+    if(!logs.length){el.innerHTML='<div class="sd-empty">// no actions recorded yet</div>';return;}
     const colorMap={
       BAN:'#ff2244', KICK:'#e8c832', WARN:'#e8c832', MUTE:'#b87af0',
       GRANT:'#00ff64', UNBAN:'#00ff64', BROADCAST:'#00c8ff', CMD:'#00c8ff', REPORT:'#ff8800'
@@ -3078,14 +3344,14 @@ const Staff={
     document.getElementById('idSelfId').textContent   = S.pfId        || '—';
     document.getElementById('idSelfRole').textContent = (S.role||'player').toUpperCase();
     document.getElementById('idlookupQ').value = '';
-    document.getElementById('idlookupRes').innerHTML  = '<div class="tno-results">// awaiting query...</div>';
+    document.getElementById('idlookupRes').innerHTML  = '<div class="sd-empty">// awaiting query...</div>';
   },
 
   idLookup(){
     const q=(document.getElementById('idlookupQ')?.value||'').trim();
     const el=document.getElementById('idlookupRes');
-    if(!q){el.innerHTML='<div class="tno-results">// enter a name or id to resolve</div>';return;}
-    el.innerHTML='<div class="tno-results">$ resolving id...</div>';
+    if(!q){el.innerHTML='<div class="sd-empty">// enter a name or id to resolve</div>';return;}
+    el.innerHTML='<div class="sd-empty">$ resolving id...</div>';
     this._fetchAllSources().then(all=>{
       const ql=q.toLowerCase();
       const hits=Object.entries(all).filter(([id,d])=>
@@ -3124,7 +3390,7 @@ const Staff={
     // Switch to tools tab
     this.tab('tools',null);
     // Manually mark the right stab button as active
-    document.querySelectorAll('#staffPanel .stab').forEach((b,i)=>{
+    document.querySelectorAll('#staffPanel .sd-tab').forEach((b,i)=>{
       b.classList.toggle('on',b.textContent.includes('MOD TOOLS'));
     });
     Toast.show('Loaded '+name+' into Mod Tools','in');
@@ -3196,10 +3462,10 @@ const Staff={
   loadReports(){
     const el=document.getElementById('reportsList');
     if(!el)return;
-    el.innerHTML='<div class="tno-results">$ fetching reports...</div>';
+    el.innerHTML='<div class="sd-empty">$ fetching reports...</div>';
 
     const renderReports=(reports)=>{
-      if(!reports.length){el.innerHTML='<div class="tno-results">// no reports on file</div>';return;}
+      if(!reports.length){el.innerHTML='<div class="sd-empty">// no reports on file</div>';return;}
       el.innerHTML='';
       reports.forEach((r,i)=>{
         const div=document.createElement('div');
@@ -3232,9 +3498,9 @@ const Staff={
             $ID: <span style="color:var(--dim2);">${r.reportedId||'—'}</span> <span style="color:var(--dim);">⎘</span>
           </div>
           <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;">
-            <button class="quick-action-btn tchip-r" style="font-size:9px;" onclick="Staff.quickBan('${safeId}','${safeName}')">BAN</button>
-            <button class="quick-action-btn tchip-y" style="font-size:9px;" onclick="Staff.quickKick('${safeId}','${safeName}')">KICK</button>
-            <button class="quick-action-btn tchip-b" style="font-size:9px;" onclick="Staff.idToTools('${safeId}','${safeName}')">TOOLS</button>
+            <button class="sd-chip red" onclick="Staff.quickBan('${safeId}','${safeName}')">Ban</button>
+            <button class="sd-chip gold" onclick="Staff.quickKick('${safeId}','${safeName}')">Kick</button>
+            <button class="sd-chip blue" onclick="Staff.idToTools('${safeId}','${safeName}')">Tools</button>
             <span style="font-family:var(--mono);font-size:9px;color:var(--dim);margin-left:auto;">by: ${_esc(r.reportedBy||'?')}</span>
           </div>`;
         el.appendChild(div);
@@ -3263,7 +3529,7 @@ const Staff={
     if(!confirm('Clear ALL reports? This cannot be undone.'))return;
     localStorage.removeItem('vn5_reports');
     if(FB_READY){ fbRemove('reports').catch(()=>{}); }
-    document.getElementById('reportsList').innerHTML='<div class="tno-results">// reports cleared</div>';
+    document.getElementById('reportsList').innerHTML='<div class="sd-empty">// reports cleared</div>';
     const badge=document.getElementById('reportsBadge');
     if(badge){badge.style.display='none';badge.textContent='0';}
     Toast.show('Reports cleared','ok');
@@ -3288,8 +3554,8 @@ const Own={
   tab(n,btn){
     ['Cmds','Grant','Bcast','Prom'].forEach(t=>document.getElementById('ow'+t).classList.add('hidden'));
     document.getElementById('ow'+n[0].toUpperCase()+n.slice(1)).classList.remove('hidden');
-    document.querySelectorAll('#ownerPanel .stab').forEach(b=>{b.classList.remove('on');b.style.color='';b.style.borderBottomColor='';});
-    if(btn){btn.classList.add('on');btn.style.color='var(--gold)';btn.style.borderBottomColor='var(--gold)';}
+    document.querySelectorAll('#ownerPanel .sd-tab').forEach(b=>{b.classList.remove('on','on-gold');});
+    if(btn){btn.classList.add('on');btn.classList.add('on-gold');}
   },
   setActive(cmdId,active){
     const el=document.getElementById('ocb'+cmdId[0].toUpperCase()+cmdId.slice(1));
@@ -3876,32 +4142,51 @@ class Snake{
       ctx.fillText(nameStr, W/2, baseY);
       ctx.shadowBlur = 0;
 
-      // ── Role tag pill (only if not plain player) ─────────────────
+      // ── Role tag pill ─────────────────────────────────────────────
       if(S.role !== 'player' && !ghostMode){
-        const tagLabel = tag.label.toUpperCase();
-        ctx.font = 'bold 9px "Exo 2",sans-serif';
+        const isOwnerRole = S.role === 'owner';
+        const tagLabel = isOwnerRole ? '♛  OWNER' : tag.label.toUpperCase();
+        const fontSize  = isOwnerRole ? 11 : 9;
+        const ph        = isOwnerRole ? 18 : 13;
+        const hPad      = isOwnerRole ? 14 : 9;
+        ctx.font = `bold ${fontSize}px "Exo 2",sans-serif`;
         const tw = ctx.measureText(tagLabel).width;
-        const ph = 13, pw = tw + 10, px = W/2 - pw/2, py = baseY - ph - 4;
+        const pw = tw + hPad * 2;
+        const px = W/2 - pw/2, py = baseY - ph - 5;
+        const rad = ph / 2;
+        // outer glow for owner
+        if(isOwnerRole){
+          ctx.shadowColor = tag.color;
+          ctx.shadowBlur  = 14;
+        }
         // pill background
         ctx.beginPath();
-        const rad = ph/2;
         ctx.moveTo(px+rad,py); ctx.lineTo(px+pw-rad,py);
         ctx.arcTo(px+pw,py,px+pw,py+ph,rad);
         ctx.lineTo(px+pw,py+rad); ctx.arcTo(px+pw,py+ph,px+pw-rad,py+ph,rad);
         ctx.lineTo(px+rad,py+ph); ctx.arcTo(px,py+ph,px,py+ph-rad,rad);
         ctx.lineTo(px,py+rad); ctx.arcTo(px,py,px+rad,py,rad);
         ctx.closePath();
-        ctx.fillStyle = tag.color;
-        ctx.globalAlpha = 0.22;
+        if(isOwnerRole){
+          const grad = ctx.createLinearGradient(px,py,px+pw,py+ph);
+          grad.addColorStop(0, tag.color + '55');
+          grad.addColorStop(1, tag.color + '22');
+          ctx.fillStyle = grad;
+        } else {
+          ctx.fillStyle = tag.color;
+          ctx.globalAlpha = 0.22;
+        }
         ctx.fill();
         ctx.globalAlpha = 1;
         // pill border
         ctx.strokeStyle = tag.color;
-        ctx.lineWidth = 1;
+        ctx.lineWidth   = isOwnerRole ? 1.5 : 1;
         ctx.stroke();
+        ctx.shadowBlur = 0;
         // tag text
-        ctx.fillStyle = tag.color;
-        ctx.fillText(tagLabel, W/2, py + ph - 3);
+        ctx.fillStyle = isOwnerRole ? '#fff' : tag.color;
+        ctx.font = `bold ${fontSize}px "Exo 2",sans-serif`;
+        ctx.fillText(tagLabel, W/2, py + ph - (isOwnerRole ? 4 : 3));
       }
 
       // ── Kill streak ───────────────────────────────────────────────
@@ -3949,29 +4234,39 @@ function drawRemotePlayers(camX,camY,now){
       ctx.fillText(nameStr, hx, baseY);
       ctx.globalAlpha = 1;
 
-      // ── Role tag pill (only if not plain player) ──────────────────
+      // ── Role tag pill ─────────────────────────────────────────────
       if(rp.role !== 'player'){
-        const tagLabel = tag.label.toUpperCase();
-        ctx.font = 'bold 9px "Exo 2",sans-serif';
+        const isOwnerRole = rp.role === 'owner';
+        const tagLabel = isOwnerRole ? '♛  OWNER' : tag.label.toUpperCase();
+        const fontSize  = isOwnerRole ? 10 : 8;
+        const ph        = isOwnerRole ? 16 : 12;
+        const hPad      = isOwnerRole ? 12 : 8;
+        ctx.font = `bold ${fontSize}px "Exo 2",sans-serif`;
         const tw = ctx.measureText(tagLabel).width;
-        const ph = 12, pw = tw + 9, px = hx - pw/2, py = baseY - ph - 3;
+        const pw = tw + hPad * 2;
+        const px = hx - pw/2, py = baseY - ph - 3;
+        const r2 = ph / 2;
+        if(isOwnerRole){ ctx.shadowColor = tag.color; ctx.shadowBlur = 12; }
         ctx.beginPath();
-        const r2 = ph/2;
         ctx.moveTo(px+r2,py); ctx.lineTo(px+pw-r2,py);
         ctx.arcTo(px+pw,py,px+pw,py+ph,r2);
         ctx.lineTo(px+pw,py+r2); ctx.arcTo(px+pw,py+ph,px+pw-r2,py+ph,r2);
         ctx.lineTo(px+r2,py+ph); ctx.arcTo(px,py+ph,px,py+ph-r2,r2);
         ctx.lineTo(px,py+r2); ctx.arcTo(px,py,px+r2,py,r2);
         ctx.closePath();
-        ctx.fillStyle = tag.color;
-        ctx.globalAlpha = 0.2;
+        if(isOwnerRole){
+          const gr2 = ctx.createLinearGradient(px,py,px+pw,py+ph);
+          gr2.addColorStop(0, tag.color + '55'); gr2.addColorStop(1, tag.color + '22');
+          ctx.fillStyle = gr2;
+        } else { ctx.fillStyle = tag.color; ctx.globalAlpha = 0.2; }
         ctx.fill();
         ctx.globalAlpha = 1;
         ctx.strokeStyle = tag.color;
-        ctx.lineWidth = 1;
+        ctx.lineWidth = isOwnerRole ? 1.5 : 1;
         ctx.stroke();
-        ctx.fillStyle = tag.color;
-        ctx.fillText(tagLabel, hx, py + ph - 2);
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = isOwnerRole ? '#fff' : tag.color;
+        ctx.fillText(tagLabel, hx, py + ph - (isOwnerRole ? 4 : 2));
       }
     }
     if(rp.boosting&&S.settings.particles!=='off'&&Math.random()<.4){
