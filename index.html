@@ -16,6 +16,27 @@
   --text:#b8ccd8;--dim:#2e4455;--dim2:#4a6478;
   --head:'Orbitron',sans-serif;--body:'Exo 2',sans-serif;--mono:'JetBrains Mono',monospace;
 }
+/* ── OWNER TROLL EFFECTS ── */
+@keyframes ownerShake {
+  0%,100%{transform:translate(0,0) rotate(0);}
+  10%{transform:translate(-8px,-6px) rotate(-1deg);}
+  20%{transform:translate(8px,6px) rotate(1deg);}
+  30%{transform:translate(-10px,4px) rotate(-2deg);}
+  40%{transform:translate(10px,-4px) rotate(2deg);}
+  50%{transform:translate(-6px,8px) rotate(-1deg);}
+  60%{transform:translate(6px,-8px) rotate(1deg);}
+  70%{transform:translate(-8px,6px) rotate(-1.5deg);}
+  80%{transform:translate(8px,-6px) rotate(1.5deg);}
+  90%{transform:translate(-4px,4px) rotate(-0.5deg);}
+}
+@keyframes drunkSway {
+  0%,100%{transform:rotate(0deg) translateY(0);}
+  25%{transform:rotate(-3deg) translateY(-4px);}
+  75%{transform:rotate(3deg) translateY(4px);}
+}
+#blackoutOverlay {
+  display:none;position:fixed;inset:0;background:#000;z-index:9000;pointer-events:none;opacity:0.97;
+}
 /* ── STAFF / OWNER PANEL VARS ── */
 :root {
   --panel-bg: rgba(8,11,18,0.96);
@@ -1445,6 +1466,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
   </div>
 </div>
 
+<div id="blackoutOverlay"></div>
 <!-- OWNER PANEL -->
 <div class="overlay hidden" id="ownerPanel">
   <div class="pbox po" style="max-width:760px;">
@@ -1504,11 +1526,31 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
           <button class="sd-cmd staff-c" id="ocbMiniSnake" onclick="Own.cmd('miniSnake')"><span class="sd-cmd-ico">◌</span>MINI SNAKE</button>
           <button class="sd-cmd staff-c" id="ocbFireworks" onclick="Own.cmd('fireworks')"><span class="sd-cmd-ico">✨</span>FIREWORKS</button>
         </div>
-        <div class="sd-section-head" style="color:rgba(255,34,68,.6);">Admin Commands — Use with Care</div>
+        <div class="sd-section-head">Troll Commands</div>
+        <div class="cgd" style="margin-top:8px;margin-bottom:14px;">
+          <button class="sd-cmd" id="ocbTinyFood" onclick="Own.cmd('tinyFood')"><span class="sd-cmd-ico">·</span>TINY FOOD</button>
+          <button class="sd-cmd" id="ocbSlippery" onclick="Own.cmd('slippery')"><span class="sd-cmd-ico">~</span>SLIPPERY</button>
+          <button class="sd-cmd" id="ocbDarkMode" onclick="Own.cmd('darkMode')"><span class="sd-cmd-ico">▪</span>BLACKOUT</button>
+          <button class="sd-cmd" id="ocbShakeScreen" onclick="Own.cmd('shakeScreen')"><span class="sd-cmd-ico">≋</span>SHAKE</button>
+          <button class="sd-cmd" id="ocbMirrorMode" onclick="Own.cmd('mirrorMode')"><span class="sd-cmd-ico">◨</span>MIRROR</button>
+          <button class="sd-cmd" id="ocbDrunkMode" onclick="Own.cmd('drunkMode')"><span class="sd-cmd-ico">⊛</span>DRUNK MODE</button>
+          <button class="sd-cmd" id="ocbShrinkAll" onclick="Own.cmd('shrinkAll')"><span class="sd-cmd-ico">↓</span>SHRINK ALL</button>
+          <button class="sd-cmd" id="ocbFreezeAll" onclick="Own.cmd('freezeAll')"><span class="sd-cmd-ico">❄</span>FREEZE ALL</button>
+        </div>
+        <div class="sd-section-head">Owner Perks</div>
+        <div class="cgd3" style="margin-top:8px;margin-bottom:14px;">
+          <button class="sd-cmd staff-c" id="ocbGodMode" onclick="Own.cmd('godMode')"><span class="sd-cmd-ico">★</span>GOD MODE</button>
+          <button class="sd-cmd staff-c" id="ocbInfiniteBoost" onclick="Own.cmd('infiniteBoost')"><span class="sd-cmd-ico">∞</span>INF BOOST</button>
+          <button class="sd-cmd staff-c" id="ocbInstakill" onclick="Own.cmd('instakill')"><span class="sd-cmd-ico">⚡</span>INSTAKILL</button>
+        </div>
+        <div class="sd-section-head" style="color:rgba(255,34,68,.6);">Admin — Use with Care</div>
         <div class="cgd3" style="margin-top:8px;">
           <button class="sd-cmd danger-c" onclick="Own.cmd('killAllBots')"><span class="sd-cmd-ico">⊗</span>KILL BOTS</button>
           <button class="sd-cmd danger-c" onclick="Own.cmd('maxFoodFrenzy')"><span class="sd-cmd-ico">■</span>MAX FOOD</button>
           <button class="sd-cmd danger-c" onclick="Own.cmd('zeroGravity')"><span class="sd-cmd-ico">○</span>ZERO GRAV</button>
+          <button class="sd-cmd danger-c" onclick="Own.cmd('killAll')"><span class="sd-cmd-ico">✕</span>KILL ALL</button>
+          <button class="sd-cmd danger-c" onclick="Own.cmd('wipeScores')"><span class="sd-cmd-ico">⌫</span>WIPE SCORES</button>
+          <button class="sd-cmd danger-c" onclick="Own.cmd('spawnBots')"><span class="sd-cmd-ico">+</span>SPAWN BOTS</button>
         </div>
       </div>
 
@@ -1525,6 +1567,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99998;
           <optgroup label="EXCLUSIVE KILL FX"><option value="kill_explosion">Explosion</option><option value="kill_vortex">Vortex</option></optgroup>
           <optgroup label="STAFF"><option value="skin_mod">Staff Blue Skin</option><option value="trail_mod">Blue Pulse Trail</option><option value="kill_thunder">Thunder Kill FX</option></optgroup>
           <optgroup label="ACCESS TOKENS"><option value="mod_panel">Mod Panel Access</option><option value="owner_panel">Owner Panel Access</option></optgroup>
+          <optgroup label="TROLL COSMETICS"><option value="skin_glitch">Glitch Skin</option><option value="skin_ghost">Ghost Skin</option><option value="trail_rainbow2">Epilepsy Trail</option><option value="trail_invisible">Invisible Trail</option><option value="trail_money">Money Trail</option><option value="kill_nuke">Nuke Kill FX</option><option value="kill_black_hole">Black Hole Kill FX</option><option value="kill_clown">Clown Kill FX</option></optgroup>
+          <optgroup label="TAGS"><option value="tag_owner">[OWNER] Tag</option><option value="tag_dev">[DEV] Tag</option><option value="tag_og">[OG] Tag</option><option value="tag_venom">[VENOM] Tag</option><option value="tag_goat">[GOAT] Tag</option></optgroup>
         </select>
         <button class="sd-btn gold" onclick="Own.grantItem()">Grant Item</button>
         <div class="sd-section-head" style="margin-top:16px;">Grant Coins</div>
@@ -1862,6 +1906,11 @@ const CATALOG = {
     {id:'skin_owner',   name:'Owner Gold',   icon:'crown',ownerOnly:true,color:'#ffd700',bc:['#ffd700','#ff8800','#ffd700']},
     {id:'skin_owner2',  name:'Owner Obsidian',icon:'gem',ownerOnly:true,color:'#8800ff',bc:['#8800ff','#cc00ff','#5500aa']},
     {id:'skin_owner3',  name:'Blood Crown',  icon:'zap',ownerOnly:true,color:'#ff0055',bc:['#ff0055','#ff4400','#ff0055']},
+    {id:'skin_glitch',   name:'Glitch',       icon:'zap',ownerOnly:true,color:'#00ff00',bc:['#00ff00','#ff00ff','#00ff00']},
+    {id:'skin_ghost',    name:'Ghost',        icon:'circle',ownerOnly:true,color:'rgba(200,220,255,0.3)',bc:['rgba(200,220,255,0.3)','rgba(180,200,255,0.15)']},
+    {id:'skin_reaper',   name:'Reaper',       icon:'square',ownerOnly:true,color:'#111111',bc:['#111111','#330033']},
+    {id:'skin_hologram', name:'Hologram',     icon:'circle',ownerOnly:true,color:'#00ddff',bc:['#00ddff','rgba(0,200,255,0.3)']},
+    {id:'skin_molten',   name:'Molten Core',  icon:'circle',ownerOnly:true,color:'#ff6600',bc:['#ff9900','#ff4400','#ffcc00']},
   ],
   trails:[
     {id:'trail_none',      name:'None',       icon:'⬜',free:true,  fx:null},
@@ -1874,6 +1923,10 @@ const CATALOG = {
     {id:'trail_mod',       name:'Blue Pulse', icon:'heart',staff:true, fx:'modpulse'},
     {id:'trail_owner',     name:'Golden Aura',icon:'crown',ownerOnly:true,fx:'owneraura'},
     {id:'trail_owner2',    name:'Void Rift',  icon:'orbit',ownerOnly:true,fx:'voidrift'},
+    {id:'trail_rainbow2',  name:'Epilepsy',   icon:'sparkles',ownerOnly:true,fx:'rainbow'},
+    {id:'trail_invisible', name:'Invisible',  icon:'circle',ownerOnly:true,fx:null},
+    {id:'trail_money',     name:'Money',      icon:'star',ownerOnly:true,fx:'coins'},
+    {id:'trail_glitch',    name:'Glitch',     icon:'zap',ownerOnly:true,fx:'sparkle'},
   ],
   kills:[
     {id:'kill_default',   name:'Default',    icon:'zap',free:true,  fx:'default'},
@@ -3665,6 +3718,23 @@ const Own={
       killAllBots:()=>{if(!Game.running){UI.msg('ownMsg','Start game first!','er');return;}for(const b of [...GS.bots])killBot(b,false);flashScreen('#ff4400',.6);showAnn('ALL BOTS ELIMINATED!',3000);UI.msg('ownMsg','Bots killed!','ok');AL.add(S.displayName,'CMD','SERVER','killAllBots');},
       maxFoodFrenzy:()=>{for(let i=0;i<400;i++)spawnFood();for(let i=0;i<50;i++)spawnCoin();showAnn('MAX FOOD FRENZY!',3000);UI.msg('ownMsg','Max food!','ok');AL.add(S.displayName,'CMD','SERVER','maxFood');},
       zeroGravity:()=>{GS.zeroGravity=!GS.zeroGravity;this.setActive('zeroGravity',GS.zeroGravity);showAnn(GS.zeroGravity?'ZERO GRAVITY!':'Gravity restored.',3000);UI.msg('ownMsg',GS.zeroGravity?'Zero grav ON!':'Zero grav off.','ok');AL.add(S.displayName,'CMD','SERVER','zeroGravity');},
+      // ── TROLL COMMANDS ──
+      tinyFood:()=>{GS.tinyFood=!GS.tinyFood;this.setActive('tinyFood',GS.tinyFood);const m=GS.tinyFood?'Tiny food ON — good luck finding it!':'Food size restored.';showAnn(m,3000);UI.msg('ownMsg',m,'ok');AL.add(S.displayName,'CMD','SERVER','tinyFood');},
+      slippery:()=>{GS.slippery=!GS.slippery;this.setActive('slippery',GS.slippery);const m=GS.slippery?'SLIPPERY CONTROLS — enjoy the chaos!':'Controls normal.';showAnn(m,3000);UI.msg('ownMsg',m,'ok');AL.add(S.displayName,'CMD','SERVER','slippery');},
+      darkMode:()=>{GS.blackout=!GS.blackout;this.setActive('darkMode',GS.blackout);const overlay=document.getElementById('blackoutOverlay');if(overlay)overlay.style.display=GS.blackout?'block':'none';const m=GS.blackout?'BLACKOUT — good luck!':'Lights back on.';if(GS.blackout)setTimeout(()=>{GS.blackout=false;if(overlay)overlay.style.display='none';this.setActive('darkMode',false);},15000);showAnn(m,3000);UI.msg('ownMsg',m,'ok');AL.add(S.displayName,'CMD','SERVER','blackout');},
+      shakeScreen:()=>{document.getElementById('gameCanvas').style.animation='none';setTimeout(()=>{document.getElementById('gameCanvas').style.animation='ownerShake 0.5s ease-in-out 6';},10);setTimeout(()=>{document.getElementById('gameCanvas').style.animation='none';},3100);showAnn('EARTHQUAKE!',3000);UI.msg('ownMsg','Screen shake sent!','ok');AL.add(S.displayName,'CMD','SERVER','shake');},
+      mirrorMode:()=>{GS.mirrorMode=!GS.mirrorMode;this.setActive('mirrorMode',GS.mirrorMode);const cv=document.getElementById('gameCanvas');if(cv)cv.style.transform=GS.mirrorMode?'scaleX(-1)':'scaleX(1)';const m=GS.mirrorMode?'MIRRORED — left is right!':'Mirror off.';if(GS.mirrorMode)setTimeout(()=>{GS.mirrorMode=false;if(cv)cv.style.transform='scaleX(1)';this.setActive('mirrorMode',false);},20000);showAnn(m,3000);UI.msg('ownMsg',m,'ok');AL.add(S.displayName,'CMD','SERVER','mirror');},
+      drunkMode:()=>{GS.drunkMode=!GS.drunkMode;this.setActive('drunkMode',GS.drunkMode);const cv=document.getElementById('gameCanvas');if(cv)cv.style.animation=GS.drunkMode?'drunkSway 2s ease-in-out infinite':'none';const m=GS.drunkMode?'DRUNK MODE — everything is spinning!':'Sobered up.';if(GS.drunkMode)setTimeout(()=>{GS.drunkMode=false;if(cv)cv.style.animation='none';this.setActive('drunkMode',false);},20000);showAnn(m,3000);UI.msg('ownMsg',m,'ok');AL.add(S.displayName,'CMD','SERVER','drunk');},
+      shrinkAll:()=>{if(!Game.running){UI.msg('ownMsg','Start game first!','er');return;}if(GS.player&&GS.player.alive&&GS.player.length>20)GS.player.length=Math.max(20,GS.player.length-80);for(const b of GS.bots)if(b.alive&&b.length>15)b.length=Math.max(15,b.length-40);showAnn('SHRINK ALL!',3000);UI.msg('ownMsg','Everyone shrunk!','ok');AL.add(S.displayName,'CMD','SERVER','shrinkAll');},
+      freezeAll:()=>{if(!Game.running){UI.msg('ownMsg','Start game first!','er');return;}GS.frozen=true;showEvBanner('FROZEN','ghost');showAnn('EVERYTHING IS FROZEN!',3000);setTimeout(()=>{GS.frozen=false;hideEvBanner();},5000);UI.msg('ownMsg','Froze everyone for 5s!','ok');AL.add(S.displayName,'CMD','SERVER','freeze');},
+      // ── OWNER PERKS ──
+      godMode:()=>{GS.godMode=!GS.godMode;this.setActive('godMode',GS.godMode);const m=GS.godMode?'GOD MODE — you are invincible.':'God mode off.';showAnn(m,3000);UI.msg('ownMsg',m,'ok');AL.add(S.displayName,'CMD','SELF','godMode');},
+      infiniteBoost:()=>{GS.infiniteBoost=!GS.infiniteBoost;this.setActive('infiniteBoost',GS.infiniteBoost);if(GS.infiniteBoost)GS.boostStamina=999999;const m=GS.infiniteBoost?'Infinite boost ON!':'Boost normal.';UI.msg('ownMsg',m,'ok');AL.add(S.displayName,'CMD','SELF','infiniteBoost');},
+      instakill:()=>{GS.instakill=!GS.instakill;this.setActive('instakill',GS.instakill);const m=GS.instakill?'INSTAKILL — one touch kills bots!':'Instakill off.';showAnn(m,3000);UI.msg('ownMsg',m,'ok');AL.add(S.displayName,'CMD','SELF','instakill');},
+      // ── EXTRA ADMIN ──
+      killAll:()=>{if(!Game.running){UI.msg('ownMsg','Start game first!','er');return;}for(const b of [...GS.bots])killBot(b,false);if(GS.player&&GS.player.alive){GS.player.alive=false;Game.end();}flashScreen('#ff0000',1);showAnn('EVERYONE DIES.',3000);UI.msg('ownMsg','All snakes killed.','ok');AL.add(S.displayName,'CMD','SERVER','killAll');},
+      wipeScores:()=>{if(!Game.running){UI.msg('ownMsg','Start game first!','er');return;}if(GS.player)GS.player.score=0;for(const b of GS.bots)b.score=0;showAnn('SCORES WIPED.',3000);UI.msg('ownMsg','All scores wiped.','ok');AL.add(S.displayName,'CMD','SERVER','wipeScores');},
+      spawnBots:()=>{if(!Game.running){UI.msg('ownMsg','Start game first!','er');return;}for(let i=0;i<10;i++){const x=Math.random()*WORLD_W,y=Math.random()*WORLD_H;GS.bots.push(new Snake(x,y,false,false));}showAnn('+10 BOTS SPAWNED!',3000);UI.msg('ownMsg','10 bots spawned!','ok');AL.add(S.displayName,'CMD','SERVER','spawnBots');},
     };
     if(actions[name]){actions[name]();if(FB_READY&&Object.keys(ev).length)fbUpdate('serverEvents',ev);}
   },
@@ -3904,7 +3974,7 @@ const GS={
   score:0, kills:0, killStreak:0, bestStreak:0, startTime:0,
   camX:0, camY:0,
   doubleXP:false, invertCtrl:false, speedMult:1,
-  ghostMode:false, miniMode:false, zeroGravity:false, muted:false,
+  ghostMode:false, miniMode:false, zeroGravity:false, muted:false, godMode:false, infiniteBoost:false, instakill:false, frozen:false, tinyFood:false, slippery:false, blackout:false, mirrorMode:false, drunkMode:false,
   modSpeedMult:1, modScaleMult:1, modInvisible:false,
   mouseX:0, mouseY:0, boosting:false,
   wasd:{w:0,a:0,s:0,d:0}, arrows:{u:0,d:0,l:0,r:0},
@@ -3925,10 +3995,10 @@ const Game={
     GS.player=null;GS.bots=[];GS.food=[];GS.particles=[];
     GS.score=0;GS.kills=0;GS.killStreak=0;GS.bestStreak=0;
     GS.doubleXP=false;GS.invertCtrl=false;GS.speedMult=1;
-    GS.ghostMode=false;GS.miniMode=false;GS.zeroGravity=false;
+    GS.ghostMode=false;GS.miniMode=false;GS.zeroGravity=false;GS.frozen=false;GS.godMode=false;GS.infiniteBoost=false;GS.instakill=false;GS.tinyFood=false;GS.slippery=false;GS.blackout=false;GS.mirrorMode=false;GS.drunkMode=false;
     GS.modSpeedMult=1;GS.modScaleMult=1;GS.modInvisible=false;
     GS.boss=null;GS.flash.a=0;GS.boosting=false;
-    GS.boostStamina=100;GS.shielded=false;GS.shieldTimer=0;GS.speedOrbTimer=0;
+    if(!GS.infiniteBoost)GS.boostStamina=100;GS.shielded=false;GS.shieldTimer=0;GS.speedOrbTimer=0;
     GS.combo=1;GS.comboTimer=0;GS.foodEaten=0;GS.magnetTimer=0;GS.bombImmune=0;GS.lastMilestone=0;
     GS._trailFxCache=null;GS._trailFxId=null; // reset trail cache for new game
     this._sessionId=(this._sessionId||0)+1; // increment session so stale timeouts self-cancel
@@ -4107,6 +4177,7 @@ class Snake{
     if(!this.alive)return;
     const speedMult = this.isPlayer ? (1 + getUpgCached('speed')) : 1;
     const _msp=this.isPlayer?(GS.modSpeedMult||1):1;
+    if(GS.frozen&&!this.isPlayer)return;
     const spd=(this.boosting?BOOST_SPD:BASE_SPD)*GS.speedMult*(this.isBoss?1.3:1)*speedMult*_msp;
     if(GS.zeroGravity&&this.isPlayer){
       this.angle+=(Math.random()-.5)*.04;
